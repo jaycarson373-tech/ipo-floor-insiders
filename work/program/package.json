@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "NO_DNA=1 anchor build",
+    "test": "NO_DNA=1 cargo test -p program --lib"
   },
   "keywords": [],
   "author": "",

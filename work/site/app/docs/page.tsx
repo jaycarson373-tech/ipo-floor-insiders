@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { launchConfig } from '../launch-config';
 
 const levelRows = [
   ['L1', 'Lead Sheet', '150,000 IPO', '0.03 SOL', '1.35x'],
@@ -18,6 +19,7 @@ function Status({ live = false }: { live?: boolean }) {
 }
 
 export default function DocsPage() {
+  const mintConfigured = Boolean(launchConfig.config);
   return (
     <main className="docsPage">
       <nav className="topbar" aria-label="Documentation">
@@ -43,7 +45,7 @@ export default function DocsPage() {
             <p className="eyebrow">Overview</p>
             <h2>Own an insider desk.</h2>
             <p>IPO Floor is a 333-piece Metaplex Core collection built around three themed markets and a 3.3% holder-priority pool for future IPO Floor launches.</p>
-            <div className="statusRows"><div><Status live /><p>Public website, collection previews, docs, and wallet connection.</p></div><div><Status /><p>On-chain mint, upgrades, allocation rounds, launchpad, and rentals.</p></div></div>
+            <div className="statusRows"><div><Status live /><p>Public website, collection previews, docs, and wallet connection.</p></div><div><Status live={mintConfigured} /><p>{mintConfigured ? 'Atomic Metaplex Core mint and IPO lock.' : 'On-chain mint requires final public deployment configuration.'}</p></div><div><Status /><p>Allocation rounds, launchpad, and rentals.</p></div></div>
           </section>
 
           <section id="desks">
@@ -62,14 +64,14 @@ export default function DocsPage() {
           <section id="mint-lock">
             <p className="eyebrow">Mint + IPO lock</p>
             <h2>0.25 SOL + 1,000,000 $IPO.</h2>
-            <p>The planned mint requires 0.25 SOL and locks 1,000,000 $IPO. Normal network fees may apply.</p>
-            <Status />
+            <p>Each mint requires 0.25 SOL and locks 1,000,000 $IPO in the program-controlled vault. Payment, lock, and Core asset creation execute atomically. Normal network fees and Core account rent apply.</p>
+            <Status live={mintConfigured} />
           </section>
 
           <section id="levels">
             <p className="eyebrow">Levels 1–10</p>
             <h2>Upgrade economics.</h2>
-            <p>An unupgraded desk begins at Base with 1.00x allocation weight. These ten upgrade costs preserve the existing economics.</p>
+            <p>An unupgraded desk begins at Base with 1.00x allocation weight. These ten upgrade costs preserve the existing economics. Each upgrade updates the Core metadata URI so the workstation art progresses while the identity remains the same.</p>
             <div className="levelTableWrap"><table className="levelTable"><thead><tr><th>Level</th><th>Upgrade</th><th>IPO cost</th><th>SOL fee</th><th>Weight</th></tr></thead><tbody>{levelRows.map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table></div>
             <Status />
           </section>
@@ -106,14 +108,14 @@ export default function DocsPage() {
           <section id="ownership">
             <p className="eyebrow">Transfer / ownership</p>
             <h2>Metaplex Core ownership.</h2>
-            <p>After on-chain minting is implemented, each desk is intended to be represented by a Metaplex Core asset held by the owner&apos;s wallet. Transfer behavior will follow the final deployed asset configuration.</p>
-            <Status />
+            <p>Each minted desk is a transferable Metaplex Core asset held by the owner&apos;s wallet. Upgrade ownership is checked against the current Core asset owner, so a transferred desk remains upgradeable by its new owner.</p>
+            <Status live={mintConfigured} />
           </section>
 
           <section id="faq">
             <p className="eyebrow">FAQ</p>
             <h2>Short answers.</h2>
-            <div className="faqList"><article><h3>Can I mint now?</h3><p>No. Wallet connection is live; the on-chain mint transaction is coming soon.</p></article><article><h3>Is the 3.3% an individual guarantee?</h3><p>No. It is the planned total holder pool. Individual weight depends on level and final round rules.</p></article><article><h3>Do GTA, NLNK, and ANTH have separate live benefits?</h3><p>No separate market-specific benefits are currently implemented.</p></article><article><h3>Can I rent a desk?</h3><p>Not yet. Rentals are coming soon.</p></article></div>
+            <div className="faqList"><article><h3>Can I mint now?</h3><p>{mintConfigured ? 'Yes. Connect a supported Solana wallet on the home page; the app verifies the contract before enabling mint.' : 'Not yet. The contract and mint client are built, but the public deployment addresses have not been configured.'}</p></article><article><h3>Is the 3.3% an individual guarantee?</h3><p>No. It is the planned total holder pool. Individual weight depends on level and final round rules.</p></article><article><h3>Do GTA, NLNK, and ANTH have separate live benefits?</h3><p>No separate market-specific benefits are currently implemented.</p></article><article><h3>Can I rent a desk?</h3><p>Not yet. Rentals are coming soon.</p></article></div>
           </section>
         </div>
       </div>

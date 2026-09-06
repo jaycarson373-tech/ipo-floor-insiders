@@ -5,11 +5,11 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { launchConfig } from './launch-config';
+import type { WalletProvider } from './solana-client';
 
 declare global {
   interface Window {
-    solana?: {
-      connect: () => Promise<{ publicKey: { toString: () => string } }>;
+    solana?: WalletProvider & {
       isPhantom?: boolean;
     };
   }
@@ -73,10 +73,12 @@ export default function Home() {
   const [selectedMarket, setSelectedMarket] = useState(markets[0]);
   const [walletLabel, setWalletLabel] = useState('Not connected');
   const [connected, setConnected] = useState(false);
+  const [minted, setMinted] = useState<number | null>(null);
+  const [mintStatus, setMintStatus] = useState<'idle' | 'checking' | 'ready' | 'minting' | 'confirmed' | 'error'>('idle');
   const [log, setLog] = useState([
     '$ ipo floor status',
     '> wallet connection............ live',
-    '> on-chain mint................ coming soon',
+    `> on-chain mint................ ${launchConfig.config ? 'checking' : 'setup pending'}`,
     '> desk rentals................. coming soon',
   ]);
 
@@ -91,23 +93,79 @@ export default function Home() {
     }
 
     try {
+      setMintStatus('checking');
       const response = await window.solana.connect();
       const publicKey = response.publicKey.toString();
       const label = `${publicKey.slice(0, 4)}...${publicKey.slice(-4)}`;
       setConnected(true);
       setWalletLabel(label);
-      setLog([
-        '$ wallet connect',
-        `> wallet...................... ${label}`,
-        '> connection.................. live',
-        '> on-chain mint............... coming soon',
-      ]);
+      try {
+        const { fetchLaunchState } = await import('./solana-client');
+        const launch = await fetchLaunchState();
+        setMinted(launch.minted);
+        setMintStatus('ready');
+        setLog([
+          '$ wallet connect',
+          `> wallet...................... ${label}`,
+          `> network..................... ${launchConfig.cluster}`,
+          `> supply...................... ${launch.minted}/${launch.totalSupply}`,
+          `> mint........................ ${launch.paused ? 'paused' : 'ready'}`,
+        ]);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Mint configuration could not be verified.';
+        setMintStatus('error');
+        setLog(['$ launch verify', `> ${message}`]);
+      }
     } catch {
       setConnected(false);
       setWalletLabel('Not connected');
+      setMintStatus('idle');
       setLog(['$ wallet connect', '> connection cancelled']);
     }
   }
+
+  async function handleMint() {
+    if (!connected) {
+      await connectWallet();
+      return;
+    }
+    if (!window.solana) return;
+
+    try {
+      setMintStatus('minting');
+      setLog([
+        '$ mint desk',
+        '> cost......................... 0.25 SOL',
+        '> lock......................... 1,000,000 IPO',
+        '> awaiting wallet approval',
+      ]);
+      const { mintDesk } = await import('./solana-client');
+      const result = await mintDesk(window.solana);
+      setMinted(result.serial);
+      setMintStatus('confirmed');
+      setLog([
+        '$ mint desk',
+        `> desk......................... #${String(result.serial).padStart(3, '0')}`,
+        `> core asset................... ${result.asset.slice(0, 8)}...${result.asset.slice(-8)}`,
+        `> transaction.................. ${result.signature.slice(0, 12)}...`,
+        '> status....................... confirmed',
+      ]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Mint failed.';
+      setMintStatus('error');
+      setLog(['$ mint desk', `> ${message}`]);
+    }
+  }
+
+  const mintReady = connected && (mintStatus === 'ready' || mintStatus === 'confirmed');
+  const mintBusy = mintStatus === 'checking' || mintStatus === 'minting';
+  const mintLabel = mintStatus === 'minting'
+    ? 'Signing and minting...'
+    : !connected
+      ? 'Connect to mint'
+      : mintReady
+        ? `Mint desk #${String((minted ?? 0) + 1).padStart(3, '0')}`
+        : 'Mint unavailable';
 
   return (
     <main>
@@ -146,7 +204,11 @@ export default function Home() {
               {connected ? `Connected ${walletLabel}` : 'CONNECT TO MINT'}
             </button>
           </div>
-          <p className="statusNote">Wallet connection is live. On-chain mint transaction: coming soon.</p>
+          <p className="statusNote">
+            {launchConfig.config
+              ? 'Connect to verify the live on-chain mint configuration.'
+              : 'The mint contract is built. Public launch addresses are not configured yet.'}
+          </p>
         </div>
 
         <div className="mintPanel" aria-label="Mint preview">
@@ -174,8 +236,16 @@ export default function Home() {
           <dl className="stats compactStats">
             <div><dt>Mint</dt><dd>0.25 SOL</dd></div>
             <div><dt>IPO lock</dt><dd>1,000,000 $IPO</dd></div>
+            <div><dt>Minted</dt><dd>{minted === null ? `— / ${launchConfig.supply}` : `${minted} / ${launchConfig.supply}`}</dd></div>
           </dl>
-          <button className="mintButton isDisabled" type="button" disabled>Mint coming soon</button>
+          <button
+            className={`mintButton ${mintReady || !connected ? '' : 'isDisabled'}`}
+            type="button"
+            disabled={mintBusy || (connected && !mintReady)}
+            onClick={handleMint}
+          >
+            {mintLabel}
+          </button>
           <small className="feeNote">Normal network fees may apply.</small>
         </div>
       </section>
@@ -262,7 +332,9 @@ export default function Home() {
           <div><p className="eyebrow">Coming soon</p><h2 id="coming-title">Next on the floor.</h2></div>
         </div>
         <div className="comingGrid">
-          <article><span>COMING SOON</span><h3>On-chain mint</h3><p>Metaplex Core mint transaction and $IPO lock.</p></article>
+          {launchConfig.config
+            ? <article><span>LIVE</span><h3>On-chain mint</h3><p>Atomic Metaplex Core mint and $IPO lock.</p></article>
+            : <article><span>SETUP REQUIRED</span><h3>On-chain mint</h3><p>Contract deployment addresses must be published.</p></article>}
           <article><span>COMING SOON</span><h3>Level upgrades</h3><p>On-chain level progression and allocation weights.</p></article>
           <article><span>COMING SOON</span><h3>Desk rentals</h3><p>Rentals are not currently functional.</p></article>
           <article><span>COMING SOON</span><h3>Launchpad</h3><p>Project applications, review, KYC, and holder rounds.</p></article>
@@ -273,7 +345,7 @@ export default function Home() {
         <div className="terminalIntro">
           <p className="eyebrow">IPO terminal</p>
           <h2 id="terminal-title">Open the floor.</h2>
-          <p>Connect a Solana wallet to enter the terminal. Minting opens when the on-chain transaction path is live.</p>
+          <p>Connect a Solana wallet to verify the contract, balances, supply, and mint status.</p>
           <button className="primaryBtn" type="button" onClick={connectWallet}>
             {connected ? `Connected ${walletLabel}` : 'CONNECT WALLET'}
           </button>
