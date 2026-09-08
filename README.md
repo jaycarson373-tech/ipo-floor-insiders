@@ -1,25 +1,24 @@
-# IPO Floor
+# IPO
 
-IPO Floor is a Solana mint site and launch stack for 333 Metaplex Core NFTs.
+IPO, short for Initial Pump Offering, is a curated Solana launch and discovery product with 1,212 Metaplex Core Launch Pass memberships.
 
-The collection thesis:
+## Confirmed product defaults
 
-```text
-IPO FLOOR
-333 anonymous insiders.
-Every insider has a desk.
-Every desk has access.
-Burn IPO to move up the floor.
-```
+- Supply: `1,212`
+- Mint price: `0.044 SOL` per pass, plus network and account costs
+- Mint token requirement: none
+- Upgrade currency: `$IPO`, after mint only
+- Upgrade levels: five configurable membership levels
+
+The current repository supports an architectural Launch Pass collection and a SOL-only mint program. It does not substantiate issuer-backed pre-IPO securities access. Project submissions, Pump.fun launches, token comparison, 3.3%/10% holder drops, IPO claims, and buyback/burn execution are documented as planned and are not executable.
 
 ## Contents
 
-- `work/site` - Vinext/Next mint site, generated NFT collection, and Metaplex Core mint worker
-- `work/program` - Anchor program for mint gating, upgrades, rentals, treasury, and IPO token locking
-- `work/scripts` - launch scripts for funding checks, program deploy, token/vault setup, program initialization, and Core collection creation
-- `work/LAUNCH_RUNBOOK.md` - launch checklist and current public addresses
-- `outputs/ipo-insider-preview-30.svg.png` - 30-piece visual preview sheet
-- `outputs/launch-addresses.txt` - generated public launch addresses
+- `work/site` - Next/Vinext product site, generated NFT collection, and Core helpers
+- `work/program` - Anchor program for SOL-only minting, configurable upgrades, and treasury handling
+- `work/scripts` - launch setup helpers
+- `work/PRODUCT_SPEC.md` - confirmed behavior, planned features, and unresolved launch decisions
+- `work/LAUNCH_RUNBOOK.md` - deployment checklist and current public addresses
 
 Private keypairs and local environment files are intentionally ignored.
 
@@ -29,32 +28,31 @@ Private keypairs and local environment files are intentionally ignored.
 cd work/site
 npm install
 npm run generate:collection
-npm run dev -- --port 3001
+npm run dev:vercel -- --port 3001
 ```
 
-Open:
+Open `http://localhost:3001/`.
 
-```text
-http://localhost:3001/
-```
-
-Production build:
+Production checks:
 
 ```bash
 cd work/site
-npm run build
+npm run lint
+npm run typecheck
+npm test
+npm run build:vercel
 ```
 
 ## Vercel
 
-This repo is configured for Vercel from the repository root.
+This repository is configured for Vercel from the repository root.
 
 ```bash
 npm ci
 npm run build:vercel
 ```
 
-For a manual Vercel import, use:
+Manual import settings:
 
 ```text
 Framework Preset: Next.js
@@ -65,19 +63,18 @@ Output Directory: work/site/.next
 
 ## Collection
 
-The generator is deterministic:
+The deterministic generator creates:
+
+- `1,212` metadata files
+- `6,060` SVG images: five upgrade stages for every Launch Pass
+- A fixed base rarity and identity for every serial
+- Architectural research workspaces with no external image dependencies
 
 ```bash
 cd work/site
 npm run generate:collection
+npm test
 ```
-
-Generated assets:
-
-- `333` metadata files
-- `1,998` SVG images: base image plus `L1-L5` upgrade art for every NFT
-- Base rarity remains fixed
-- Upgrade levels preserve the same insider identity and evolve the workstation
 
 ## Program
 
@@ -85,37 +82,11 @@ Generated assets:
 cd work/program
 npm install
 NO_DNA=1 anchor build
+cargo test
 ```
 
-The compiled program artifact is produced locally at:
-
-```text
-work/program/target/deploy/program.so
-```
-
-`target/` is ignored in Git, so rebuild before deployment.
+The compiled program artifact is written to `work/program/target/deploy/program.so`. The `target/` directory is ignored, so rebuild before deployment.
 
 ## Launch
 
-Read the runbook first:
-
-```text
-work/LAUNCH_RUNBOOK.md
-```
-
-Current deployer / launch authority address:
-
-```text
-7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY2wUddr99dJ7C
-```
-
-Recommended setup funding: `2 SOL`.
-
-Then run:
-
-```bash
-work/scripts/check-funding.sh
-work/scripts/run-mainnet-setup.sh
-```
-
-Do not commit private keypairs or `.env.local`.
+Read `work/LAUNCH_RUNBOOK.md` before funding or deployment. Do not commit private keypairs or `.env.local`.

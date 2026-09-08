@@ -1,87 +1,93 @@
-# IPO Floor Launch Runbook
+# IPO Launch Runbook
 
-## What Is Built
+## Confirmed Economics
 
-- Public mint site in `work/site`
-- Live site: `https://ipo-floor.sufficientlev.chatgpt.site`
-- 333 generated anonymous insider NFT images in `work/site/public/collection/images`
-- 333 matching metadata files in `work/site/public/collection/metadata`
-- Metaplex Core mint worker in `work/site/scripts/mint-core-assets.mjs`
-- Anchor mint gate program in `work/program`
+- Supply: 1,212 Metaplex Core assets
+- Mint payment: 0.044 SOL per desk
+- Mint token requirement: none
+- Token lock or burn during mint: none
+- Upgrade currency: `$IPO`, after mint only
+- Upgrade levels: five configurable levels
+- Maximum gross mint proceeds: 53.328 SOL before network and account costs
 
-## Economics
+The mint instruction transfers SOL, creates the Core asset, and records the desk atomically. A failed Core creation rolls back the SOL transfer. Upgrade execution is disabled by default until the authority explicitly configures and publishes the five upgrade prices.
 
-- Supply: 333
-- Buyer pays: 0.25 SOL + 1,000,000 IPO
-- Mint-funded treasury at sellout: 83.25 SOL
-- NFT standard: Metaplex Core
-- Collection concept: 333 anonymous insiders at trading desks
-- Upgrade levels: 10
+## Public Addresses
 
-## Launch Values Needed
-
-Generated public addresses:
-
-- Deployer / launch authority: `7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY2wUddr99dJ7C`
+- Setup funding wallet: `7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY2wUddr99dJ7C`
 - Treasury wallet: `5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875`
-- IPO mint: `CG4jSsRE73DeL8PoBuusjiRgFhyJTGbogJttubM2GGdj`
-- Metaplex Core collection: `3oWH9UQ2E8D7GuHUAfzn1GTkB9HAoEfbRo7JJ7e4o4RK`
-- Anchor program id: `2P9ehfkHUgght4YmW43YG1vEqFatKa3zKAkaV5ona7wo`
+- Existing program address: `2P9ehfkHUgght4YmW43YG1vEqFatKa3zKAkaV5ona7wo`
+- Planned Core collection address: `3oWH9UQ2E8D7GuHUAfzn1GTkB9HAoEfbRo7JJ7e4o4RK`
 
-Fund the deployer / launch authority with setup SOL first:
+These addresses do not prove that the current source has been deployed. Verify every account and the deployed program data against the intended cluster before enabling public minting.
+
+The real `$IPO` token mint is intentionally not hard-coded. Supply it through `IPO_MINT` only after verifying the mint and authority on the selected cluster.
+
+## Funding
+
+Fund the setup wallet, not the treasury:
 
 ```text
 7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY2wUddr99dJ7C
 ```
 
-Recommended setup funding: `2 SOL`.
+Determine the required balance from a devnet rehearsal and current mainnet fees. The repository does not promise that a fixed funding estimate will cover deployment. Unused SOL remains in the setup wallet.
 
-Current mainnet funding status checked on 2026-08-31:
+## Verification
 
-- Deployer / launch authority: `0 SOL`
-- Treasury wallet: `0 SOL`
+```bash
+cd work/site
+npm run lint
+npm run typecheck
+npm test
+npm run build:vercel
 
-Before mainnet launch, fill these values in `work/site/.env.local` and hosted runtime environment:
+cd ../program
+cargo fmt --check
+cargo test
+NO_DNA=1 anchor build
+```
+
+Before mainnet, deploy and test the same build on devnet. Complete at least one successful mint and test wallet rejection, insufficient SOL, paused mint, wrong collection, sold out, disconnect, duplicate submission prevention, pending confirmation, failure, and confirmed receipt states. Configure upgrades only after the five prices and token policy are approved.
+
+## Mainnet Setup
+
+Mainnet setup requires the verified `$IPO` mint and an explicit operator confirmation:
+
+```bash
+IPO_MINT=<PUBLIC_IPO_TOKEN_MINT> work/scripts/run-mainnet-setup.sh
+```
+
+It performs these steps:
+
+1. Prints the authority, program, `$IPO` upgrade mint, and treasury.
+2. Builds and deploys the Anchor program.
+3. Creates the Core collection with the program config PDA as update authority.
+4. Creates the `$IPO` token vault owned by the config PDA.
+5. Initializes the 1,212 supply and 0.044 SOL mint price.
+6. Prints the public site environment values.
+
+Do not run this command until devnet verification is complete. The redesign task does not deploy contracts or execute mainnet transactions.
+
+## Site Environment
+
+Publish the verified values printed by the initializer:
 
 ```bash
 NEXT_PUBLIC_SOLANA_CLUSTER=mainnet-beta
-NEXT_PUBLIC_SOLANA_RPC_URL=
-NEXT_PUBLIC_IPO_PROGRAM_ID=
-NEXT_PUBLIC_IPO_MINT=
-NEXT_PUBLIC_IPO_VAULT=
-NEXT_PUBLIC_TREASURY_WALLET=
-NEXT_PUBLIC_CORE_COLLECTION=
-NEXT_PUBLIC_METADATA_BASE_URL=
+NEXT_PUBLIC_SOLANA_RPC_URL=<MAINNET_RPC_URL>
+NEXT_PUBLIC_IPO_PROGRAM_ID=<PROGRAM_ID>
+NEXT_PUBLIC_IPO_CONFIG=<CONFIG_PDA>
+NEXT_PUBLIC_IPO_MINT=<IPO_MINT>
+NEXT_PUBLIC_IPO_VAULT=<CONFIG_OWNED_VAULT>
+NEXT_PUBLIC_TREASURY_WALLET=<TREASURY>
+NEXT_PUBLIC_CORE_COLLECTION=<CORE_COLLECTION>
+NEXT_PUBLIC_METADATA_BASE_URL=https://<PUBLIC_SITE>/api/metadata
+NEXT_PUBLIC_SITE_URL=https://<PUBLIC_SITE>
 ```
 
-`NEXT_PUBLIC_IPO_VAULT` is intentionally blank until the IPO token vault is created on mainnet.
+The website enables minting only after it fetches the config and verifies program ownership, 1,212 supply, 0.044 SOL price, and zero `$IPO` mint requirement. It simulates each signed transaction before sending it and waits for confirmation before showing success.
 
-## Mainnet Safety Checklist
+## Planned, Not Live
 
-1. Create or confirm the IPO SPL token mint.
-2. Create the treasury wallet.
-3. Create the IPO vault token account owned by the launch authority or vault authority.
-4. Upload `public/collection` to permanent storage.
-5. Deploy the Anchor program.
-6. Initialize the program with:
-   - treasury wallet
-   - IPO mint
-   - IPO vault
-   - total supply `333`
-   - mint price `250000000` lamports
-   - IPO token price in raw base units, usually `1000000 * 10 ** decimals`
-7. Create the Metaplex Core collection.
-8. Put the deployed program id, collection, token, vault, and treasury into the site environment.
-9. Run a devnet mint first.
-10. Run a mainnet mint with a team wallet before opening traffic.
-
-## Mint Flow
-
-1. Buyer connects wallet on the site.
-2. Buyer submits `mint_desk`.
-3. Program transfers 0.25 SOL to treasury.
-4. Program transfers 1,000,000 IPO to the IPO vault.
-5. Program records the desk account and emits `DeskMinted`.
-6. Mint worker mints the Metaplex Core asset to the buyer using the matching metadata URI.
-
-The Core asset minting step requires the collection/update authority keypair and must be run by the operator or a secured backend worker. Do not put that key in public frontend code.
+The 3.3% holder reserve, allocation rounds, project review, KYC workflow, launchpad, IPO Signal, claims, and issuer-backed pre-IPO inventory are not implemented in this repository. Keep their actions disabled and their status labeled `Planned` until contracts, funding, moderation, compliance, and backend flows are deployed and independently tested.

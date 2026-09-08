@@ -1,0 +1,98 @@
+{
+  "name": "IPO Launch Pass #1116",
+  "symbol": "IPO",
+  "description": "A collectible IPO Launch Pass represented by an architectural research desk. Holder-drop and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.",
+  "image": "images/IPO-1116-L1.svg",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Workspace",
+      "value": "research studio"
+    },
+    {
+      "trait_type": "Desk Form",
+      "value": "modular"
+    },
+    {
+      "trait_type": "Material",
+      "value": "matte black"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "signal cyan"
+    },
+    {
+      "trait_type": "View",
+      "value": "night city"
+    },
+    {
+      "trait_type": "Research Mode",
+      "value": "market brief"
+    },
+    {
+      "trait_type": "Desk Object",
+      "value": "reference books"
+    },
+    {
+      "trait_type": "Desk Serial",
+      "value": 1116
+    }
+  ],
+  "properties": {
+    "category": "image",
+    "files": [
+      {
+        "uri": "images/IPO-1116-L1.svg",
+        "type": "image/svg+xml"
+      },
+      {
+        "uri": "images/IPO-1116-L2.svg",
+        "type": "image/svg+xml"
+      },
+      {
+        "uri": "images/IPO-1116-L3.svg",
+        "type": "image/svg+xml"
+      },
+      {
+        "uri": "images/IPO-1116-L4.svg",
+        "type": "image/svg+xml"
+      },
+      {
+        "uri": "images/IPO-1116-L5.svg",
+        "type": "image/svg+xml"
+      }
+    ],
+    "upgrade_images": [
+      {
+        "level": 1,
+        "status": "Member",
+        "uri": "images/IPO-1116-L1.svg"
+      },
+      {
+        "level": 2,
+        "status": "Researcher",
+        "uri": "images/IPO-1116-L2.svg"
+      },
+      {
+        "level": 3,
+        "status": "Analyst",
+        "uri": "images/IPO-1116-L3.svg"
+      },
+      {
+        "level": 4,
+        "status": "Strategist",
+        "uri": "images/IPO-1116-L4.svg"
+      },
+      {
+        "level": 5,
+        "status": "Director",
+        "uri": "images/IPO-1116-L5.svg"
+      }
+    ],
+    "seed": "ipo-desk-1116",
+    "visual_signature": "5EF21693"
+  }
+}

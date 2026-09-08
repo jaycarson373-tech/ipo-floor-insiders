@@ -9,6 +9,7 @@ import {
   publicKey,
 } from '@metaplex-foundation/umi';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
+import product from '../product-config.json' with { type: 'json' };
 
 const RPC_URL = process.env.SOLANA_RPC_URL ?? 'https://api.devnet.solana.com';
 const KEYPAIR_PATH = process.env.SOLANA_KEYPAIR ?? path.join(os.homedir(), '.config/solana/id.json');
@@ -32,10 +33,6 @@ const secret = JSON.parse(await readFile(KEYPAIR_PATH, 'utf8'));
 const umi = createUmi(RPC_URL).use(mplCore());
 umi.use(keypairIdentity(umi.eddsa.createKeypairFromSecretKey(new Uint8Array(secret))));
 
-function companyForSerial(serial) {
-  return ['GTA', 'NLNK', 'ANTH'][(serial - 1) % 3];
-}
-
 async function ensureCollection() {
   if (COLLECTION_KEYPAIR_PATH && CREATE_COLLECTION) {
     const collectionSecret = JSON.parse(await readFile(COLLECTION_KEYPAIR_PATH, 'utf8'));
@@ -44,7 +41,7 @@ async function ensureCollection() {
     const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/../manifest.json`;
     await createCollection(umi, {
       collection,
-      name: 'IPO Floor Insiders',
+      name: 'IPO Desks',
       uri,
     }).sendAndConfirm(umi);
     console.log(`Created Core collection: ${collection.publicKey}`);
@@ -59,7 +56,7 @@ async function ensureCollection() {
   const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/../manifest.json`;
   await createCollection(umi, {
     collection,
-    name: 'IPO Floor Insiders',
+    name: 'IPO Desks',
     uri,
   }).sendAndConfirm(umi);
   console.log(`Created Core collection: ${collection.publicKey}`);
@@ -68,19 +65,26 @@ async function ensureCollection() {
 
 const collection = await ensureCollection();
 
+if (!Number.isInteger(START_SERIAL) || !Number.isInteger(COUNT) || START_SERIAL < 1 || COUNT < 1) {
+  throw new Error('START_SERIAL and COUNT must be positive integers.');
+}
+
+if (START_SERIAL + COUNT - 1 > product.supply) {
+  throw new Error(`Requested serial range exceeds the configured ${product.supply} desk supply.`);
+}
+
 for (let serial = START_SERIAL; serial < START_SERIAL + COUNT; serial += 1) {
-  const ticker = companyForSerial(serial);
-  const insiderId = `${ticker}-${String(serial).padStart(3, '0')}`;
+  const deskId = `IPO-${String(serial).padStart(4, '0')}`;
   const asset = generateSigner(umi);
-  const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/${insiderId}.json`;
+  const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/${deskId}.json`;
 
   await create(umi, {
     asset,
     collection,
     owner: publicKey(OWNER),
-    name: `IPO Insider ${insiderId}`,
+    name: `IPO Desk #${String(serial).padStart(4, '0')}`,
     uri,
   }).sendAndConfirm(umi);
 
-  console.log(`Minted Core asset ${insiderId}: ${asset.publicKey}`);
+  console.log(`Minted Core asset ${deskId}: ${asset.publicKey}`);
 }

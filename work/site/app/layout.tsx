@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'IPO Floor',
-  description: '333 anonymous insider desks across three IPO markets, built around a 3.3% holder-priority pool.',
+  title: 'IPO',
+  description: 'Initial Pump Offering: curated Solana launches, 1,212 Launch Passes, funded holder drops, and on-chain receipts.',
 };
 
 export default function RootLayout({
