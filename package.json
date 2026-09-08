@@ -11,6 +11,7 @@
     "work/program"
   ],
   "dependencies": {
+    "@emnapi/runtime": "1.11.3",
     "next": "16.2.6"
   },
   "scripts": {
