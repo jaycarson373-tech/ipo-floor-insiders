@@ -96,6 +96,53 @@ export function claimAllocation(claimedIds, allocation) {
   return { claimedIds: next, claimed: true, units: BigInt(allocation.units) };
 }
 
+const mintTransitions = {
+  idle: ['review'],
+  review: ['signing', 'cancelled', 'idle'],
+  signing: ['submitted', 'cancelled', 'failed'],
+  submitted: ['confirmed', 'failed'],
+  confirmed: ['idle'],
+  cancelled: ['review', 'idle'],
+  failed: ['review', 'idle'],
+};
+
+export function transitionMint(current, next) {
+  if (!mintTransitions[current]?.includes(next)) throw new Error(`Invalid mint transition: ${current} -> ${next}.`);
+  return next;
+}
+
+export function appendRoomRevision(revisions, draft, timestamp) {
+  if (!draft?.title?.trim() || !draft?.thesis?.trim()) throw new Error('Room revisions require a title and thesis.');
+  let source;
+  try {
+    source = new URL(draft.source);
+  } catch {
+    throw new Error('Room revisions require a valid source URL.');
+  }
+  if (!['http:', 'https:'].includes(source.protocol)) throw new Error('Room sources must use HTTP or HTTPS.');
+  const updatedAt = new Date(timestamp).toISOString();
+  const revision = {
+    ...draft,
+    source: source.toString(),
+    updatedAt,
+    revision: revisions.length + 1,
+  };
+  return [...revisions, revision];
+}
+
+const contributionTransitions = {
+  pending: ['accepted', 'declined'],
+  accepted: [],
+  declined: ['pending'],
+};
+
+export function transitionContribution(current, next) {
+  if (!contributionTransitions[current]?.includes(next)) {
+    throw new Error(`Invalid contribution transition: ${current} -> ${next}.`);
+  }
+  return next;
+}
+
 const transitions = {
   draft: ['metadata_ready', 'cancelled'],
   metadata_ready: ['token_submitted', 'failed', 'cancelled'],

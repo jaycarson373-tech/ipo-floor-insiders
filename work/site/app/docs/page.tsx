@@ -171,14 +171,16 @@ export default function DocsPage() {
               Room drafts capture a thesis, dated source, catalyst with
               confirmed/reported/speculative status, invalidation criteria,
               author identity, and sponsorship or financial-interest disclosure.
-              Local drafts work now.
+              Local drafts, preserved browser revisions, follows, bookmarks,
+              alert preferences, and share-card copying work now.
             </p>
             <p>
-              Publishing, preserved edit history, authentication, watchlists,
-              bookmarks, alerts, discussion, moderation, and
-              contribution-campaign receipts require backend services. No fake
-              rooms or engagement numbers appear while those services are
-              unavailable.
+              A campaign lab stores campaign terms and pending contributions in
+              the browser without claiming funding, review, rewards, or
+              publication. Authentication, durable storage, real notifications,
+              discussion, moderation, reviewer decisions, funding, and reward
+              receipts require backend services. No fake rooms or engagement
+              numbers appear while those services are unavailable.
             </p>
             <Flag />
           </section>
@@ -197,6 +199,14 @@ export default function DocsPage() {
               execution, creator authorization, and post-transaction chain-state
               verification are not connected. A saved launch packet is not a
               launched token.
+            </p>
+            <p>
+              Pump&apos;s current fee-sharing flow creates an initial config with
+              the creator at 100%, then permits one final recipient update that
+              revokes the admin. Sweeping and distribution are permissionless.
+              IPO must read that resulting config on-chain before describing a
+              route as verified; fee distribution alone is not a holder reward
+              accounting or claim system.
             </p>
             <Flag />
           </section>

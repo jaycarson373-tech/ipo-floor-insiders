@@ -30,9 +30,11 @@ Project/community tokens, third-party exposure, and issuer-authorized securities
 
 ## IPO Rooms
 
-Room drafts store thesis, source, catalyst and confidence, invalidation criteria, author, and sponsorship/financial-interest disclosure locally. Production publishing needs authentication, durable version history, moderation, following/bookmarks, alerts, discussion, and source storage.
+Room drafts store thesis, source, catalyst and confidence, invalidation criteria, author, and sponsorship/financial-interest disclosure locally. Browser-local revision history, follows, bookmarks, alert preferences, share-card copying, campaign drafts, and pending contribution submissions are implemented for workflow testing. Production publishing, notifications, funded campaigns, reviewer decisions, reward receipts, moderation, discussion, and durable storage still need authenticated services.
 
 An optional room launch uses the current six-step builder. Proposed third-party creator-fee routing is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% operations. The template applies only to creator fees received and requires creator authorization and chain-state verification.
+
+Current Pump documentation describes an initial fee-sharing config with the creator at 100%, followed by a one-time final recipient update that revokes the admin; fee sweeps and distribution are permissionless. IPO must verify the finalized config from chain state. That primitive routes creator-fee receipts but does not provide dynamic holder snapshots, reward purchases, accrual, or claims.
 
 For `$IPO` itself, the planned policy is 100% of creator-fee receipts actually received by the project toward desk-holder asset purchases. Operations pays execution costs separately. This is planned until routing, indexing, and purchases are deployed and verified.
 
@@ -42,7 +44,7 @@ Optional `$IPO` upgrades may later provide alerts, research organization, analyt
 
 ## Status
 
-Implemented: responsive product shell, Room drafts, launch/support drafts, deterministic desk art, wallet flow, revised 80/20 mint source/client, integer accounting domain, transfer cutoffs, failure retention, duplicate protection, and public docs.
+Implemented: responsive product shell, Room drafts and local social workflow, campaign/submission preview, launch/support drafts, deterministic desk art, wallet flow, revised 80/20 mint source/client, integer accounting domain, transfer cutoffs, failure retention, duplicate protection, and public docs.
 
 Preview: mint and accounting source before deployment, research publishing, asset registry review, launch configuration, and reward allocation.
 

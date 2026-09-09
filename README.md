@@ -15,7 +15,7 @@ All product economics are centralized in `work/site/product-config.json`. The cl
 
 ## Status
 
-Available locally: sourced Room drafts, launch/support application drafts, fee-share validation, deterministic artwork, wallet connection, revised Metaplex Core mint source with atomic 80/20 routing, transaction states, integer epoch accounting, receipt deduplication, equal desk allocation, and documentation.
+Available locally: sourced Room drafts with preserved revisions, local follows/bookmarks, share-card copying, contribution campaign drafts, pending local submissions, launch/support application drafts, fee-share validation, deterministic artwork, wallet connection, revised Metaplex Core mint source with atomic 80/20 routing, transaction states, integer epoch accounting, receipt deduplication, equal desk allocation, and documentation. Browser-local social and campaign actions do not publish, notify, fund rewards, or submit work to IPO.
 
 Not production-connected: Pump execution, metadata storage, recipient fee accounts, creator-fee indexing, reward purchases, reward vault/claims, ownership indexing, curated submission backend, presale escrow, settlements, refunds, and activity indexing. Production actions remain disabled rather than represented with fake data.
 

@@ -3,13 +3,16 @@ import test from 'node:test';
 import {
   allocateDeskRewards,
   allocateEpochRewards,
+  appendRoomRevision,
   claimAllocation,
   recordPurchaseResult,
   reconcileReceipt,
   splitIntegerAmount,
   splitMintReceipt,
   transferDeskForNextEpoch,
+  transitionContribution,
   transitionLaunch,
+  transitionMint,
   validateAssetRecord,
   validateFeeShares,
 } from '../app/platform-domain.mjs';
@@ -83,6 +86,41 @@ test('receipt reconciliation and claims reject duplicates', () => {
   const claim = claimAllocation(new Set(), { id: 'round:desk', units: 12n });
   assert.equal(claim.claimed, true);
   assert.equal(claimAllocation(claim.claimedIds, { id: 'round:desk', units: 12n }).claimed, false);
+});
+
+test('mint lifecycle rejects duplicate and out-of-order submission states', () => {
+  assert.equal(transitionMint('idle', 'review'), 'review');
+  assert.equal(transitionMint('review', 'signing'), 'signing');
+  assert.equal(transitionMint('signing', 'submitted'), 'submitted');
+  assert.equal(transitionMint('submitted', 'confirmed'), 'confirmed');
+  assert.equal(transitionMint('signing', 'cancelled'), 'cancelled');
+  assert.equal(transitionMint('failed', 'review'), 'review');
+  assert.throws(() => transitionMint('submitted', 'signing'), /Invalid mint transition/);
+  assert.throws(() => transitionMint('confirmed', 'confirmed'), /Invalid mint transition/);
+});
+
+test('room revisions preserve source and edit history', () => {
+  const first = appendRoomRevision([], {
+    title: 'Private market infrastructure',
+    thesis: 'Settlement tooling is improving.',
+    source: 'https://example.com/research',
+  }, '2026-09-08T12:00:00Z');
+  const second = appendRoomRevision(first, {
+    title: 'Private market infrastructure',
+    thesis: 'The thesis changed after new evidence.',
+    source: 'https://example.com/update',
+  }, '2026-09-09T12:00:00Z');
+  assert.equal(first[0].revision, 1);
+  assert.equal(second[1].revision, 2);
+  assert.equal(second[0].thesis, 'Settlement tooling is improving.');
+  assert.throws(() => appendRoomRevision([], { title: 'Room', thesis: 'Thesis', source: 'javascript:alert(1)' }, Date.now()), /HTTP/);
+});
+
+test('contribution review states require explicit reviewer transitions', () => {
+  assert.equal(transitionContribution('pending', 'accepted'), 'accepted');
+  assert.equal(transitionContribution('pending', 'declined'), 'declined');
+  assert.equal(transitionContribution('declined', 'pending'), 'pending');
+  assert.throws(() => transitionContribution('accepted', 'pending'), /Invalid contribution transition/);
 });
 
 test('interrupted launch setup only follows recoverable transitions', () => {

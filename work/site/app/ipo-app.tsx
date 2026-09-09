@@ -6,7 +6,9 @@ import {
   Activity,
   ArrowRight,
   BadgeCheck,
+  Bell,
   Blocks,
+  Bookmark,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -14,11 +16,15 @@ import {
   ExternalLink,
   FileCheck2,
   FolderOpen,
+  History,
   LayoutDashboard,
+  Megaphone,
   Menu,
   Plus,
   Rocket,
   Search,
+  Send,
+  Share2,
   ShieldCheck,
   Sparkles,
   WalletCards,
@@ -31,7 +37,11 @@ import {
   rewardAssets,
   type ProductStatus,
 } from "./product-data";
-import { validateFeeShares } from "./platform-domain.mjs";
+import {
+  appendRoomRevision,
+  splitMintReceipt,
+  validateFeeShares,
+} from "./platform-domain.mjs";
 import type { WalletProvider } from "./solana-client";
 
 declare global {
@@ -91,6 +101,22 @@ type RoomDraft = {
   disclosure: string;
   updatedAt: string;
 };
+type RoomRevision = RoomDraft & { revision: number };
+type RoomFilter = "latest" | "following" | "bookmarks";
+type CampaignDraft = {
+  objective: string;
+  budget: string;
+  deadline: string;
+  requirements: string;
+  criteria: string;
+  updatedAt: string;
+};
+type ContributionDraft = { link: string; note: string };
+type LocalContribution = ContributionDraft & {
+  id: string;
+  submittedAt: string;
+  status: "pending";
+};
 
 const defaultLaunch: LaunchDraft = {
   name: "",
@@ -129,6 +155,15 @@ const defaultRoom: RoomDraft = {
   disclosure: "",
   updatedAt: "",
 };
+const defaultCampaign: CampaignDraft = {
+  objective: "",
+  budget: "",
+  deadline: "",
+  requirements: "",
+  criteria: "",
+  updatedAt: "",
+};
+const defaultContribution: ContributionDraft = { link: "", note: "" };
 const navItems: Array<{ id: View; label: string; icon: typeof Search }> = [
   { id: "explore", label: "Explore", icon: Search },
   { id: "desk", label: "My Desk", icon: LayoutDashboard },
@@ -191,10 +226,20 @@ function formatBps(value: number) {
   return `${(value / 100).toFixed(value % 100 ? 2 : 0)}%`;
 }
 
+function formatLamports(lamports: bigint, maximumDecimals = 3) {
+  const whole = lamports / 1_000_000_000n;
+  const remainder = (lamports % 1_000_000_000n)
+    .toString()
+    .padStart(9, "0")
+    .slice(0, maximumDecimals)
+    .replace(/0+$/, "");
+  return remainder ? `${whole}.${remainder}` : whole.toString();
+}
+
 export default function IpoApp() {
   const [view, setView] = useState<View>("explore");
   const [roomsMode, setRoomsMode] = useState<
-    "watch" | "launch" | "application"
+    "watch" | "campaign" | "launch" | "application"
   >("watch");
   const [connected, setConnected] = useState(false);
   const [walletLabel, setWalletLabel] = useState("Connect");
@@ -213,6 +258,16 @@ export default function IpoApp() {
   const [offeringDraft, setOfferingDraft] =
     useState<OfferingDraft>(defaultOffering);
   const [roomDraft, setRoomDraft] = useState<RoomDraft>(defaultRoom);
+  const [roomHistory, setRoomHistory] = useState<RoomRevision[]>([]);
+  const [roomFilter, setRoomFilter] = useState<RoomFilter>("latest");
+  const [roomFollowed, setRoomFollowed] = useState(false);
+  const [roomBookmarked, setRoomBookmarked] = useState(false);
+  const [roomAlertPreference, setRoomAlertPreference] = useState(false);
+  const [campaignDraft, setCampaignDraft] =
+    useState<CampaignDraft>(defaultCampaign);
+  const [contributionDraft, setContributionDraft] =
+    useState<ContributionDraft>(defaultContribution);
+  const [contributions, setContributions] = useState<LocalContribution[]>([]);
   const [localEvents, setLocalEvents] = useState<LocalEvent[]>([]);
   const [notice, setNotice] = useState("");
   const submitting = useRef(false);
@@ -224,11 +279,28 @@ export default function IpoApp() {
         const offering = localStorage.getItem("ipo-offering-draft-v1");
         const events = localStorage.getItem("ipo-local-events-v1");
         const room = localStorage.getItem("ipo-room-draft-v1");
+        const roomRevisions = localStorage.getItem("ipo-room-history-v1");
+        const roomPreferences = localStorage.getItem("ipo-room-preferences-v1");
+        const campaign = localStorage.getItem("ipo-campaign-draft-v1");
+        const savedContributions = localStorage.getItem(
+          "ipo-contributions-v1",
+        );
         if (launch) setLaunchDraft({ ...defaultLaunch, ...JSON.parse(launch) });
         if (offering)
           setOfferingDraft({ ...defaultOffering, ...JSON.parse(offering) });
         if (events) setLocalEvents(JSON.parse(events));
         if (room) setRoomDraft({ ...defaultRoom, ...JSON.parse(room) });
+        if (roomRevisions) setRoomHistory(JSON.parse(roomRevisions));
+        if (roomPreferences) {
+          const preferences = JSON.parse(roomPreferences);
+          setRoomFollowed(Boolean(preferences.followed));
+          setRoomBookmarked(Boolean(preferences.bookmarked));
+          setRoomAlertPreference(Boolean(preferences.alerts));
+        }
+        if (campaign)
+          setCampaignDraft({ ...defaultCampaign, ...JSON.parse(campaign) });
+        if (savedContributions)
+          setContributions(JSON.parse(savedContributions));
       } catch {
         setNotice("A saved browser draft could not be loaded.");
       }
@@ -236,7 +308,11 @@ export default function IpoApp() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const total = quantity * launchConfig.mintPriceSol;
+  const totalLamports = launchConfig.mintPriceLamports * BigInt(quantity);
+  const mintAllocation = splitMintReceipt(
+    totalLamports,
+    launchConfig.draftMintCapitalBps,
+  );
   const remaining =
     minted === null ? null : Math.max(0, launchConfig.supply - minted);
   const feeValidation = useMemo(
@@ -298,17 +374,105 @@ export default function IpoApp() {
     );
   }
   function saveRoomDraft() {
-    const next = { ...roomDraft, updatedAt: new Date().toISOString() };
-    setRoomDraft(next);
-    localStorage.setItem("ipo-room-draft-v1", JSON.stringify(next));
-    addLocalEvent("IPO Room research draft saved", "BROWSER ONLY");
-    setNotice("Research draft saved in this browser. It is not published.");
+    try {
+      const nextHistory = appendRoomRevision(
+        roomHistory,
+        roomDraft,
+        new Date(),
+      );
+      const next = nextHistory.at(-1) as RoomRevision;
+      setRoomDraft(next);
+      setRoomHistory(nextHistory);
+      localStorage.setItem("ipo-room-draft-v1", JSON.stringify(next));
+      localStorage.setItem(
+        "ipo-room-history-v1",
+        JSON.stringify(nextHistory),
+      );
+      addLocalEvent(`IPO Room revision ${next.revision} saved`, "BROWSER ONLY");
+      setNotice(
+        `Research revision ${next.revision} saved in this browser. It is not published.`,
+      );
+    } catch (error) {
+      setNotice(
+        error instanceof Error ? error.message : "Research draft is invalid.",
+      );
+    }
+  }
+  function saveRoomPreferences(next: {
+    followed?: boolean;
+    bookmarked?: boolean;
+    alerts?: boolean;
+  }) {
+    const preferences = {
+      followed: next.followed ?? roomFollowed,
+      bookmarked: next.bookmarked ?? roomBookmarked,
+      alerts: next.alerts ?? roomAlertPreference,
+    };
+    setRoomFollowed(preferences.followed);
+    setRoomBookmarked(preferences.bookmarked);
+    setRoomAlertPreference(preferences.alerts);
+    localStorage.setItem(
+      "ipo-room-preferences-v1",
+      JSON.stringify(preferences),
+    );
+  }
+  async function copyRoomCard() {
+    if (!roomDraft.updatedAt) return;
+    const card = [
+      roomDraft.title,
+      roomDraft.thesis,
+      `Source: ${roomDraft.source}`,
+      roomDraft.catalyst
+        ? `Catalyst (${roomDraft.catalystStatus}): ${roomDraft.catalyst}`
+        : "",
+      roomDraft.invalidation
+        ? `Invalidation: ${roomDraft.invalidation}`
+        : "",
+      roomDraft.disclosure
+        ? `Disclosure: ${roomDraft.disclosure}`
+        : "Disclosure: none provided",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    try {
+      await navigator.clipboard.writeText(card);
+      setNotice("Research card copied. It remains an unpublished local draft.");
+    } catch {
+      setNotice("Clipboard access is unavailable in this browser.");
+    }
+  }
+  function saveCampaignDraft() {
+    const next = { ...campaignDraft, updatedAt: new Date().toISOString() };
+    setCampaignDraft(next);
+    localStorage.setItem("ipo-campaign-draft-v1", JSON.stringify(next));
+    addLocalEvent("Contribution campaign draft saved", "BROWSER ONLY");
+    setNotice(
+      "Campaign draft saved locally. Funding and publication are not connected.",
+    );
+  }
+  function submitLocalContribution() {
+    const submission: LocalContribution = {
+      ...contributionDraft,
+      id: crypto.randomUUID(),
+      submittedAt: new Date().toISOString(),
+      status: "pending",
+    };
+    const next = [submission, ...contributions];
+    setContributions(next);
+    setContributionDraft(defaultContribution);
+    localStorage.setItem("ipo-contributions-v1", JSON.stringify(next));
+    addLocalEvent("Contribution saved for local review", "PENDING / LOCAL");
+    setNotice(
+      "Contribution saved with pending status. It was not submitted to IPO.",
+    );
   }
   function goTo(next: View) {
     setView(next);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
-  function openRooms(mode: "watch" | "launch" | "application") {
+  function openRooms(
+    mode: "watch" | "campaign" | "launch" | "application",
+  ) {
     setRoomsMode(mode);
     goTo("rooms");
   }
@@ -622,6 +786,12 @@ export default function IpoApp() {
   }
 
   function renderRooms() {
+    const savedRoomVisible = Boolean(
+      roomDraft.updatedAt &&
+        (roomFilter === "latest" ||
+          (roomFilter === "following" && roomFollowed) ||
+          (roomFilter === "bookmarks" && roomBookmarked)),
+    );
     return (
       <section className="appPage shell">
         <div className="pageHeader">
@@ -638,6 +808,7 @@ export default function IpoApp() {
         </div>
         <div className="roomModeTabs">
           <button className="active">Research feed</button>
+          <button onClick={() => setRoomsMode("campaign")}>Campaign lab</button>
           <button onClick={() => setRoomsMode("launch")}>Launch builder</button>
           <button onClick={() => setRoomsMode("application")}>
             Curated support
@@ -647,9 +818,17 @@ export default function IpoApp() {
           <div className="roomFeed">
             <div className="roomTools">
               <div>
-                <button className="active">Latest</button>
-                <button>Following</button>
-                <button>Bookmarks</button>
+                {(["latest", "following", "bookmarks"] as RoomFilter[]).map(
+                  (filter) => (
+                    <button
+                      className={roomFilter === filter ? "active" : ""}
+                      key={filter}
+                      onClick={() => setRoomFilter(filter)}
+                    >
+                      {filter[0].toUpperCase() + filter.slice(1)}
+                    </button>
+                  ),
+                )}
               </div>
               <button
                 className="secondaryAction"
@@ -662,14 +841,111 @@ export default function IpoApp() {
                 Draft a room <Plus size={16} />
               </button>
             </div>
-            <EmptyState
-              eyebrow="NO PUBLISHED RESEARCH"
-              title="No room is being fabricated for launch theater."
-            >
-              Published rooms will include sourced claims, catalyst confidence,
-              invalidation criteria, timestamps, edit history, authorship, and
-              financial-interest disclosure.
-            </EmptyState>
+            {savedRoomVisible ? (
+              <article className="localRoomCard">
+                <div className="localRoomHead">
+                  <div>
+                    <Status>BROWSER DRAFT</Status>
+                    <Status tone={roomDraft.catalystStatus === "confirmed" ? "available" : "preview"}>
+                      {roomDraft.catalystStatus.toUpperCase()}
+                    </Status>
+                  </div>
+                  <span>
+                    REVISION {roomHistory.length || 1} · {new Date(roomDraft.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <h2>{roomDraft.title}</h2>
+                <p>{roomDraft.thesis}</p>
+                <dl className="roomEvidence">
+                  <div>
+                    <dt>CATALYST</dt>
+                    <dd>{roomDraft.catalyst || "Not provided"}</dd>
+                  </div>
+                  <div>
+                    <dt>INVALIDATION</dt>
+                    <dd>{roomDraft.invalidation || "Not provided"}</dd>
+                  </div>
+                  <div>
+                    <dt>AUTHOR</dt>
+                    <dd>{roomDraft.author || "Not provided"}</dd>
+                  </div>
+                  <div>
+                    <dt>DISCLOSURE</dt>
+                    <dd>{roomDraft.disclosure || "None provided"}</dd>
+                  </div>
+                </dl>
+                <a href={roomDraft.source} target="_blank" rel="noreferrer">
+                  Open primary source <ExternalLink size={14} />
+                </a>
+                <div className="roomPreferenceRow">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={roomFollowed}
+                      onChange={(event) =>
+                        saveRoomPreferences({ followed: event.target.checked })
+                      }
+                    />
+                    Follow locally
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={roomBookmarked}
+                      onChange={(event) =>
+                        saveRoomPreferences({ bookmarked: event.target.checked })
+                      }
+                    />
+                    <Bookmark size={14} /> Bookmark locally
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={roomAlertPreference}
+                      onChange={(event) =>
+                        saveRoomPreferences({ alerts: event.target.checked })
+                      }
+                    />
+                    <Bell size={14} /> Remember alert preference
+                  </label>
+                </div>
+                <p className="formNote">
+                  Preferences stay in this browser. No notifications are sent.
+                </p>
+                <div className="roomCardActions">
+                  <button className="secondaryAction" onClick={copyRoomCard}>
+                    <Share2 size={15} /> Copy research card
+                  </button>
+                  <button
+                    className="secondaryAction"
+                    onClick={() => setRoomsMode("launch")}
+                  >
+                    <Rocket size={15} /> Open optional launch
+                  </button>
+                </div>
+                <div className="revisionTrail">
+                  <History size={15} />
+                  <span>
+                    {roomHistory.length
+                      ? `${roomHistory.length} preserved browser revision${roomHistory.length === 1 ? "" : "s"}`
+                      : "Loaded legacy draft; save to begin revision history"}
+                  </span>
+                </div>
+              </article>
+            ) : (
+              <EmptyState
+                eyebrow={roomFilter === "latest" ? "NO PUBLISHED RESEARCH" : `NO LOCAL ${roomFilter.toUpperCase()}`}
+                title={
+                  roomFilter === "latest"
+                    ? "No room is being fabricated for launch theater."
+                    : `No saved room matches ${roomFilter}.`
+                }
+              >
+                Published rooms require authentication and moderation. You can
+                create, follow, and bookmark a clearly labeled browser draft to
+                test this workflow without inventing live research.
+              </EmptyState>
+            )}
             <div className="roomRules">
               <article>
                 <Search />
@@ -806,11 +1082,238 @@ export default function IpoApp() {
               Save research draft <FileCheck2 size={16} />
             </button>
             <p className="formNote">
-              This saves locally. Authentication, version history, publishing,
-              following, bookmarks, alerts, discussion, and moderation require a
-              backend.
+              Draft revisions, follows, bookmarks, and alert preferences save
+              locally. Publishing, real notifications, discussion, and
+              moderation require a backend.
             </p>
           </form>
+        </div>
+      </section>
+    );
+  }
+
+  function renderCampaigns() {
+    const campaignSaved = Boolean(campaignDraft.updatedAt);
+    return (
+      <section className="appPage shell">
+        <button className="backToRooms" onClick={() => setRoomsMode("watch")}>
+          <ChevronLeft size={16} /> Back to IPO Rooms
+        </button>
+        <div className="pageHeader">
+          <div>
+            <p className="eyebrow">CONTRIBUTION CAMPAIGN LAB</p>
+            <h1>Useful work, explicit review.</h1>
+            <p>
+              Draft a research or launch-support campaign and test its
+              submission states. Funding, reviewers, rewards, and publication
+              require production services.
+            </p>
+          </div>
+          <Status>BROWSER-ONLY PREVIEW</Status>
+        </div>
+        <div className="campaignStatusStrip">
+          <article>
+            <span>FUNDING</span>
+            <strong>NOT CONNECTED</strong>
+            <small>No escrow or funded budget is being claimed.</small>
+          </article>
+          <article>
+            <span>REVIEW</span>
+            <strong>PENDING → ACCEPTED / DECLINED</strong>
+            <small>Only an authenticated reviewer may change status.</small>
+          </article>
+          <article>
+            <span>REWARD RECEIPTS</span>
+            <strong>UNAVAILABLE</strong>
+            <small>No reward is promised or recorded.</small>
+          </article>
+        </div>
+        <div className="campaignLayout">
+          <form
+            className="campaignForm"
+            onSubmit={(event) => {
+              event.preventDefault();
+              saveCampaignDraft();
+            }}
+          >
+            <SectionHeading
+              eyebrow="CAMPAIGN DRAFT"
+              title="Define the work before inviting it."
+              body="No campaign is public until funding and moderation are connected."
+            />
+            <label>
+              Objective
+              <textarea
+                required
+                value={campaignDraft.objective}
+                onChange={(event) =>
+                  setCampaignDraft({
+                    ...campaignDraft,
+                    objective: event.target.value,
+                  })
+                }
+                placeholder="The concrete research, explainer, or campaign asset needed"
+              />
+            </label>
+            <div className="formGrid roomFields">
+              <label>
+                Proposed budget
+                <input
+                  required
+                  value={campaignDraft.budget}
+                  onChange={(event) =>
+                    setCampaignDraft({
+                      ...campaignDraft,
+                      budget: event.target.value,
+                    })
+                  }
+                  placeholder="Amount and asset; not funded"
+                />
+              </label>
+              <label>
+                Deadline
+                <input
+                  required
+                  type="datetime-local"
+                  value={campaignDraft.deadline}
+                  onChange={(event) =>
+                    setCampaignDraft({
+                      ...campaignDraft,
+                      deadline: event.target.value,
+                    })
+                  }
+                />
+              </label>
+            </div>
+            <label>
+              Submission requirements
+              <textarea
+                required
+                value={campaignDraft.requirements}
+                onChange={(event) =>
+                  setCampaignDraft({
+                    ...campaignDraft,
+                    requirements: event.target.value,
+                  })
+                }
+              />
+            </label>
+            <label>
+              Review criteria
+              <textarea
+                required
+                value={campaignDraft.criteria}
+                onChange={(event) =>
+                  setCampaignDraft({
+                    ...campaignDraft,
+                    criteria: event.target.value,
+                  })
+                }
+              />
+            </label>
+            <button className="primaryAction full" type="submit">
+              <Megaphone size={16} /> Save campaign draft
+            </button>
+            <p className="formNote">
+              Browser-only draft. Saving does not fund, publish, or authorize a
+              campaign.
+            </p>
+          </form>
+          <div className="contributionPanel">
+            <SectionHeading
+              eyebrow="SUBMISSION TEST"
+              title="Contribute without fake approval."
+              body="Local submissions remain pending because no reviewer is connected."
+            />
+            {campaignSaved && (
+              <div className="campaignBrief">
+                <Status>UNPUBLISHED DRAFT</Status>
+                <h3>{campaignDraft.objective}</h3>
+                <dl>
+                  <div>
+                    <dt>BUDGET</dt>
+                    <dd>{campaignDraft.budget}</dd>
+                  </div>
+                  <div>
+                    <dt>FUNDING</dt>
+                    <dd>Unverified</dd>
+                  </div>
+                  <div>
+                    <dt>DEADLINE</dt>
+                    <dd>{new Date(campaignDraft.deadline).toLocaleString()}</dd>
+                  </div>
+                </dl>
+              </div>
+            )}
+            <form
+              className="contributionForm"
+              onSubmit={(event) => {
+                event.preventDefault();
+                submitLocalContribution();
+              }}
+            >
+              <label>
+                Contribution link
+                <input
+                  required
+                  type="url"
+                  disabled={!campaignSaved}
+                  value={contributionDraft.link}
+                  onChange={(event) =>
+                    setContributionDraft({
+                      ...contributionDraft,
+                      link: event.target.value,
+                    })
+                  }
+                  placeholder="https://"
+                />
+              </label>
+              <label>
+                Context for reviewer
+                <textarea
+                  required
+                  disabled={!campaignSaved}
+                  value={contributionDraft.note}
+                  onChange={(event) =>
+                    setContributionDraft({
+                      ...contributionDraft,
+                      note: event.target.value,
+                    })
+                  }
+                />
+              </label>
+              <button
+                className={campaignSaved ? "secondaryAction full" : "blockedAction full"}
+                disabled={!campaignSaved}
+                type="submit"
+              >
+                <Send size={16} /> Save pending submission
+              </button>
+            </form>
+            <div className="contributionList">
+              {contributions.map((item) => (
+                <article key={item.id}>
+                  <div>
+                    <Status>PENDING / LOCAL</Status>
+                    <time>{new Date(item.submittedAt).toLocaleString()}</time>
+                  </div>
+                  <a href={item.link} target="_blank" rel="noreferrer">
+                    Open contribution <ExternalLink size={13} />
+                  </a>
+                  <p>{item.note}</p>
+                  <small>Reviewer feedback unavailable · No reward receipt</small>
+                </article>
+              ))}
+              {!contributions.length && (
+                <EmptyState
+                  eyebrow="NO SUBMISSIONS"
+                  title="Nothing is being fabricated."
+                >
+                  Save a campaign draft to test a local pending submission.
+                </EmptyState>
+              )}
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -1540,6 +2043,7 @@ export default function IpoApp() {
               <button
                 className={mintConfigured ? "primaryAction" : "blockedAction"}
                 onClick={startMint}
+                disabled={!mintConfigured}
               >
                 {mintConfigured ? "Mint a desk" : "Mint unavailable"}
               </button>
@@ -1766,6 +2270,8 @@ export default function IpoApp() {
         : view === "rooms"
           ? roomsMode === "launch"
             ? renderLaunch()
+            : roomsMode === "campaign"
+              ? renderCampaigns()
             : roomsMode === "application"
               ? renderOfferings()
               : renderRooms()
@@ -1910,15 +2416,15 @@ export default function IpoApp() {
                   </div>
                   <div>
                     <dt>Mint total</dt>
-                    <dd>{total.toFixed(2)} SOL</dd>
+                    <dd>{formatLamports(totalLamports)} SOL</dd>
                   </div>
                   <div>
                     <dt>Mint-funded assets (80%)</dt>
-                    <dd>{(total * 0.8).toFixed(3)} SOL</dd>
+                    <dd>{formatLamports(mintAllocation.initialAssetCapital)} SOL</dd>
                   </div>
                   <div>
                     <dt>Operations (20%)</dt>
-                    <dd>{(total * 0.2).toFixed(3)} SOL</dd>
+                    <dd>{formatLamports(mintAllocation.operationFunds)} SOL</dd>
                   </div>
                   <div>
                     <dt>Network/account costs</dt>

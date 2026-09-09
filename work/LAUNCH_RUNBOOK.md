@@ -27,6 +27,8 @@ Do not launch if the deployed program config differs. The client fetches the con
 
 Track: draft → metadata ready → token submitted → token confirmed → fee routing pending → fee routing verified → rewards active. A failure resumes from the last verified state. Never label a partially configured coin as a functioning reward launch.
 
+Pump fee-sharing configuration starts with the creator at 100% and supports one final recipient update that revokes the admin. Verify the resulting config on-chain after finalization. Permissionless fee sweeps/distribution do not replace holder indexing, reward purchases, epoch allocation, or claims.
+
 ## Financial boundaries
 
 No mainnet token creation, fund movement, authority change, or fee finalization is part of frontend deployment. The proposed third-party creator-fee template is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% operations. Publish exact recipients, costs, eligibility, exclusions, rounding, dust, and unclaimed balances before enabling money flows.
