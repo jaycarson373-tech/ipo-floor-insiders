@@ -16,8 +16,8 @@ export ANCHOR_WALLET="$DEPLOYER_KEYPAIR"
 
 echo "Deploying IPO Anchor program"
 echo "RPC:      $RPC_URL"
-echo "Wallet:   $(solana-keygen pubkey "$DEPLOYER_KEYPAIR")"
-echo "Program:  $(solana-keygen pubkey "$PROGRAM_DIR/target/deploy/program-keypair.json")"
+echo "Wallet:   $(NO_DNA=1 solana-keygen pubkey "$DEPLOYER_KEYPAIR")"
+echo "Program:  $(NO_DNA=1 solana-keygen pubkey "$PROGRAM_DIR/target/deploy/program-keypair.json")"
 echo
 
 cd "$PROGRAM_DIR"

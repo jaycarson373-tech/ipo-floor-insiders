@@ -23,6 +23,7 @@
     "start:vercel": "npm --workspace sites-project run start:vercel --",
     "lint": "npm --workspace sites-project run lint",
     "test": "npm --workspace sites-project run test",
+    "launch:preflight": "npm --workspace sites-project run launch:preflight",
     "generate:collection": "npm --workspace sites-project run generate:collection",
     "mint:core": "npm --workspace sites-project run mint:core",
     "anchor:build": "npm --workspace program run build"

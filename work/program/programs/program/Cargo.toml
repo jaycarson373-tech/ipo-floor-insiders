@@ -6,7 +6,7 @@ edition.workspace = true
 rust-version.workspace = true
 
 [lib]
-crate-type = ["cdylib", "lib"]
+crate-type = ["cdylib"]
 name = "program"
 
 [features]
@@ -23,7 +23,6 @@ custom-panic = []
 [dependencies]
 anchor-lang = "1.1.2"
 anchor-spl = "1.1.2"
-mpl-core = "0.12.1"
 
 [build-dependencies]
 serde_json = "1"

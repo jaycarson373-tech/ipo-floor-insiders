@@ -7,6 +7,7 @@ import {
   Transaction,
   TransactionInstruction,
 } from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { launchConfig } from './launch-config';
 
 export const MPL_CORE_PROGRAM_ID = new PublicKey('CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d');
@@ -28,12 +29,12 @@ export type LaunchState = {
   treasury: PublicKey;
   assetTreasury: PublicKey;
   ipoMint: PublicKey;
-  ipoVault: PublicKey;
   coreCollection: PublicKey;
   totalSupply: number;
   minted: number;
   mintPriceLamports: bigint;
   ipoPriceTokens: bigint;
+  metadataBaseUri: string;
   paused: boolean;
 };
 
@@ -46,13 +47,13 @@ function readU64(view: DataView, offset: number) {
 }
 
 function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
-  if (data.length < 238 || !CONFIG_DISCRIMINATOR.every((byte, index) => data[index] === byte)) {
+  if (data.length < 194 || !CONFIG_DISCRIMINATOR.every((byte, index) => data[index] === byte)) {
     throw new Error('The configured account is not an IPO launch config.');
   }
 
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-  const uriLength = view.getUint32(200, true);
-  const numericOffset = 204 + uriLength;
+  const uriLength = view.getUint32(168, true);
+  const numericOffset = 172 + uriLength;
   if (uriLength > 180 || numericOffset + 22 > data.length) {
     throw new Error('The on-chain launch config is malformed.');
   }
@@ -63,12 +64,12 @@ function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
     treasury: readPublicKey(data, 40),
     assetTreasury: readPublicKey(data, 72),
     ipoMint: readPublicKey(data, 104),
-    ipoVault: readPublicKey(data, 136),
-    coreCollection: readPublicKey(data, 168),
+    coreCollection: readPublicKey(data, 136),
     totalSupply: view.getUint16(numericOffset, true),
     minted: view.getUint16(numericOffset + 2, true),
     mintPriceLamports: readU64(view, numericOffset + 4),
     ipoPriceTokens: readU64(view, numericOffset + 12),
+    metadataBaseUri: new TextDecoder().decode(data.slice(172, 172 + uriLength)),
     paused: data[numericOffset + 20] === 1,
   };
 }
@@ -78,8 +79,24 @@ function validateLaunchState(state: LaunchState) {
   if (state.mintPriceLamports !== EXPECTED_SOL_PRICE) throw new Error(`On-chain SOL price is not ${launchConfig.mintPriceSol.toFixed(3)} SOL.`);
   if (state.ipoPriceTokens !== EXPECTED_IPO_PRICE) throw new Error('On-chain mint unexpectedly requires IPO.');
   if (state.assetTreasury.equals(state.treasury)) throw new Error('On-chain asset and operations treasuries are not separated.');
-  if (!launchConfig.assetTreasury) throw new Error('The public asset-capital treasury is not configured.');
-  if (!state.assetTreasury.equals(new PublicKey(launchConfig.assetTreasury))) throw new Error('On-chain asset-capital treasury does not match the published address.');
+  const expectedAddresses = [
+    ['operations treasury', state.treasury, launchConfig.treasury],
+    ['asset-capital treasury', state.assetTreasury, launchConfig.assetTreasury],
+    ['IPO mint', state.ipoMint, launchConfig.ipoMint],
+    ['Core collection', state.coreCollection, launchConfig.coreCollection],
+  ] as const;
+  for (const [label, actual, published] of expectedAddresses) {
+    if (!published) throw new Error(`The public ${label} is not configured.`);
+    if (!actual.equals(new PublicKey(published))) {
+      throw new Error(`On-chain ${label} does not match the published address.`);
+    }
+  }
+  if (!launchConfig.metadataBaseUrl.startsWith('https://')) {
+    throw new Error('The public metadata base URL must use HTTPS.');
+  }
+  if (state.metadataBaseUri.replace(/\/$/, '') !== launchConfig.metadataBaseUrl.replace(/\/$/, '')) {
+    throw new Error('On-chain metadata URL does not match the published URL.');
+  }
   if (state.minted > state.totalSupply) throw new Error('On-chain minted count is invalid.');
 }
 
@@ -91,11 +108,26 @@ export async function fetchLaunchState(connection = getConnection()) {
   if (!launchConfig.config) throw new Error('Mint configuration is not published yet.');
   const config = new PublicKey(launchConfig.config);
   const programId = new PublicKey(launchConfig.programId);
-  const account = await connection.getAccountInfo(config, 'confirmed');
+  const [programAccount, account] = await Promise.all([
+    connection.getAccountInfo(programId, 'confirmed'),
+    connection.getAccountInfo(config, 'confirmed'),
+  ]);
+  if (!programAccount?.executable) throw new Error('The published IPO program is not executable.');
   if (!account) throw new Error('The IPO program is not initialized on this network.');
   if (!account.owner.equals(programId)) throw new Error('The launch config is owned by the wrong program.');
   const state = decodeConfig(config, account.data);
   validateLaunchState(state);
+
+  const [mintAccount, collectionAccount] = await Promise.all([
+    connection.getAccountInfo(state.ipoMint, 'confirmed'),
+    connection.getAccountInfo(state.coreCollection, 'confirmed'),
+  ]);
+  if (!mintAccount?.owner.equals(TOKEN_PROGRAM_ID)) {
+    throw new Error('The published IPO mint is not an SPL Token mint supported by this program.');
+  }
+  if (!collectionAccount?.owner.equals(MPL_CORE_PROGRAM_ID)) {
+    throw new Error('The published collection is not a Metaplex Core collection.');
+  }
   return state;
 }
 

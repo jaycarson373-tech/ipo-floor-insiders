@@ -30,6 +30,9 @@ npm run lint
 npm --workspace sites-project run typecheck
 npm test
 npm run build:vercel
+npm run launch:preflight
 ```
 
-See `work/PRODUCT_SPEC.md` and `work/LAUNCH_RUNBOOK.md` for product boundaries and launch requirements.
+The final preflight is read-only and intentionally fails until every production
+address exists and matches the deployed mainnet state. See `work/PRODUCT_SPEC.md`
+and `work/LAUNCH_RUNBOOK.md` for product boundaries and launch requirements.

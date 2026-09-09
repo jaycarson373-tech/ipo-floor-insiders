@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { launchConfig } from "../launch-config";
+import { launchConfig, mintEnvironmentConfigured } from "../launch-config";
 import { productFeatures } from "../product-data";
 
 function Flag({
@@ -19,7 +19,7 @@ function Flag({
 }
 
 export default function DocsPage() {
-  const mintConfigured = Boolean(launchConfig.config);
+  const mintConfigured = mintEnvironmentConfigured;
   const sections = [
     "overview",
     "economics",

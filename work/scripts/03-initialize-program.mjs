@@ -5,8 +5,6 @@ import { createCollection, mplCore } from '@metaplex-foundation/mpl-core';
 import { createSignerFromKeypair, keypairIdentity, publicKey } from '@metaplex-foundation/umi';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import {
-  createAssociatedTokenAccountIdempotentInstruction,
-  getAssociatedTokenAddressSync,
   getMint,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
@@ -60,7 +58,6 @@ const [config] = PublicKey.findProgramAddressSync(
   [Buffer.from('config'), payer.publicKey.toBuffer()],
   programId,
 );
-const ipoVault = getAssociatedTokenAddressSync(ipoMint, config, true, TOKEN_PROGRAM_ID);
 
 console.log('IPO launch configuration');
 console.log('RPC:             ', rpcUrl);
@@ -70,7 +67,6 @@ console.log('Config PDA:      ', config.toBase58());
 console.log('Treasury:        ', treasury.toBase58());
 console.log('Asset treasury:  ', assetTreasury.toBase58());
 console.log('IPO mint:        ', ipoMint.toBase58());
-console.log('IPO upgrade vault:', ipoVault.toBase58());
 console.log('Core collection: ', collectionKeypair.publicKey.toBase58());
 console.log('Metadata:        ', metadataBaseUrl);
 console.log('Mode:            ', execute ? 'EXECUTE' : 'DRY RUN');
@@ -148,7 +144,6 @@ const initializeInstruction = new TransactionInstruction({
     { pubkey: payer.publicKey, isSigner: true, isWritable: true },
     { pubkey: config, isSigner: false, isWritable: true },
     { pubkey: ipoMint, isSigner: false, isWritable: false },
-    { pubkey: ipoVault, isSigner: false, isWritable: false },
     { pubkey: collectionKeypair.publicKey, isSigner: false, isWritable: false },
     { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
   ],
@@ -160,13 +155,6 @@ const setupTransaction = new Transaction({
   blockhash,
   lastValidBlockHeight,
 }).add(
-  createAssociatedTokenAccountIdempotentInstruction(
-    payer.publicKey,
-    ipoVault,
-    config,
-    ipoMint,
-    TOKEN_PROGRAM_ID,
-  ),
   initializeInstruction,
 );
 setupTransaction.sign(payer);
@@ -194,7 +182,6 @@ function printSiteEnvironment() {
   console.log(`NEXT_PUBLIC_IPO_PROGRAM_ID=${programId.toBase58()}`);
   console.log(`NEXT_PUBLIC_IPO_CONFIG=${config.toBase58()}`);
   console.log(`NEXT_PUBLIC_IPO_MINT=${ipoMint.toBase58()}`);
-  console.log(`NEXT_PUBLIC_IPO_VAULT=${ipoVault.toBase58()}`);
   console.log(`NEXT_PUBLIC_TREASURY_WALLET=${treasury.toBase58()}`);
   console.log(`NEXT_PUBLIC_ASSET_TREASURY_WALLET=${assetTreasury.toBase58()}`);
   console.log(`NEXT_PUBLIC_CORE_COLLECTION=${collectionKeypair.publicKey.toBase58()}`);

@@ -48,6 +48,23 @@ npm --workspace sites-project run typecheck
 npm test
 npm run build:vercel
 cd work/program && cargo fmt --check && cargo test
+npm run launch:preflight
 ```
+
+`npm run launch:preflight` is the final read-only mainnet gate. It validates the
+central economics, required public environment, separate treasuries, executable
+program, config ownership and decoding, SPL mint identity, Metaplex Core
+collection ownership, pause/supply state, and public metadata. It exits nonzero
+and sends no transaction when any check fails.
+
+For a devnet rehearsal, run:
+
+```bash
+npm --workspace sites-project run launch:preflight -- --allow-devnet
+```
+
+Do not publish `NEXT_PUBLIC_IPO_CONFIG` by itself. Publish the complete address
+set together only after this preflight passes against the same cluster and RPC
+used by the production site.
 
 Verify 390px, 430px, and desktop layouts; keyboard navigation; disconnected wallet; rejection; insufficient balance; unavailable supply; pending/failed/confirmed states; duplicate prevention; and no production fixture data.

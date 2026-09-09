@@ -3,10 +3,9 @@ import productConfig from '../product-config.json';
 export const launchConfig = {
   cluster: process.env.NEXT_PUBLIC_SOLANA_CLUSTER ?? 'devnet',
   rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? 'https://api.devnet.solana.com',
-  programId: process.env.NEXT_PUBLIC_IPO_PROGRAM_ID ?? '2P9ehfkHUgght4YmW43YG1vEqFatKa3zKAkaV5ona7wo',
+  programId: process.env.NEXT_PUBLIC_IPO_PROGRAM_ID ?? '9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU',
   config: process.env.NEXT_PUBLIC_IPO_CONFIG ?? '',
   ipoMint: process.env.NEXT_PUBLIC_IPO_MINT ?? '',
-  ipoVault: process.env.NEXT_PUBLIC_IPO_VAULT ?? '',
   treasury: process.env.NEXT_PUBLIC_TREASURY_WALLET ?? '',
   assetTreasury: process.env.NEXT_PUBLIC_ASSET_TREASURY_WALLET ?? '',
   coreCollection: process.env.NEXT_PUBLIC_CORE_COLLECTION ?? '',
@@ -21,3 +20,11 @@ export const launchConfig = {
   upgradePolicy: productConfig.upgradePolicy,
   pumpExecutionEnabled: process.env.NEXT_PUBLIC_PUMP_EXECUTION_ENABLED === 'true',
 };
+
+export const mintEnvironmentConfigured = [
+  launchConfig.config,
+  launchConfig.ipoMint,
+  launchConfig.treasury,
+  launchConfig.assetTreasury,
+  launchConfig.coreCollection,
+].every(Boolean) && launchConfig.treasury !== launchConfig.assetTreasury;

@@ -33,7 +33,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { launchConfig } from "./launch-config";
+import { launchConfig, mintEnvironmentConfigured } from "./launch-config";
 import {
   productFeatures,
   rewardAssets,
@@ -492,7 +492,7 @@ export default function IpoApp() {
       const key = response.publicKey.toString();
       setConnected(true);
       setWalletLabel(`${key.slice(0, 4)}...${key.slice(-4)}`);
-      if (!launchConfig.config) {
+      if (!mintEnvironmentConfigured) {
         setMintReady(false);
         setConnectionNote(
           "Wallet connected. Mint remains unavailable until the on-chain configuration is published.",
@@ -521,7 +521,7 @@ export default function IpoApp() {
     }
   }
   async function startMint() {
-    if (!launchConfig.config) {
+    if (!mintEnvironmentConfigured) {
       goTo("desk");
       setConnectionNote(
         "Mint preview only: the public on-chain configuration has not been published.",
@@ -565,7 +565,7 @@ export default function IpoApp() {
   }
 
   function renderExplore() {
-    const mintConfigured = Boolean(launchConfig.config);
+    const mintConfigured = mintEnvironmentConfigured;
     return (
       <>
         <section className="hero shell">
@@ -2059,7 +2059,7 @@ export default function IpoApp() {
   }
 
   function renderDesk() {
-    const mintConfigured = Boolean(launchConfig.config);
+    const mintConfigured = mintEnvironmentConfigured;
     return (
       <section className="appPage shell">
         <div className="pageHeader">

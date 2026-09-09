@@ -7,15 +7,19 @@ if [[ -z "${IPO_MINT:-}" ]]; then
   echo "IPO_MINT is required. It must be the public mint address of the real IPO token."
   exit 1
 fi
+if [[ -z "${ASSET_TREASURY_WALLET:-}" ]]; then
+  echo "ASSET_TREASURY_WALLET is required and must be separate from operations."
+  exit 1
+fi
 
 SOLANA_RPC_URL=https://api.mainnet-beta.solana.com "$ROOT/scripts/check-funding.sh"
 echo
-echo "Program:  2P9ehfkHUgght4YmW43YG1vEqFatKa3zKAkaV5ona7wo"
+echo "Program:  9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU"
 echo "IPO mint: $IPO_MINT"
 echo "Treasury: ${TREASURY_WALLET:-5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875}"
-read -r -p "This spends mainnet SOL to deploy and initialize. Type RUN IPO MAINNET: " CONFIRM
-if [[ "$CONFIRM" != "RUN IPO MAINNET" ]]; then
-  echo "Stopped."
+echo "Asset treasury: ${ASSET_TREASURY_WALLET:-missing}"
+if [[ "${CONFIRM_MAINNET:-}" != "IPO" ]]; then
+  echo "Dry stop. Review the addresses and transactions, then rerun with CONFIRM_MAINNET=IPO."
   exit 1
 fi
 
