@@ -6,6 +6,7 @@ const appRoot = dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = resolve(appRoot, '../..');
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   turbopack: {
     root: workspaceRoot,
   },
