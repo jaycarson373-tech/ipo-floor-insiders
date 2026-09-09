@@ -45,5 +45,14 @@ export const productFeatures: Array<{ name: string; status: ProductStatus; detai
   { name: 'Pump create_v2 execution', status: 'blocked', detail: 'Requires metadata storage, production recipient wallets, SDK transaction QA, and operator enablement.' },
   { name: 'Creator-fee reconciliation', status: 'preview', detail: 'Integer accounting and receipt deduplication are tested; no production indexer is connected.' },
   { name: 'Reward allocation and claims', status: 'preview', detail: 'Equal per-desk allocation logic is tested; vault, purchase, and claim programs are not deployed.' },
+  { name: '$IPO upgrade burn', status: 'preview', detail: 'Integer burn accounting is tested at the configured 100% burn share; prices, payment, and on-chain burn execution remain disabled.' },
   { name: 'Curated support applications', status: 'available', detail: 'Applications can be retained as a local draft; server submission is not connected.' },
 ];
+
+export const upgradeLevels = [
+  { level: 1, name: 'Member', feature: 'Desk ownership, holdings, claims, receipts, and public research.' },
+  { level: 2, name: 'Scout', feature: 'Planned watchlist folders and launch-alert controls.' },
+  { level: 3, name: 'Analyst', feature: 'Planned research organization and portfolio analytics.' },
+  { level: 4, name: 'Operator', feature: 'Planned exports, creator tools, and advanced launch monitoring.' },
+  { level: 5, name: 'Studio', feature: 'Planned workspace personalization and final desk art stage.' },
+] as const;

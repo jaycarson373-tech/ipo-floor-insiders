@@ -15,8 +15,10 @@ import {
   CircleDollarSign,
   ExternalLink,
   FileCheck2,
+  Flame,
   FolderOpen,
   History,
+  Landmark,
   LayoutDashboard,
   Megaphone,
   Menu,
@@ -35,6 +37,7 @@ import { launchConfig } from "./launch-config";
 import {
   productFeatures,
   rewardAssets,
+  upgradeLevels,
   type ProductStatus,
 } from "./product-data";
 import {
@@ -567,42 +570,46 @@ export default function IpoApp() {
       <>
         <section className="hero shell">
           <div className="heroCopy">
-            <Status tone={mintConfigured ? "available" : "preview"}>
-              {mintConfigured ? "MINT CONFIG VERIFIED" : "PRODUCT PREVIEW"}
+            <Status tone="preview">
+              INITIAL PUMP OFFERING
             </Status>
             <h1>
-              Your desk on
+              Launch on
               <br />
               the <em>IPO floor.</em>
             </h1>
             <p>
-              Follow sourced theses, join IPO Rooms, and track exactly how desk
-              capital and future rewards move from receipt to asset to claim.
+              Build a transparent fair launch or prepare a structured presale,
+              then connect research, community, fee receipts, and holder
+              distributions in one verifiable record.
             </p>
             <div className="economicsStrip">
               <div>
-                <span>SUPPLY</span>
-                <strong>{launchConfig.supply.toLocaleString()}</strong>
+                <span>FAIR LAUNCH</span>
+                <strong>PUMP RAIL</strong>
               </div>
               <div>
-                <span>PRICE</span>
-                <strong>{launchConfig.mintPriceSol.toFixed(2)} SOL</strong>
+                <span>CURATED PRESALE</span>
+                <strong>REVIEW + ESCROW</strong>
               </div>
               <div>
-                <span>$IPO TO MINT</span>
-                <strong>NONE</strong>
+                <span>DESK MEMBERSHIP</span>
+                <strong>{launchConfig.supply.toLocaleString()} TOTAL</strong>
               </div>
             </div>
             <div className="heroActions">
-              <button className="primaryAction" onClick={startMint}>
-                {mintConfigured ? "Mint a desk" : "Preview a desk"}{" "}
+              <button
+                className="primaryAction"
+                onClick={() => openRooms("launch")}
+              >
+                Build a fair launch
                 <ArrowRight size={17} />
               </button>
               <button
                 className="secondaryAction"
-                onClick={() => openRooms("watch")}
+                onClick={() => goTo("desk")}
               >
-                Explore IPO Watch
+                {mintConfigured ? "Mint a desk" : "Preview membership"}
               </button>
             </div>
           </div>
@@ -621,37 +628,94 @@ export default function IpoApp() {
           <div className="shell pathGrid">
             <article className="pathCard instant">
               <div className="pathIcon">
-                <Search />
+                <Rocket />
               </div>
               <div>
-                <Status tone="available">OPEN RESEARCH</Status>
-                <h2>IPO Watch</h2>
+                <Status tone="available">BUILDER AVAILABLE</Status>
+                <h2>Instant fair launch</h2>
                 <p>
-                  Sourced theses, dated catalysts, invalidation criteria,
-                  disclosures, and optional community launches. Reading never
-                  requires a mint or trade.
+                  Configure token metadata, rewards, fee recipients, and an
+                  optional initial buy on supported Pump infrastructure.
                 </p>
-                <button onClick={() => openRooms("watch")}>
-                  Enter the rooms <ArrowRight size={16} />
+                <button onClick={() => openRooms("launch")}>
+                  Build the launch <ArrowRight size={16} />
                 </button>
               </div>
             </article>
             <article className="pathCard curated">
               <div className="pathIcon">
-                <Rocket />
+                <Landmark />
               </div>
               <div>
-                <Status>CREATOR TOOLS</Status>
-                <h2>Launch from a thesis</h2>
+                <Status>APPLICATION PREVIEW</Status>
+                <h2>Curated presale</h2>
                 <p>
-                  Turn a useful room into an optional project-token launch with
-                  visible reward settings, fee recipients, and recoverable
-                  setup.
+                  Apply for structured terms, project review, separate escrow,
+                  transparent allocations, settlement, and refunds.
                 </p>
-                <button onClick={() => openRooms("launch")}>
-                  Open launch builder <ArrowRight size={16} />
+                <button onClick={() => openRooms("application")}>
+                  Prepare an application <ArrowRight size={16} />
                 </button>
               </div>
+            </article>
+            <article className="pathCard membership">
+              <div className="pathIcon">
+                <WalletCards />
+              </div>
+              <div>
+                <Status tone={mintConfigured ? "available" : "preview"}>
+                  {mintConfigured ? "MINT VERIFIED" : "MINT PREVIEW"}
+                </Status>
+                <h2>1,212 IPO Desks</h2>
+                <p>
+                  Equal base participation in disclosed desk reward pools,
+                  plus optional research, analytics, and personalization tools.
+                </p>
+                <button onClick={() => goTo("desk")}>
+                  View membership <ArrowRight size={16} />
+                </button>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section className="contentSection shell">
+          <SectionHeading
+            eyebrow="PLATFORM VALUE LOOP — PROPOSED"
+            title="A launch fee is useful only when every destination is visible."
+            body="IPO takes a disclosed platform share, funds a separate desk-holder pool, and keeps optional $IPO burns isolated from rewards and operations. No route is live until verified on-chain."
+          />
+          <div className="valueLoopGrid">
+            <article>
+              <Rocket />
+              <span>FAIR-LAUNCH CREATOR FEES</span>
+              <strong>60 / 15 / 15 / 10</strong>
+              <p>
+                Proposed split: coin-holder purchases, desk-holder purchases,
+                creator, and IPO operations. It applies only to creator fees
+                actually received.
+              </p>
+            </article>
+            <article>
+              <WalletCards />
+              <span>1,212-DESK POOL</span>
+              <strong>15% PROPOSED</strong>
+              <p>
+                Eligible assets purchased for the shared pool and allocated
+                equally per eligible desk by finalized epoch. Not guaranteed
+                income or a fixed return.
+              </p>
+            </article>
+            <article>
+              <Flame />
+              <span>OPTIONAL $IPO UPGRADES</span>
+              <strong>
+                {formatBps(launchConfig.upgradePolicy.burnBps)} BURN PROPOSED
+              </strong>
+              <p>
+                Upgrade payments would burn $IPO rather than change allocation
+                weight. Prices, payment, and the on-chain burn instruction are
+                currently disabled.
+              </p>
             </article>
           </div>
         </section>
@@ -809,9 +873,9 @@ export default function IpoApp() {
         <div className="roomModeTabs">
           <button className="active">Research feed</button>
           <button onClick={() => setRoomsMode("campaign")}>Campaign lab</button>
-          <button onClick={() => setRoomsMode("launch")}>Launch builder</button>
+          <button onClick={() => setRoomsMode("launch")}>Fair launch</button>
           <button onClick={() => setRoomsMode("application")}>
-            Curated support
+            Presale application
           </button>
         </div>
         <div className="roomLayout">
@@ -1333,12 +1397,13 @@ export default function IpoApp() {
         </button>
         <div className="pageHeader">
           <div>
-            <p className="eyebrow">ROOM LAUNCH BUILDER</p>
-            <h1>Build the launch before you sign it.</h1>
+            <p className="eyebrow">INSTANT FAIR-LAUNCH BUILDER</p>
+            <h1>Configure the launch before you sign it.</h1>
             <p>
-              Attach an optional project-token launch to a useful room.
-              Production creation remains gated until metadata, recipient
-              wallets, and Pump execution are configured.
+              Launch a project token through supported Pump infrastructure,
+              with visible reward rules and fee destinations. Production
+              creation remains gated until metadata, recipient wallets, and
+              Pump execution are configured.
             </p>
           </div>
           <Status tone={launchConfig.pumpExecutionEnabled ? "live" : "blocked"}>
@@ -1779,8 +1844,8 @@ export default function IpoApp() {
         </button>
         <div className="pageHeader">
           <div>
-            <p className="eyebrow">CURATED LAUNCH SUPPORT</p>
-            <h1>Structured terms before deposits.</h1>
+            <p className="eyebrow">CURATED PRESALE SUPPORT</p>
+            <h1>Structure the presale before deposits.</h1>
             <p>
               Teams can prepare an application now. Review, escrow, settlement,
               and refunds must be operational before a contribution is accepted.
@@ -2159,14 +2224,46 @@ export default function IpoApp() {
                 <span>
                   <strong>Optional upgrades</strong>
                   <small>
-                    Alerts, research, analytics, exports, and art only; payments
-                    disabled
+                    Tools and personalization only; no allocation multipliers
                   </small>
                 </span>
               </div>
             </div>
           </div>
         </div>
+        <section className="upgradePanel">
+          <div className="upgradePanelHead">
+            <SectionHeading
+              eyebrow="OPTIONAL $IPO UPGRADES — PREVIEW"
+              title="More tools, never more economic weight."
+              body="Five workspace levels organize planned product features and art progression. Core ownership, balances, claims, receipts, and equal desk participation never require an upgrade."
+            />
+            <div className="burnPolicy">
+              <Flame size={20} />
+              <span>
+                <strong>
+                  {formatBps(launchConfig.upgradePolicy.burnBps)} UPGRADE BURN
+                </strong>
+                <small>Proposed · pricing and payments disabled</small>
+              </span>
+            </div>
+          </div>
+          <div className="upgradeLadder">
+            {upgradeLevels.map((item) => (
+              <article key={item.level}>
+                <span>L{item.level}</span>
+                <strong>{item.name}</strong>
+                <p>{item.feature}</p>
+                <small>{item.level === 1 ? "BASE DESK" : "PLANNED"}</small>
+              </article>
+            ))}
+          </div>
+          <p className="formNote">
+            No upgrade price, burn transaction, or paid feature is active. A
+            future burn must use the verified $IPO mint and confirm the supply
+            reduction on-chain before the level changes.
+          </p>
+        </section>
       </section>
     );
   }

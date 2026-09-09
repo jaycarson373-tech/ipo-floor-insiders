@@ -2,7 +2,7 @@
 
 ## Product
 
-IPO means Initial Pump Offering. It combines 1,212 desk NFTs, IPO Watch research rooms, and optional project-token launch tools. Research can exist without a token. Project tokens are not actual company IPOs or company equity.
+IPO means Initial Pump Offering. It is a Solana launch platform with two paths: instant fair launches on supported Pump infrastructure and curated presales with structured terms. It also combines 1,212 desk NFTs and IPO Watch research rooms. Research can exist without a token, and creators do not need a desk to prepare an instant launch. Project tokens are not actual company IPOs or company equity.
 
 ## Mint policy
 
@@ -32,7 +32,9 @@ Project/community tokens, third-party exposure, and issuer-authorized securities
 
 Room drafts store thesis, source, catalyst and confidence, invalidation criteria, author, and sponsorship/financial-interest disclosure locally. Browser-local revision history, follows, bookmarks, alert preferences, share-card copying, campaign drafts, and pending contribution submissions are implemented for workflow testing. Production publishing, notifications, funded campaigns, reviewer decisions, reward receipts, moderation, discussion, and durable storage still need authenticated services.
 
-An optional room launch uses the current six-step builder. Proposed third-party creator-fee routing is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% operations. The template applies only to creator fees received and requires creator authorization and chain-state verification.
+An optional room launch uses the current six-step fair-launch builder. Proposed third-party creator-fee routing is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% IPO platform operations. The template applies only to creator fees received and requires creator authorization and chain-state verification. The 15% desk pool uses equal participation by eligible desk at the finalized epoch; it is not a fixed return.
+
+Curated presales are a separate application path. Deposits remain disabled until segregated escrow, published caps and tranches, oversubscription rules, settlement authorization, cancellation, and refunds are implemented and reviewed. A Pump bonding curve does not create a fixed-price presale allocation.
 
 Current Pump documentation describes an initial fee-sharing config with the creator at 100%, followed by a one-time final recipient update that revokes the admin; fee sweeps and distribution are permissionless. IPO must verify the finalized config from chain state. That primitive routes creator-fee receipts but does not provide dynamic holder snapshots, reward purchases, accrual, or claims.
 
@@ -40,7 +42,9 @@ For `$IPO` itself, the planned policy is 100% of creator-fee receipts actually r
 
 ## Upgrades
 
-Optional `$IPO` upgrades may later provide alerts, research organization, analytics, exports, personalization, and artwork. They do not multiply payouts. Holdings, essential disclosures, claims, and receipts remain accessible without an upgrade. Pricing and payment are disabled.
+Optional `$IPO` upgrades use five proposed product levels: Member, Scout, Analyst, Operator, and Studio. They may provide alerts, research organization, analytics, exports, creator tools, personalization, and artwork. They do not multiply payouts. Holdings, essential disclosures, claims, receipts, and equal desk participation remain accessible without an upgrade.
+
+The configured draft burn policy sends 100% of any future `$IPO` upgrade payment to burn. No price is set, and payment and on-chain burn execution are disabled. A future implementation must verify the exact `$IPO` mint, burn instruction, transaction confirmation, and resulting supply before changing the desk level. Upgrade burns may not use mint-funded assets, desk rewards, or operations balances.
 
 ## Status
 

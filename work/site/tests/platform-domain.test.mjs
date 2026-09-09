@@ -9,6 +9,7 @@ import {
   reconcileReceipt,
   splitIntegerAmount,
   splitMintReceipt,
+  splitUpgradePayment,
   transferDeskForNextEpoch,
   transitionContribution,
   transitionLaunch,
@@ -38,6 +39,14 @@ test('mint receipts preserve the 80/20 per-desk allocation without assuming sell
   const partial = splitMintReceipt(7n * 120_000_000n);
   assert.equal(partial.initialAssetCapital, 672_000_000n);
   assert.equal(partial.operationFunds, 168_000_000n);
+});
+
+test('upgrade payments follow the configured burn policy without touching desk rewards', () => {
+  const fullBurn = splitUpgradePayment(1_000_000n, 10_000);
+  assert.deepEqual(fullBurn, { burnUnits: 1_000_000n, retainedUnits: 0n });
+  const partialBurn = splitUpgradePayment(101n, 2_500);
+  assert.deepEqual(partialBurn, { burnUnits: 25n, retainedUnits: 76n });
+  assert.throws(() => splitUpgradePayment(1n, 10_001), /exceed/);
 });
 
 test('new desks receive no historical rewards and transfers start next epoch', () => {

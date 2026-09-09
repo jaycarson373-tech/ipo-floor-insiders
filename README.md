@@ -1,6 +1,6 @@
 # IPO — Initial Pump Offering
 
-IPO combines Solana desk membership, sourced IPO Watch research rooms, and optional project-token launch tools. The interface separates mint-funded asset capital from revenue-funded rewards and distinguishes receipts, purchases, allocations, claims, and operations.
+IPO is an Initial Pump Offering platform for instant fair launches, curated presale preparation, sourced IPO Watch research rooms, and a limited desk membership. The interface separates mint-funded asset capital from revenue-funded rewards and distinguishes receipts, purchases, allocations, claims, burns, and operations.
 
 ## Desk defaults
 
@@ -10,6 +10,8 @@ IPO combines Solana desk membership, sourced IPO Watch research rooms, and optio
 - Reward participation: equal base weight per eligible desk
 - Proposed mint split: `80%` desk-attributed asset capital / `20%` operations
 - Gross sellout scenario: `145.44 SOL`; this is not money already raised
+- Proposed fair-launch creator-fee split: `60%` coin-holder purchases / `15%` desk-holder purchases / `15%` creator / `10%` platform operations
+- Proposed upgrades: five tool and art levels with `100%` of upgrade payments burned; pricing and payment disabled
 
 All product economics are centralized in `work/site/product-config.json`. The client refuses to enable minting if deployed configuration differs from the expected supply, SOL price, or zero-token requirement.
 

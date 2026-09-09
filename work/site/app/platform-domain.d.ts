@@ -4,6 +4,7 @@ export type FeeShares = Record<(typeof FEE_SHARE_KEYS)[number], number>;
 export function validateFeeShares(shares: FeeShares): { valid: boolean; total: number; remaining: number; shares: FeeShares };
 export function splitIntegerAmount(totalUnits: bigint, shares: FeeShares): { allocations: Record<string, bigint>; dust: bigint };
 export function splitMintReceipt(totalLamports: bigint, allocation?: { rewardAssets: number; operations: number }): { initialAssetCapital: bigint; operationFunds: bigint; dust: bigint };
+export function splitUpgradePayment(totalUnits: bigint, burnBps: number): { burnUnits: bigint; retainedUnits: bigint };
 export function allocateDeskRewards(totalUnits: bigint, desks: Array<{ id: string; owner: string }>, excludedAddresses?: string[]): { entries: Array<{ deskId: string; owner: string; units: bigint }>; eligibleDesks: number; allocated: bigint; dust: bigint };
 export function allocateEpochRewards(totalUnits: bigint, desks: Array<{ id: string; owner: string; eligibleFromEpoch: number }>, epoch: number, excludedAddresses?: string[]): { entries: Array<{ deskId: string; owner: string; units: bigint }>; eligibleDesks: number; allocated: bigint; dust: bigint };
 export function transferDeskForNextEpoch<T extends { id: string; owner: string; eligibleFromEpoch: number }>(desk: T, newOwner: string, transferEpoch: number): { previousOwner: string; desk: T };

@@ -7,6 +7,8 @@
 - `$IPO` mint requirement: zero
 - Base reward weight: equal per eligible desk
 - Mint allocation: 80% to the separate asset-capital treasury and 20% to operations
+- Fair-launch fee template: 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% IPO platform operations
+- Upgrade draft: five levels, 100% of upgrade payments burned, pricing and payment disabled
 
 Do not launch if the deployed program config differs. The client fetches the config, checks program ownership, supply, price, pause state, and zero-token requirement, simulates the mint, prevents duplicate submission, waits for confirmation, and verifies asset ownership before success.
 
@@ -22,6 +24,7 @@ Do not launch if the deployed program config differs. The client fetches the con
 8. Configure monitoring, retries, idempotency, and an activity indexer.
 9. Implement authenticated curated applications and review records.
 10. Select and review segregated escrow/settlement before enabling presale deposits.
+11. Verify the `$IPO` mint, token program, burn instruction, supply readback, and upgrade-level authority before enabling upgrades.
 
 ## Launch state
 
@@ -32,6 +35,8 @@ Pump fee-sharing configuration starts with the creator at 100% and supports one 
 ## Financial boundaries
 
 No mainnet token creation, fund movement, authority change, or fee finalization is part of frontend deployment. The proposed third-party creator-fee template is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% operations. Publish exact recipients, costs, eligibility, exclusions, rounding, dust, and unclaimed balances before enabling money flows.
+
+Upgrade payments are a separate proposed flow: 100% `$IPO` burn, 0% desk rewards, and 0% operations. Never burn holder assets or owed rewards. Confirm the burn and reduced supply on-chain before recording a new level.
 
 ## Deployment checks
 

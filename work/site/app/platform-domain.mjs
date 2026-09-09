@@ -44,6 +44,16 @@ export function splitMintReceipt(totalLamports, allocation = { rewardAssets: 800
   return { initialAssetCapital, operationFunds, dust: total - initialAssetCapital - operationFunds };
 }
 
+export function splitUpgradePayment(totalUnits, burnBps) {
+  const total = BigInt(totalUnits);
+  const burnShare = Number(burnBps);
+  if (total < 0n) throw new Error('Upgrade payment cannot be negative.');
+  assertInteger(burnShare, 'burnBps');
+  if (burnShare > BPS_TOTAL) throw new Error('Burn share cannot exceed 10,000 basis points.');
+  const burnUnits = total * BigInt(burnShare) / BigInt(BPS_TOTAL);
+  return { burnUnits, retainedUnits: total - burnUnits };
+}
+
 export function allocateDeskRewards(totalUnits, desks, excludedAddresses = []) {
   const total = BigInt(totalUnits);
   if (total < 0n) throw new Error('Reward amount cannot be negative.');

@@ -18,5 +18,6 @@ export const launchConfig = {
   maxLevels: productConfig.maxLevels,
   defaultFeeSharesBps: productConfig.defaultFeeSharesBps,
   draftMintCapitalBps: productConfig.draftMintCapitalBps,
+  upgradePolicy: productConfig.upgradePolicy,
   pumpExecutionEnabled: process.env.NEXT_PUBLIC_PUMP_EXECUTION_ENABLED === 'true',
 };

@@ -12,5 +12,11 @@
   "draftMintCapitalBps": {
     "rewardAssets": 8000,
     "operations": 2000
+  },
+  "upgradePolicy": {
+    "levels": 5,
+    "paymentAsset": "IPO",
+    "burnBps": 10000,
+    "paymentEnabled": false
   }
 }

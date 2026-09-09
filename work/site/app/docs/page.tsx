@@ -53,9 +53,9 @@ export default function DocsPage() {
         <p className="eyebrow">INITIAL PUMP OFFERING</p>
         <h1>Terms before transactions.</h1>
         <p>
-          Desk economics, ownership cutoffs, asset policy, launch configuration,
-          and the receipts required before any financial action can be described
-          as complete.
+          Fair launches, curated presales, desk economics, $IPO upgrades, and
+          the receipts required before any financial action can be described as
+          complete.
         </p>
       </header>
       <div className="docsLayout shell">
@@ -69,13 +69,13 @@ export default function DocsPage() {
         <article className="docsContent">
           <section id="overview">
             <p className="eyebrow">OVERVIEW</p>
-            <h2>Desk membership, sourced research, optional launches.</h2>
+            <h2>A launch platform with a limited membership layer.</h2>
             <p>
-              IPO combines 1,212 desk NFTs, IPO Watch research rooms, and
-              creator tools for optional project-token launches. The journey is:
-              discover a sourced thesis, follow its room, optionally participate
-              in its community token, and verify actual receipts and
-              distributions.
+              IPO means Initial Pump Offering. It combines instant fair-launch
+              tooling, curated presale preparation, 1,212 desk NFTs, and IPO
+              Watch research rooms. A creator can prepare a launch without a
+              desk; membership participates in separately disclosed desk pools
+              and unlocks optional product tools.
             </p>
             <p>
               Project tokens are not company IPOs. Third-party tokenized pre-IPO
@@ -185,14 +185,21 @@ export default function DocsPage() {
             <Flag />
           </section>
           <section id="launches">
-            <p className="eyebrow">OPTIONAL PROJECT-TOKEN LAUNCHES</p>
-            <h2>A useful room can add a launch.</h2>
+            <p className="eyebrow">TWO LAUNCH PATHS</p>
+            <h2>Instant fair launch or curated presale.</h2>
             <p>
-              The six-step builder records token metadata, reviewed reward
-              asset, fee shares, optional initial buy, full review, and
+              The instant six-step builder records token metadata, reviewed
+              reward asset, fee shares, optional initial buy, full review, and
               execution readiness. Drafts persist through interruption. Pump
               create_v2 can compose creation with an initial buy; successful
               bonding curves graduate to PumpSwap.
+            </p>
+            <p>
+              Curated presales use a separate application and published terms.
+              Deposits require reviewed segregated escrow, caps, tranche rules,
+              oversubscription treatment, settlement authorization,
+              cancellation, and refunds. A Pump bonding curve does not provide
+              fixed-price presale escrow by itself.
             </p>
             <p>
               Metadata storage, final recipients, Pump SDK transaction
@@ -220,15 +227,15 @@ export default function DocsPage() {
               </div>
               <div>
                 <strong>Desk-holder purchases</strong>
-                <p>15%.</p>
+                <p>15%, allocated equally per eligible desk by epoch.</p>
               </div>
               <div>
                 <strong>Creator</strong>
                 <p>15%.</p>
               </div>
               <div>
-                <strong>Operations</strong>
-                <p>10%.</p>
+                <strong>IPO platform operations</strong>
+                <p>10%, the proposed disclosed platform share.</p>
               </div>
             </div>
             <p>
@@ -263,12 +270,24 @@ export default function DocsPage() {
           </section>
           <section id="upgrades">
             <p className="eyebrow">OPTIONAL $IPO UTILITY</p>
-            <h2>Tools and personalization, not payout multipliers.</h2>
+            <h2>
+              Five tool levels and a proposed{" "}
+              {launchConfig.upgradePolicy.burnBps / 100}% burn.
+            </h2>
             <p>
-              Future upgrades may include alerts, research organization,
-              analytics, exports, personalization, and artwork. Basic holdings,
-              claims, receipts, and disclosures stay available to every entitled
-              user. Prices, burns, and payment are not finalized or enabled.
+              The proposed progression is Member, Scout, Analyst, Operator,
+              and Studio. Features may include alerts, research organization,
+              analytics, exports, creator tools, personalization, and artwork.
+              Basic holdings, claims, receipts, disclosures, and equal economic
+              participation stay available to every entitled desk.
+            </p>
+            <p>
+              The configured draft sends{" "}
+              {launchConfig.upgradePolicy.burnBps / 100}% of any future upgrade
+              payment to an $IPO burn and zero to the desk or operations pools. Pricing,
+              payment, and on-chain burn execution are disabled until the token
+              mint and program are verified. Upgrades never multiply reward
+              weight.
             </p>
           </section>
           <section id="status">

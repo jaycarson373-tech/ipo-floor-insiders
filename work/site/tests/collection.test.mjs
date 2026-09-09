@@ -22,6 +22,12 @@ test('collection matches the centralized product configuration', async () => {
   assert.equal(Object.values(product.defaultFeeSharesBps).reduce((sum, value) => sum + value, 0), 10_000);
   assert.equal(Object.values(product.draftMintCapitalBps).reduce((sum, value) => sum + value, 0), 10_000);
   assert.deepEqual(product.draftMintCapitalBps, { rewardAssets: 8_000, operations: 2_000 });
+  assert.deepEqual(product.upgradePolicy, {
+    levels: 5,
+    paymentAsset: 'IPO',
+    burnBps: 10_000,
+    paymentEnabled: false,
+  });
 });
 
 test('collection contains every complete deterministic IPO Desk', async () => {
