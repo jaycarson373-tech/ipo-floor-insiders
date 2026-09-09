@@ -13,7 +13,7 @@ IPO is an Initial Pump Offering platform for instant fair launches, curated pres
 - Proposed fair-launch creator-fee split: `60%` coin-holder purchases / `15%` desk-holder purchases / `15%` creator / `10%` platform operations
 - Proposed upgrades: five tool and art levels with `100%` of upgrade payments burned; pricing and payment disabled
 
-All product economics are centralized in `work/site/product-config.json`. The client refuses to enable minting if deployed configuration differs from the expected supply, SOL price, or zero-token requirement.
+All product economics are centralized in `work/site/product-config.json`. The client refuses to enable minting if deployed configuration differs from the expected supply, SOL price, treasury separation, collection, or metadata. The desk-mint instruction has no `$IPO` token account.
 
 ## Status
 

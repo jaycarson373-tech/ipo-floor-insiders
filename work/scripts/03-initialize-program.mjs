@@ -5,10 +5,6 @@ import { createCollection, mplCore } from '@metaplex-foundation/mpl-core';
 import { createSignerFromKeypair, keypairIdentity, publicKey } from '@metaplex-foundation/umi';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import {
-  getMint,
-  TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import {
   Connection,
   Keypair,
   PublicKey,
@@ -22,7 +18,6 @@ const deployerPath = path.join(root, 'keys', 'deployer-authority.json');
 const collectionPath = path.join(root, 'keys', 'core-collection.json');
 const programKeypairPath = path.join(root, 'program', 'target', 'deploy', 'program-keypair.json');
 const rpcUrl = process.env.SOLANA_RPC_URL ?? 'https://api.devnet.solana.com';
-const ipoMintValue = process.env.IPO_MINT;
 const treasuryValue = process.env.TREASURY_WALLET ?? '5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875';
 const assetTreasuryValue = process.env.ASSET_TREASURY_WALLET;
 const metadataBaseUrl = process.env.METADATA_BASE_URL ?? 'https://ipo-floor-insiders.vercel.app/api/metadata';
@@ -30,9 +25,6 @@ const collectionMetadataUrl = process.env.COLLECTION_METADATA_URL
   ?? 'https://ipo-floor-insiders.vercel.app/collection/manifest.json';
 const execute = process.env.EXECUTE === 'true';
 
-if (!ipoMintValue) {
-  throw new Error('IPO_MINT is required. Use the public mint address of the real $IPO token.');
-}
 if (!assetTreasuryValue) {
   throw new Error('ASSET_TREASURY_WALLET is required and must differ from TREASURY_WALLET.');
 }
@@ -49,7 +41,6 @@ const readKeypair = (filename) => Keypair.fromSecretKey(
 const payer = readKeypair(deployerPath);
 const collectionKeypair = readKeypair(collectionPath);
 const programId = readKeypair(programKeypairPath).publicKey;
-const ipoMint = new PublicKey(ipoMintValue);
 const treasury = new PublicKey(treasuryValue);
 const assetTreasury = new PublicKey(assetTreasuryValue);
 if (assetTreasury.equals(treasury)) throw new Error('Asset capital and operations must use separate treasury addresses.');
@@ -66,19 +57,15 @@ console.log('Program:         ', programId.toBase58());
 console.log('Config PDA:      ', config.toBase58());
 console.log('Treasury:        ', treasury.toBase58());
 console.log('Asset treasury:  ', assetTreasury.toBase58());
-console.log('IPO mint:        ', ipoMint.toBase58());
 console.log('Core collection: ', collectionKeypair.publicKey.toBase58());
 console.log('Metadata:        ', metadataBaseUrl);
 console.log('Mode:            ', execute ? 'EXECUTE' : 'DRY RUN');
 
-const [programAccount, mintAccount, configAccount] = await Promise.all([
+const [programAccount, configAccount] = await Promise.all([
   connection.getAccountInfo(programId, 'confirmed'),
-  connection.getAccountInfo(ipoMint, 'confirmed'),
   connection.getAccountInfo(config, 'confirmed'),
 ]);
 if (!programAccount?.executable) throw new Error('Deploy the IPO program before initialization.');
-if (!mintAccount) throw new Error('IPO_MINT does not exist on the selected network.');
-await getMint(connection, ipoMint, 'confirmed', TOKEN_PROGRAM_ID);
 
 if (configAccount) {
   console.log('Config already initialized; no transaction sent.');
@@ -86,7 +73,7 @@ if (configAccount) {
   process.exit(0);
 }
 if (!execute) {
-  console.log('Dry run complete. Set EXECUTE=true to create the collection, vault, and config.');
+  console.log('Dry run complete. Set EXECUTE=true to create the collection and config.');
   process.exit(0);
 }
 
@@ -143,7 +130,6 @@ const initializeInstruction = new TransactionInstruction({
   keys: [
     { pubkey: payer.publicKey, isSigner: true, isWritable: true },
     { pubkey: config, isSigner: false, isWritable: true },
-    { pubkey: ipoMint, isSigner: false, isWritable: false },
     { pubkey: collectionKeypair.publicKey, isSigner: false, isWritable: false },
     { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
   ],
@@ -181,7 +167,6 @@ function printSiteEnvironment() {
   console.log(`NEXT_PUBLIC_SOLANA_RPC_URL=${rpcUrl}`);
   console.log(`NEXT_PUBLIC_IPO_PROGRAM_ID=${programId.toBase58()}`);
   console.log(`NEXT_PUBLIC_IPO_CONFIG=${config.toBase58()}`);
-  console.log(`NEXT_PUBLIC_IPO_MINT=${ipoMint.toBase58()}`);
   console.log(`NEXT_PUBLIC_TREASURY_WALLET=${treasury.toBase58()}`);
   console.log(`NEXT_PUBLIC_ASSET_TREASURY_WALLET=${assetTreasury.toBase58()}`);
   console.log(`NEXT_PUBLIC_CORE_COLLECTION=${collectionKeypair.publicKey.toBase58()}`);

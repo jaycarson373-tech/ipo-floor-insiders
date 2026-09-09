@@ -3,7 +3,6 @@ import { PublicKey } from '@solana/web3.js';
 export const REQUIRED_LAUNCH_ADDRESSES = [
   'NEXT_PUBLIC_IPO_PROGRAM_ID',
   'NEXT_PUBLIC_IPO_CONFIG',
-  'NEXT_PUBLIC_IPO_MINT',
   'NEXT_PUBLIC_TREASURY_WALLET',
   'NEXT_PUBLIC_ASSET_TREASURY_WALLET',
   'NEXT_PUBLIC_CORE_COLLECTION',
@@ -94,26 +93,24 @@ export function evaluateStaticLaunchReadiness(product, env, { requireMainnet = t
 
 export function decodeLaunchConfig(address, data) {
   const discriminator = [155, 12, 170, 224, 30, 250, 204, 130];
-  if (data.length < 194 || !discriminator.every((byte, index) => data[index] === byte)) {
+  if (data.length < 155 || !discriminator.every((byte, index) => data[index] === byte)) {
     throw new Error('The configured account is not an IPO launch config.');
   }
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
   const readKey = (offset) => new PublicKey(data.slice(offset, offset + 32));
-  const uriLength = view.getUint32(168, true);
-  const numericOffset = 172 + uriLength;
-  if (uriLength > 180 || numericOffset + 22 > data.length) throw new Error('The launch config is malformed.');
+  const uriLength = view.getUint32(136, true);
+  const numericOffset = 140 + uriLength;
+  if (uriLength > 180 || numericOffset + 15 > data.length) throw new Error('The launch config is malformed.');
   return {
     address,
     authority: readKey(8),
     treasury: readKey(40),
     assetTreasury: readKey(72),
-    ipoMint: readKey(104),
-    coreCollection: readKey(136),
-    metadataBaseUri: new TextDecoder().decode(data.slice(172, numericOffset)),
+    coreCollection: readKey(104),
+    metadataBaseUri: new TextDecoder().decode(data.slice(140, numericOffset)),
     totalSupply: view.getUint16(numericOffset, true),
     minted: view.getUint16(numericOffset + 2, true),
     mintPriceLamports: view.getBigUint64(numericOffset + 4, true),
-    ipoPriceTokens: view.getBigUint64(numericOffset + 12, true),
-    paused: data[numericOffset + 20] === 1,
+    paused: data[numericOffset + 12] === 1,
   };
 }

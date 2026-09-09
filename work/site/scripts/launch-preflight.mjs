@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import {
   decodeLaunchConfig,
@@ -83,7 +82,6 @@ async function runNetworkChecks(checks, config, values) {
   const addressChecks = [
     ['operations-treasury', state.treasury, values.NEXT_PUBLIC_TREASURY_WALLET],
     ['asset-treasury', state.assetTreasury, values.NEXT_PUBLIC_ASSET_TREASURY_WALLET],
-    ['ipo-mint-address', state.ipoMint, values.NEXT_PUBLIC_IPO_MINT],
     ['core-collection-address', state.coreCollection, values.NEXT_PUBLIC_CORE_COLLECTION],
   ];
   for (const [id, actual, expected] of addressChecks) {
@@ -93,18 +91,13 @@ async function runNetworkChecks(checks, config, values) {
 
   add(checks, 'onchain-supply', state.totalSupply === config.supply ? 'pass' : 'fail', `On-chain supply: ${state.totalSupply.toLocaleString()}.`);
   add(checks, 'onchain-price', state.mintPriceLamports === BigInt(config.mintPriceLamports) ? 'pass' : 'fail', `On-chain mint price: ${state.mintPriceLamports.toString()} lamports.`);
-  add(checks, 'onchain-ipo-price', state.ipoPriceTokens === 0n ? 'pass' : 'fail', `On-chain IPO mint requirement: ${state.ipoPriceTokens.toString()}.`);
   add(checks, 'onchain-supply-state', state.minted <= state.totalSupply ? 'pass' : 'fail', `Minted: ${state.minted.toLocaleString()} of ${state.totalSupply.toLocaleString()}.`);
   add(checks, 'onchain-pause', state.paused ? 'fail' : 'pass', state.paused ? 'Mint is paused on-chain.' : 'Mint is not paused.');
   const metadataMatches = normalizeUrl(state.metadataBaseUri) === normalizeUrl(values.NEXT_PUBLIC_METADATA_BASE_URL);
   add(checks, 'onchain-metadata', metadataMatches ? 'pass' : 'fail', metadataMatches ? 'Published metadata URL matches the on-chain config.' : 'Published metadata URL differs from the on-chain config.');
 
   try {
-    const [mintAccount, collectionAccount] = await Promise.all([
-      connection.getAccountInfo(state.ipoMint, 'confirmed'),
-      connection.getAccountInfo(state.coreCollection, 'confirmed'),
-    ]);
-    add(checks, 'ipo-token-program', mintAccount?.owner.equals(TOKEN_PROGRAM_ID) ? 'pass' : 'fail', mintAccount?.owner.equals(TOKEN_PROGRAM_ID) ? 'IPO mint uses the supported SPL Token program.' : 'IPO mint does not use the supported SPL Token program.');
+    const collectionAccount = await connection.getAccountInfo(state.coreCollection, 'confirmed');
     add(checks, 'core-collection-owner', collectionAccount?.owner.equals(CORE_PROGRAM_ID) ? 'pass' : 'fail', collectionAccount?.owner.equals(CORE_PROGRAM_ID) ? 'Collection is owned by Metaplex Core.' : 'Collection is missing or is not owned by Metaplex Core.');
   } catch (error) {
     add(checks, 'linked-accounts', 'fail', `Linked-account verification failed: ${cleanError(error)}`);

@@ -8,8 +8,8 @@ echo "$(NO_DNA=1 solana-keygen pubkey "$ROOT/keys/deployer-authority.json")"
 echo
 echo "Generated public addresses:"
 echo "Treasury wallet:          $(NO_DNA=1 solana-keygen pubkey "$ROOT/keys/treasury.json")"
-echo "Asset-capital treasury:   ${ASSET_TREASURY_WALLET:-not selected}"
-echo "IPO mint candidate:       $(NO_DNA=1 solana-keygen pubkey "$ROOT/keys/ipo-mint.json") (not verified on-chain)"
+echo "Asset-capital treasury:   ${ASSET_TREASURY_WALLET:-$(NO_DNA=1 solana-keygen pubkey "$ROOT/keys/deployer-authority.json")}"
+echo "Future upgrade mint:      not configured (upgrades disabled)"
 echo "Core collection candidate: $(NO_DNA=1 solana-keygen pubkey "$ROOT/keys/core-collection.json") (not created)"
 echo "Anchor program id:        $(NO_DNA=1 solana-keygen pubkey "$ROOT/program/target/deploy/program-keypair.json")"
 echo

@@ -3,21 +3,13 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-if [[ -z "${IPO_MINT:-}" ]]; then
-  echo "IPO_MINT is required. It must be the public mint address of the real IPO token."
-  exit 1
-fi
-if [[ -z "${ASSET_TREASURY_WALLET:-}" ]]; then
-  echo "ASSET_TREASURY_WALLET is required and must be separate from operations."
-  exit 1
-fi
+ASSET_TREASURY_WALLET="${ASSET_TREASURY_WALLET:-7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY2wUddr99dJ7C}"
 
 SOLANA_RPC_URL=https://api.mainnet-beta.solana.com "$ROOT/scripts/check-funding.sh"
 echo
 echo "Program:  9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU"
-echo "IPO mint: $IPO_MINT"
 echo "Treasury: ${TREASURY_WALLET:-5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875}"
-echo "Asset treasury: ${ASSET_TREASURY_WALLET:-missing}"
+echo "Asset treasury: $ASSET_TREASURY_WALLET"
 if [[ "${CONFIRM_MAINNET:-}" != "IPO" ]]; then
   echo "Dry stop. Review the addresses and transactions, then rerun with CONFIRM_MAINNET=IPO."
   exit 1
@@ -30,6 +22,6 @@ CONFIRM_MAINNET=IPO \
 SOLANA_RPC_URL=https://api.mainnet-beta.solana.com \
 CONFIRM_MAINNET=IPO \
 EXECUTE=true \
-IPO_MINT="$IPO_MINT" \
 TREASURY_WALLET="${TREASURY_WALLET:-5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875}" \
+ASSET_TREASURY_WALLET="$ASSET_TREASURY_WALLET" \
 node "$ROOT/scripts/03-initialize-program.mjs"

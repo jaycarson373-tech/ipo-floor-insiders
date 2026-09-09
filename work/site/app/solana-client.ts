@@ -7,7 +7,6 @@ import {
   Transaction,
   TransactionInstruction,
 } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { launchConfig } from './launch-config';
 
 export const MPL_CORE_PROGRAM_ID = new PublicKey('CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d');
@@ -15,7 +14,6 @@ const CONFIG_DISCRIMINATOR = new Uint8Array([155, 12, 170, 224, 30, 250, 204, 13
 const MINT_DESK_DISCRIMINATOR = new Uint8Array([13, 78, 211, 198, 47, 173, 187, 207]);
 const EXPECTED_SUPPLY = launchConfig.supply;
 const EXPECTED_SOL_PRICE = launchConfig.mintPriceLamports;
-const EXPECTED_IPO_PRICE = 0n;
 
 export type WalletProvider = {
   publicKey?: PublicKey;
@@ -28,12 +26,10 @@ export type LaunchState = {
   authority: PublicKey;
   treasury: PublicKey;
   assetTreasury: PublicKey;
-  ipoMint: PublicKey;
   coreCollection: PublicKey;
   totalSupply: number;
   minted: number;
   mintPriceLamports: bigint;
-  ipoPriceTokens: bigint;
   metadataBaseUri: string;
   paused: boolean;
 };
@@ -47,14 +43,14 @@ function readU64(view: DataView, offset: number) {
 }
 
 function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
-  if (data.length < 194 || !CONFIG_DISCRIMINATOR.every((byte, index) => data[index] === byte)) {
+  if (data.length < 155 || !CONFIG_DISCRIMINATOR.every((byte, index) => data[index] === byte)) {
     throw new Error('The configured account is not an IPO launch config.');
   }
 
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-  const uriLength = view.getUint32(168, true);
-  const numericOffset = 172 + uriLength;
-  if (uriLength > 180 || numericOffset + 22 > data.length) {
+  const uriLength = view.getUint32(136, true);
+  const numericOffset = 140 + uriLength;
+  if (uriLength > 180 || numericOffset + 15 > data.length) {
     throw new Error('The on-chain launch config is malformed.');
   }
 
@@ -63,26 +59,22 @@ function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
     authority: readPublicKey(data, 8),
     treasury: readPublicKey(data, 40),
     assetTreasury: readPublicKey(data, 72),
-    ipoMint: readPublicKey(data, 104),
-    coreCollection: readPublicKey(data, 136),
+    coreCollection: readPublicKey(data, 104),
     totalSupply: view.getUint16(numericOffset, true),
     minted: view.getUint16(numericOffset + 2, true),
     mintPriceLamports: readU64(view, numericOffset + 4),
-    ipoPriceTokens: readU64(view, numericOffset + 12),
-    metadataBaseUri: new TextDecoder().decode(data.slice(172, 172 + uriLength)),
-    paused: data[numericOffset + 20] === 1,
+    metadataBaseUri: new TextDecoder().decode(data.slice(140, 140 + uriLength)),
+    paused: data[numericOffset + 12] === 1,
   };
 }
 
 function validateLaunchState(state: LaunchState) {
   if (state.totalSupply !== EXPECTED_SUPPLY) throw new Error(`On-chain supply is not ${EXPECTED_SUPPLY.toLocaleString()}.`);
   if (state.mintPriceLamports !== EXPECTED_SOL_PRICE) throw new Error(`On-chain SOL price is not ${launchConfig.mintPriceSol.toFixed(3)} SOL.`);
-  if (state.ipoPriceTokens !== EXPECTED_IPO_PRICE) throw new Error('On-chain mint unexpectedly requires IPO.');
   if (state.assetTreasury.equals(state.treasury)) throw new Error('On-chain asset and operations treasuries are not separated.');
   const expectedAddresses = [
     ['operations treasury', state.treasury, launchConfig.treasury],
     ['asset-capital treasury', state.assetTreasury, launchConfig.assetTreasury],
-    ['IPO mint', state.ipoMint, launchConfig.ipoMint],
     ['Core collection', state.coreCollection, launchConfig.coreCollection],
   ] as const;
   for (const [label, actual, published] of expectedAddresses) {
@@ -118,13 +110,7 @@ export async function fetchLaunchState(connection = getConnection()) {
   const state = decodeConfig(config, account.data);
   validateLaunchState(state);
 
-  const [mintAccount, collectionAccount] = await Promise.all([
-    connection.getAccountInfo(state.ipoMint, 'confirmed'),
-    connection.getAccountInfo(state.coreCollection, 'confirmed'),
-  ]);
-  if (!mintAccount?.owner.equals(TOKEN_PROGRAM_ID)) {
-    throw new Error('The published IPO mint is not an SPL Token mint supported by this program.');
-  }
+  const collectionAccount = await connection.getAccountInfo(state.coreCollection, 'confirmed');
   if (!collectionAccount?.owner.equals(MPL_CORE_PROGRAM_ID)) {
     throw new Error('The published collection is not a Metaplex Core collection.');
   }

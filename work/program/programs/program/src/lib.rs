@@ -45,16 +45,15 @@ pub mod ipo_program {
         config.authority = ctx.accounts.authority.key();
         config.treasury = treasury;
         config.asset_treasury = asset_treasury;
-        config.ipo_mint = ctx.accounts.ipo_mint.key();
         config.core_collection = ctx.accounts.core_collection.key();
         config.metadata_base_uri = metadata_base_uri;
         config.total_supply = TOTAL_SUPPLY;
         config.minted = 0;
         config.mint_price_lamports = MINT_PRICE_LAMPORTS;
-        config.ipo_price_tokens = IPO_MINT_PRICE_TOKENS;
         config.paused = false;
         config.bump = ctx.bumps.config;
         config.upgrades_enabled = false;
+        config.upgrade_ipo_mint = Pubkey::default();
         config.upgrade_ipo_costs = [0; MAX_UPGRADE_LEVEL as usize];
         config.upgrade_sol_costs = [0; MAX_UPGRADE_LEVEL as usize];
 
@@ -62,11 +61,9 @@ pub mod ipo_program {
             authority: config.authority,
             treasury,
             asset_treasury,
-            ipo_mint: config.ipo_mint,
             core_collection: config.core_collection,
             total_supply: config.total_supply,
             mint_price_lamports: config.mint_price_lamports,
-            ipo_price_tokens: config.ipo_price_tokens,
         });
         Ok(())
     }
@@ -79,11 +76,17 @@ pub mod ipo_program {
 
     pub fn configure_upgrades(
         ctx: Context<Admin>,
+        ipo_mint: Pubkey,
         ipo_costs: [u64; MAX_UPGRADE_LEVEL as usize],
         sol_costs: [u64; MAX_UPGRADE_LEVEL as usize],
         enabled: bool,
     ) -> Result<()> {
+        require!(
+            !enabled || ipo_mint != Pubkey::default(),
+            ErrorCode::InvalidMint
+        );
         let config = &mut ctx.accounts.config;
+        config.upgrade_ipo_mint = ipo_mint;
         config.upgrade_ipo_costs = ipo_costs;
         config.upgrade_sol_costs = sol_costs;
         config.upgrades_enabled = enabled;
@@ -240,7 +243,6 @@ pub struct Initialize<'info> {
         bump
     )]
     pub config: Account<'info, Config>,
-    pub ipo_mint: Account<'info, Mint>,
     /// CHECK: Ownership, data, and update authority are validated in the instruction.
     pub core_collection: UncheckedAccount<'info>,
     pub system_program: Program<'info, System>,
@@ -371,7 +373,11 @@ fn validate_upgrade_accounts<'info>(
     core_collection: &UncheckedAccount<'info>,
 ) -> Result<()> {
     require_keys_eq!(treasury.key(), config.treasury, ErrorCode::InvalidTreasury);
-    require_keys_eq!(ipo_mint.key(), config.ipo_mint, ErrorCode::InvalidMint);
+    require_keys_eq!(
+        ipo_mint.key(),
+        config.upgrade_ipo_mint,
+        ErrorCode::InvalidMint
+    );
     require_keys_eq!(
         core_collection.key(),
         config.core_collection,
@@ -556,17 +562,16 @@ pub struct Config {
     pub authority: Pubkey,
     pub treasury: Pubkey,
     pub asset_treasury: Pubkey,
-    pub ipo_mint: Pubkey,
     pub core_collection: Pubkey,
     #[max_len(180)]
     pub metadata_base_uri: String,
     pub total_supply: u16,
     pub minted: u16,
     pub mint_price_lamports: u64,
-    pub ipo_price_tokens: u64,
     pub paused: bool,
     pub bump: u8,
     pub upgrades_enabled: bool,
+    pub upgrade_ipo_mint: Pubkey,
     pub upgrade_ipo_costs: [u64; MAX_UPGRADE_LEVEL as usize],
     pub upgrade_sol_costs: [u64; MAX_UPGRADE_LEVEL as usize],
 }
@@ -589,11 +594,9 @@ pub struct ConfigInitialized {
     pub authority: Pubkey,
     pub treasury: Pubkey,
     pub asset_treasury: Pubkey,
-    pub ipo_mint: Pubkey,
     pub core_collection: Pubkey,
     pub total_supply: u16,
     pub mint_price_lamports: u64,
-    pub ipo_price_tokens: u64,
 }
 
 #[event]
@@ -665,7 +668,6 @@ pub enum ErrorCode {
 pub const CONFIG_SEED: &[u8] = b"config";
 pub const DESK_SEED: &[u8] = b"desk";
 include!(concat!(env!("OUT_DIR"), "/economics.rs"));
-pub const IPO_MINT_PRICE_TOKENS: u64 = 0;
 pub const BPS_DENOMINATOR: u64 = 10_000;
 pub const MAX_METADATA_BASE_URI: usize = 180;
 pub const CORE_ASSET_V1_KEY: u8 = 1;

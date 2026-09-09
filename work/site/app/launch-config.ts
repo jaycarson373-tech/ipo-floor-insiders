@@ -5,7 +5,6 @@ export const launchConfig = {
   rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? 'https://api.devnet.solana.com',
   programId: process.env.NEXT_PUBLIC_IPO_PROGRAM_ID ?? '9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU',
   config: process.env.NEXT_PUBLIC_IPO_CONFIG ?? '',
-  ipoMint: process.env.NEXT_PUBLIC_IPO_MINT ?? '',
   treasury: process.env.NEXT_PUBLIC_TREASURY_WALLET ?? '',
   assetTreasury: process.env.NEXT_PUBLIC_ASSET_TREASURY_WALLET ?? '',
   coreCollection: process.env.NEXT_PUBLIC_CORE_COLLECTION ?? '',
@@ -23,7 +22,6 @@ export const launchConfig = {
 
 export const mintEnvironmentConfigured = [
   launchConfig.config,
-  launchConfig.ipoMint,
   launchConfig.treasury,
   launchConfig.assetTreasury,
   launchConfig.coreCollection,

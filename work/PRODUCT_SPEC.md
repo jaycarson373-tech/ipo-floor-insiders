@@ -12,7 +12,7 @@ IPO means Initial Pump Offering. It is a Solana launch platform with two paths: 
 - No `$IPO` requirement, lock, or burn.
 - Full-supply scenario: 145.44 SOL gross, 116.352 SOL initial assets, and 29.088 SOL operations. This is not money already raised.
 
-The revised Anchor source routes the two amounts atomically to distinct treasuries and records both on the desk account. This changes account layout and initialization arguments, so an old deployment cannot be reused silently. The web client decodes the new layout and verifies the separate published asset treasury before minting.
+The revised Anchor source routes the two amounts atomically to distinct treasuries and records both on the desk account. Desk minting does not depend on a `$IPO` mint. This changes account layout and initialization arguments, so an old deployment cannot be reused silently. The web client decodes the new layout and verifies the separate published asset treasury before minting.
 
 ## Entitlement accounting
 
@@ -44,7 +44,7 @@ For `$IPO` itself, the planned policy is 100% of creator-fee receipts actually r
 
 Optional `$IPO` upgrades use five proposed product levels: Member, Scout, Analyst, Operator, and Studio. They may provide alerts, research organization, analytics, exports, creator tools, personalization, and artwork. They do not multiply payouts. Holdings, essential disclosures, claims, receipts, and equal desk participation remain accessible without an upgrade.
 
-The configured draft burn policy sends 100% of any future `$IPO` upgrade payment to burn. No price is set, and payment and on-chain burn execution are disabled. A future implementation must verify the exact `$IPO` mint, burn instruction, transaction confirmation, and resulting supply before changing the desk level. Upgrade burns may not use mint-funded assets, desk rewards, or operations balances.
+The configured draft burn policy sends 100% of any future `$IPO` upgrade payment to burn. No price is set, and payments are disabled. The on-chain burn path exists but its mint address is unset until the authority explicitly configures upgrades. A future release must verify the exact `$IPO` mint, burn instruction, transaction confirmation, and resulting supply before enabling or displaying a paid level change. Upgrade burns may not use mint-funded assets, desk rewards, or operations balances.
 
 ## Status
 
