@@ -1,60 +1,49 @@
-# IPO Product Specification
+# IPO Economics and Entitlement Specification
 
-## Confirmed for this revision
+## Product
 
-- Collection: 1,212 Metaplex Core Launch Pass memberships.
-- Mint price: 0.044 SOL per pass, plus separately disclosed network and account costs.
-- Mint currency: SOL only. No `$IPO` lock, burn, or payment during mint.
-- Collection art: deterministic architectural trading and research workspaces with five visual stages.
-- Product category: curated Solana project-token launch discovery and membership.
-- Essential ownership information, receipts, and future claims remain available without an upgrade.
+IPO means Initial Pump Offering. It combines 1,212 desk NFTs, IPO Watch research rooms, and optional project-token launch tools. Research can exist without a token. Project tokens are not actual company IPOs or company equity.
 
-The repository does not contain substantiated issuer-backed tokenized pre-IPO assets, company share ownership, issuer affiliations, or guaranteed launch allocations. Company research entries must not be presented as confirmed offerings.
+## Mint policy
 
-## Implemented
+- Price: 0.12 SOL per desk plus network/account costs.
+- Mint-funded assets: 80%, or 0.096 SOL per desk.
+- Operations: 20%, or 0.024 SOL per desk.
+- No `$IPO` requirement, lock, or burn.
+- Full-supply scenario: 145.44 SOL gross, 116.352 SOL initial assets, and 29.088 SOL operations. This is not money already raised.
 
-- A dark responsive Explore, My Pass, Signal, Activity, and Docs interface.
-- A SOL-only Anchor mint instruction for Metaplex Core assets.
-- Frontend verification that blocks minting when deployed config differs from 1,212 supply, 0.044 SOL price, or zero `$IPO` mint requirement.
-- Wallet balance checks, transaction simulation, duplicate submission prevention, submitted and confirmed states, failure recovery, and transaction receipts.
-- Deterministic metadata and five artwork stages for all 1,212 Launch Pass IDs.
-- Upgrade configuration controlled by the program authority and disabled by default.
+The revised Anchor source routes the two amounts atomically to distinct treasuries and records both on the desk account. This changes account layout and initialization arguments, so an old deployment cannot be reused silently. The web client decodes the new layout and verifies the separate published asset treasury before minting.
 
-## Planned, Not Implemented
+## Entitlement accounting
 
-- Project-funded holder-drop templates: 3.3% standard or 10% featured.
-- Allocation calculation, cutoff snapshots, vesting, claims, unclaimed-token policy, refunds, and funding receipts.
-- Project intake, review, launch terms, and Pump.fun integration.
-- Address-based token comparison and market-data adapters.
-- IPO-token genesis claims for verified Launch Pass holders.
-- A receipt-backed revenue-funded IPO buyback and burn policy.
-- IPO Signal campaign funding, moderation, anti-abuse checks, contribution credits, and rewards.
-- Public upgrade prices and payment execution.
+Initial capital stays attributable to its desk until purchased or claimed. Purchases may batch execution while preserving per-desk integer balances and unspent amounts. Mint capital is not yield or protocol revenue.
 
-## Proposed holder reserve
+Recurring rewards use finalized epochs. One eligible desk equals one unit. A newly minted desk cannot join historical epochs. On transfer, future participation starts with the next epoch; balances finalized for the previous owner remain theirs. Claims use immutable allocation IDs and reject duplicates. Pool/vault addresses are excluded from the denominator. Integer division dust remains in the source account under published treatment.
 
-For a future project-token launch, a project may select a 3.3% standard reserve or 10% featured reserve of total token supply for eligible passes. A round must not open until the reserve is funded and the asset mint, eligibility cutoff, equal per-pass weighting, rounding, vesting, claim conditions, and unclaimed-token treatment are published. These are templates, not automatic entitlements, company equity, guaranteed purchase rights, or guaranteed returns.
+This epoch, transfer, purchase-failure, rounding, and duplicate-claim logic is locally tested. Production enforcement still needs ownership indexing/proofs, an accumulator or vault, purchase instructions, allocation finalization, and a claim program.
 
-## Launch rail proposal
+## Assets
 
-Selected projects may prepare launch terms through IPO and create their token through Pump.fun. Pump.fun currently documents SOL and USDC launch pairs and automatic graduation from its bonding curve to a canonical PumpSwap pool. The repository does not create Pump.fun coins, route trades, collect creator fees, or support a direct PUMP-token pair.
+The target basket is a small, reviewed set of third-party tokenized pre-IPO exposure. Every entry needs an exact Solana mint, provider, category, backing/rights documentation, transfer constraints, token controls/extensions, quote route, liquidity limits, current purchase eligibility, and timestamp. No such asset is currently purchase-enabled in this repository.
 
-## IPO token proposal
+Project/community tokens, third-party exposure, and issuer-authorized securities remain distinct. A provider token is not its underlying exposure. Failed or expired quotes retain funds visibly as unspent; no substitute purchase is allowed.
 
-A future IPO token may launch through Pump.fun. A genesis claim for verified Launch Pass holders requires final snapshot rules, token amount, exclusions, vesting, claim authority, funding, and an audited claim contract. A future buyback and burn policy requires a finalized revenue percentage, public wallets, programmatic controls, accounting, and transaction receipts. Neither proposal creates revenue rights or a promise of returns.
+## IPO Rooms
 
-## Upgrade proposal
+Room drafts store thesis, source, catalyst and confidence, invalidation criteria, author, and sponsorship/financial-interest disclosure locally. Production publishing needs authentication, durable version history, moderation, following/bookmarks, alerts, discussion, and source storage.
 
-Five membership levels are displayed: Member, Researcher, Analyst, Strategist, and Director. Upgrades may add watchlists, research tools, alerts, analytics, appearance options, and contribution history. Pricing and final benefits remain unresolved, so upgrade payments stay disabled. Basic allocation rights must not depend on upgrading in the first release.
+An optional room launch uses the current six-step builder. Proposed third-party creator-fee routing is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% operations. The template applies only to creator fees received and requires creator authorization and chain-state verification.
 
-## Launch blockers
+For `$IPO` itself, the planned policy is 100% of creator-fee receipts actually received by the project toward desk-holder asset purchases. Operations pays execution costs separately. This is planned until routing, indexing, and purchases are deployed and verified.
 
-1. Deploy and verify the current program build on devnet, then mainnet only after approval.
-2. Create and verify the Core collection and `$IPO` upgrade vault.
-3. Configure production environment addresses from deployed accounts.
-4. Run wallet and transaction-state testing against devnet.
-5. Decide and publish upgrade economics before enabling upgrades.
-6. Implement and audit reserve funding, allocation, claim, and receipt contracts before marketing holder drops as live.
-7. Complete legal and compliance review for any issuer-backed asset access.
-8. Connect a reviewed Pump.fun launch flow and market-data adapter before enabling launch or comparison actions.
-9. Finalize and audit any IPO genesis claim or revenue-funded buyback and burn policy before announcing entitlement or execution.
+## Upgrades
+
+Optional `$IPO` upgrades may later provide alerts, research organization, analytics, exports, personalization, and artwork. They do not multiply payouts. Holdings, essential disclosures, claims, and receipts remain accessible without an upgrade. Pricing and payment are disabled.
+
+## Status
+
+Implemented: responsive product shell, Room drafts, launch/support drafts, deterministic desk art, wallet flow, revised 80/20 mint source/client, integer accounting domain, transfer cutoffs, failure retention, duplicate protection, and public docs.
+
+Preview: mint and accounting source before deployment, research publishing, asset registry review, launch configuration, and reward allocation.
+
+Blocked: public mint config, tokenized pre-IPO purchase registry, Pump execution, fee indexing, purchases, ownership history, reward vault/claims, Room backend, valuations, and production activity receipts.

@@ -155,8 +155,8 @@ for (let serial = 1; serial <= product.supply; serial += 1) await generateDesk(s
 
 await writeFile(new URL('manifest.json', collectionDir), `${JSON.stringify({
   name: 'IPO Launch Pass', symbol: 'IPO', standard: 'Metaplex Core', supply: product.supply,
-  mintPrice: { sol: product.mintPriceSol, ipo: 0 }, holderPoolPercent: product.holderPoolPercent,
+  mintPrice: { sol: product.mintPriceSol, lamports: product.mintPriceLamports, ipo: 0 }, rewardParticipation: 'Equal base participation per eligible desk; terms published per program.',
   upgradeLevels: levels, assetCategory: 'IPO-themed project launch membership and research', securitiesAccess: false,
-  artDirection: 'Architectural research desks with a consistent camera, restrained materials, and crisp pixel-grid detail.',
+  artDirection: 'Architectural launch consoles with a consistent camera, restrained materials, and crisp pixel-grid detail.',
 }, null, 2)}\n`);
 console.log(`Generated ${product.supply} IPO Launch Passes with ${product.maxLevels} architectural art stages each.`);

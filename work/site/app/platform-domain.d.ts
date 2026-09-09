@@ -1,0 +1,15 @@
+export const BPS_TOTAL: number;
+export const FEE_SHARE_KEYS: readonly ['coinHolders', 'deskHolders', 'creator', 'operations'];
+export type FeeShares = Record<(typeof FEE_SHARE_KEYS)[number], number>;
+export function validateFeeShares(shares: FeeShares): { valid: boolean; total: number; remaining: number; shares: FeeShares };
+export function splitIntegerAmount(totalUnits: bigint, shares: FeeShares): { allocations: Record<string, bigint>; dust: bigint };
+export function splitMintReceipt(totalLamports: bigint, allocation?: { rewardAssets: number; operations: number }): { initialAssetCapital: bigint; operationFunds: bigint; dust: bigint };
+export function allocateDeskRewards(totalUnits: bigint, desks: Array<{ id: string; owner: string }>, excludedAddresses?: string[]): { entries: Array<{ deskId: string; owner: string; units: bigint }>; eligibleDesks: number; allocated: bigint; dust: bigint };
+export function allocateEpochRewards(totalUnits: bigint, desks: Array<{ id: string; owner: string; eligibleFromEpoch: number }>, epoch: number, excludedAddresses?: string[]): { entries: Array<{ deskId: string; owner: string; units: bigint }>; eligibleDesks: number; allocated: bigint; dust: bigint };
+export function transferDeskForNextEpoch<T extends { id: string; owner: string; eligibleFromEpoch: number }>(desk: T, newOwner: string, transferEpoch: number): { previousOwner: string; desk: T };
+export function recordPurchaseResult(account: { pendingUnits: bigint; purchasedUnits?: bigint }, result: { success: boolean; spentUnits?: bigint; purchasedUnits?: bigint; reason?: string }): { pendingUnits: bigint; purchasedUnits: bigint; lastFailure: string };
+export function reconcileReceipt<T extends { signature: string; instructionIndex: number; amountUnits: bigint }>(receipts: Array<T & { id: string }>, receipt: T): { receipts: Array<T & { id: string }>; inserted: boolean };
+export function claimAllocation(claimedIds: Set<string>, allocation: { id: string; units: bigint }): { claimedIds: Set<string>; claimed: boolean; units: bigint };
+export type LaunchStatus = 'draft' | 'metadata_ready' | 'token_submitted' | 'token_confirmed' | 'fee_routing_pending' | 'fee_routing_verified' | 'rewards_disabled' | 'failed' | 'rewards_active' | 'cancelled';
+export function transitionLaunch(current: LaunchStatus, next: LaunchStatus): LaunchStatus;
+export function validateAssetRecord(asset: Record<string, unknown>): { checks: Record<string, boolean>; purchaseEligible: boolean };

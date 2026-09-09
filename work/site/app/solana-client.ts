@@ -13,7 +13,7 @@ export const MPL_CORE_PROGRAM_ID = new PublicKey('CoREENxT6tW1HoK8ypY1SxRMZTcVPm
 const CONFIG_DISCRIMINATOR = new Uint8Array([155, 12, 170, 224, 30, 250, 204, 130]);
 const MINT_DESK_DISCRIMINATOR = new Uint8Array([13, 78, 211, 198, 47, 173, 187, 207]);
 const EXPECTED_SUPPLY = launchConfig.supply;
-const EXPECTED_SOL_PRICE = BigInt(Math.round(launchConfig.mintPriceSol * 1_000_000_000));
+const EXPECTED_SOL_PRICE = launchConfig.mintPriceLamports;
 const EXPECTED_IPO_PRICE = 0n;
 
 export type WalletProvider = {
@@ -26,6 +26,7 @@ export type LaunchState = {
   config: PublicKey;
   authority: PublicKey;
   treasury: PublicKey;
+  assetTreasury: PublicKey;
   ipoMint: PublicKey;
   ipoVault: PublicKey;
   coreCollection: PublicKey;
@@ -45,13 +46,13 @@ function readU64(view: DataView, offset: number) {
 }
 
 function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
-  if (data.length < 206 || !CONFIG_DISCRIMINATOR.every((byte, index) => data[index] === byte)) {
+  if (data.length < 238 || !CONFIG_DISCRIMINATOR.every((byte, index) => data[index] === byte)) {
     throw new Error('The configured account is not an IPO launch config.');
   }
 
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-  const uriLength = view.getUint32(168, true);
-  const numericOffset = 172 + uriLength;
+  const uriLength = view.getUint32(200, true);
+  const numericOffset = 204 + uriLength;
   if (uriLength > 180 || numericOffset + 22 > data.length) {
     throw new Error('The on-chain launch config is malformed.');
   }
@@ -60,9 +61,10 @@ function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
     config: address,
     authority: readPublicKey(data, 8),
     treasury: readPublicKey(data, 40),
-    ipoMint: readPublicKey(data, 72),
-    ipoVault: readPublicKey(data, 104),
-    coreCollection: readPublicKey(data, 136),
+    assetTreasury: readPublicKey(data, 72),
+    ipoMint: readPublicKey(data, 104),
+    ipoVault: readPublicKey(data, 136),
+    coreCollection: readPublicKey(data, 168),
     totalSupply: view.getUint16(numericOffset, true),
     minted: view.getUint16(numericOffset + 2, true),
     mintPriceLamports: readU64(view, numericOffset + 4),
@@ -75,6 +77,9 @@ function validateLaunchState(state: LaunchState) {
   if (state.totalSupply !== EXPECTED_SUPPLY) throw new Error(`On-chain supply is not ${EXPECTED_SUPPLY.toLocaleString()}.`);
   if (state.mintPriceLamports !== EXPECTED_SOL_PRICE) throw new Error(`On-chain SOL price is not ${launchConfig.mintPriceSol.toFixed(3)} SOL.`);
   if (state.ipoPriceTokens !== EXPECTED_IPO_PRICE) throw new Error('On-chain mint unexpectedly requires IPO.');
+  if (state.assetTreasury.equals(state.treasury)) throw new Error('On-chain asset and operations treasuries are not separated.');
+  if (!launchConfig.assetTreasury) throw new Error('The public asset-capital treasury is not configured.');
+  if (!state.assetTreasury.equals(new PublicKey(launchConfig.assetTreasury))) throw new Error('On-chain asset-capital treasury does not match the published address.');
   if (state.minted > state.totalSupply) throw new Error('On-chain minted count is invalid.');
 }
 
@@ -129,6 +134,7 @@ export async function mintDesk(provider: WalletProvider, onSubmitted?: (signatur
       { pubkey: state.config, isSigner: false, isWritable: true },
       { pubkey: desk, isSigner: false, isWritable: true },
       { pubkey: state.treasury, isSigner: false, isWritable: true },
+      { pubkey: state.assetTreasury, isSigner: false, isWritable: true },
       { pubkey: asset.publicKey, isSigner: true, isWritable: true },
       { pubkey: state.coreCollection, isSigner: false, isWritable: true },
       { pubkey: MPL_CORE_PROGRAM_ID, isSigner: false, isWritable: false },

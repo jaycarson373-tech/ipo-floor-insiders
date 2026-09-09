@@ -1,6 +1,16 @@
 {
   "supply": 1212,
-  "mintPriceSol": 0.044,
-  "holderPoolPercent": 3.3,
-  "maxLevels": 5
+  "mintPriceSol": 0.12,
+  "mintPriceLamports": 120000000,
+  "maxLevels": 5,
+  "defaultFeeSharesBps": {
+    "coinHolders": 6000,
+    "deskHolders": 1500,
+    "creator": 1500,
+    "operations": 1000
+  },
+  "draftMintCapitalBps": {
+    "rewardAssets": 8000,
+    "operations": 2000
+  }
 }

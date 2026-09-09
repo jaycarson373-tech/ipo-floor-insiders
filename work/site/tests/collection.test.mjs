@@ -15,11 +15,16 @@ test('collection matches the centralized product configuration', async () => {
   const manifest = JSON.parse(await readFile(path.join(collection, 'manifest.json'), 'utf8'));
   assert.equal(manifest.supply, product.supply);
   assert.equal(manifest.mintPrice.sol, product.mintPriceSol);
+  assert.equal(manifest.mintPrice.lamports, product.mintPriceLamports);
+  assert.equal(product.mintPriceLamports, 120_000_000);
   assert.equal(manifest.mintPrice.ipo, 0);
-  assert.equal(manifest.holderPoolPercent, product.holderPoolPercent);
+  assert.match(manifest.rewardParticipation, /Equal base participation/);
+  assert.equal(Object.values(product.defaultFeeSharesBps).reduce((sum, value) => sum + value, 0), 10_000);
+  assert.equal(Object.values(product.draftMintCapitalBps).reduce((sum, value) => sum + value, 0), 10_000);
+  assert.deepEqual(product.draftMintCapitalBps, { rewardAssets: 8_000, operations: 2_000 });
 });
 
-test('collection contains 1,212 complete deterministic Launch Passes', async () => {
+test('collection contains every complete deterministic Launch Pass', async () => {
   const metadataFiles = (await readdir(metadataDir)).filter((file) => file.endsWith('.json')).sort();
   const levelOneHashes = new Set();
   assert.equal(metadataFiles.length, product.supply);

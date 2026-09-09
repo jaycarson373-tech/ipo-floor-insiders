@@ -11,24 +11,30 @@ fn main() {
     let supply = config["supply"]
         .as_u64()
         .expect("supply must be an integer");
-    let price_sol = config["mintPriceSol"]
-        .as_f64()
-        .expect("mintPriceSol must be a number");
+    let price_lamports = config["mintPriceLamports"]
+        .as_u64()
+        .expect("mintPriceLamports must be an integer");
     let max_levels = config["maxLevels"]
         .as_u64()
         .expect("maxLevels must be an integer");
-    let price_lamports = (price_sol * 1_000_000_000.0).round() as u64;
-
+    let mint_asset_bps = config["draftMintCapitalBps"]["rewardAssets"]
+        .as_u64()
+        .expect("draftMintCapitalBps.rewardAssets must be an integer");
+    let mint_operations_bps = config["draftMintCapitalBps"]["operations"]
+        .as_u64()
+        .expect("draftMintCapitalBps.operations must be an integer");
     assert!(supply <= u16::MAX as u64, "supply must fit in u16");
     assert!(max_levels <= u8::MAX as u64, "maxLevels must fit in u8");
-    assert!(
-        ((price_lamports as f64 / 1_000_000_000.0) - price_sol).abs() < f64::EPSILON,
-        "mintPriceSol must resolve to whole lamports"
+    assert_eq!(
+        mint_asset_bps + mint_operations_bps,
+        10_000,
+        "mint allocation must total 10,000 bps"
     );
 
     let generated = format!(
         "pub const TOTAL_SUPPLY: u16 = {supply};\n\
          pub const MINT_PRICE_LAMPORTS: u64 = {price_lamports};\n\
+         pub const MINT_ASSET_BPS: u64 = {mint_asset_bps};\n\
          pub const MAX_UPGRADE_LEVEL: u8 = {max_levels};\n"
     );
     let out = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR")).join("economics.rs");

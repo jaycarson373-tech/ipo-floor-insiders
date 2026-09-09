@@ -14,9 +14,15 @@ pub mod ipo_program {
     pub fn initialize(
         ctx: Context<Initialize>,
         treasury: Pubkey,
+        asset_treasury: Pubkey,
         metadata_base_uri: String,
     ) -> Result<()> {
         require!(treasury != Pubkey::default(), ErrorCode::InvalidTreasury);
+        require!(
+            asset_treasury != Pubkey::default(),
+            ErrorCode::InvalidAssetTreasury
+        );
+        require!(asset_treasury != treasury, ErrorCode::InvalidAssetTreasury);
         require!(
             metadata_base_uri.starts_with("https://")
                 && metadata_base_uri.len() <= MAX_METADATA_BASE_URI,
@@ -46,6 +52,7 @@ pub mod ipo_program {
         let config = &mut ctx.accounts.config;
         config.authority = ctx.accounts.authority.key();
         config.treasury = treasury;
+        config.asset_treasury = asset_treasury;
         config.ipo_mint = ctx.accounts.ipo_mint.key();
         config.ipo_vault = ctx.accounts.ipo_vault.key();
         config.core_collection = ctx.accounts.core_collection.key();
@@ -63,6 +70,7 @@ pub mod ipo_program {
         emit!(ConfigInitialized {
             authority: config.authority,
             treasury,
+            asset_treasury,
             ipo_mint: config.ipo_mint,
             ipo_vault: config.ipo_vault,
             core_collection: config.core_collection,
@@ -101,6 +109,7 @@ pub mod ipo_program {
         validate_mint_accounts(
             config,
             &ctx.accounts.treasury,
+            &ctx.accounts.asset_treasury,
             &ctx.accounts.core_collection,
         )?;
 
@@ -110,10 +119,17 @@ pub mod ipo_program {
         let config_bump = [config.bump];
         let signer_seeds: &[&[u8]] = &[CONFIG_SEED, authority.as_ref(), &config_bump];
 
+        let (initial_asset_lamports, operations_lamports) =
+            split_mint_receipt(MINT_PRICE_LAMPORTS)?;
+        transfer_sol(
+            &ctx.accounts.buyer,
+            &ctx.accounts.asset_treasury,
+            initial_asset_lamports,
+        )?;
         transfer_sol(
             &ctx.accounts.buyer,
             &ctx.accounts.treasury,
-            MINT_PRICE_LAMPORTS,
+            operations_lamports,
         )?;
         CreateV2CpiBuilder::new(&ctx.accounts.mpl_core_program.to_account_info())
             .asset(&ctx.accounts.asset.to_account_info())
@@ -133,6 +149,8 @@ pub mod ipo_program {
         desk.serial = serial;
         desk.level = 0;
         desk.minted_at = Clock::get()?.unix_timestamp;
+        desk.initial_asset_lamports = initial_asset_lamports;
+        desk.operations_lamports = operations_lamports;
         desk.bump = ctx.bumps.desk;
 
         emit!(DeskMinted {
@@ -140,6 +158,8 @@ pub mod ipo_program {
             asset: desk.asset,
             serial,
             sol_paid: MINT_PRICE_LAMPORTS,
+            initial_asset_lamports,
+            operations_lamports,
         });
         Ok(())
     }
@@ -272,6 +292,9 @@ pub struct MintDesk<'info> {
     /// CHECK: Must match the immutable treasury stored in config.
     #[account(mut)]
     pub treasury: UncheckedAccount<'info>,
+    /// CHECK: Must match the separate asset-capital treasury stored in config.
+    #[account(mut)]
+    pub asset_treasury: UncheckedAccount<'info>,
     /// CHECK: New Metaplex Core asset; must sign the outer transaction.
     #[account(mut, signer)]
     pub asset: UncheckedAccount<'info>,
@@ -338,9 +361,15 @@ impl<'info> UpgradeDesk<'info> {
 fn validate_mint_accounts<'info>(
     config: &Account<'info, Config>,
     treasury: &UncheckedAccount<'info>,
+    asset_treasury: &UncheckedAccount<'info>,
     core_collection: &UncheckedAccount<'info>,
 ) -> Result<()> {
     require_keys_eq!(treasury.key(), config.treasury, ErrorCode::InvalidTreasury);
+    require_keys_eq!(
+        asset_treasury.key(),
+        config.asset_treasury,
+        ErrorCode::InvalidAssetTreasury
+    );
     require_keys_eq!(
         core_collection.key(),
         config.core_collection,
@@ -410,6 +439,17 @@ fn whole_token_amount(tokens: u64, decimals: u8) -> Result<u64> {
         .ok_or(ErrorCode::TokenAmountOverflow.into())
 }
 
+fn split_mint_receipt(lamports: u64) -> Result<(u64, u64)> {
+    let initial_assets = lamports
+        .checked_mul(MINT_ASSET_BPS)
+        .ok_or(ErrorCode::TokenAmountOverflow)?
+        / BPS_DENOMINATOR;
+    let operations = lamports
+        .checked_sub(initial_assets)
+        .ok_or(ErrorCode::TokenAmountOverflow)?;
+    Ok((initial_assets, operations))
+}
+
 fn metadata_uri(base: &str, serial: u16, level: u8) -> String {
     format!(
         "{}/IPO-{:04}?level={}",
@@ -424,6 +464,7 @@ fn metadata_uri(base: &str, serial: u16, level: u8) -> String {
 pub struct Config {
     pub authority: Pubkey,
     pub treasury: Pubkey,
+    pub asset_treasury: Pubkey,
     pub ipo_mint: Pubkey,
     pub ipo_vault: Pubkey,
     pub core_collection: Pubkey,
@@ -448,6 +489,8 @@ pub struct Desk {
     pub serial: u16,
     pub level: u8,
     pub minted_at: i64,
+    pub initial_asset_lamports: u64,
+    pub operations_lamports: u64,
     pub bump: u8,
 }
 
@@ -455,6 +498,7 @@ pub struct Desk {
 pub struct ConfigInitialized {
     pub authority: Pubkey,
     pub treasury: Pubkey,
+    pub asset_treasury: Pubkey,
     pub ipo_mint: Pubkey,
     pub ipo_vault: Pubkey,
     pub core_collection: Pubkey,
@@ -469,6 +513,8 @@ pub struct DeskMinted {
     pub asset: Pubkey,
     pub serial: u16,
     pub sol_paid: u64,
+    pub initial_asset_lamports: u64,
+    pub operations_lamports: u64,
 }
 
 #[event]
@@ -501,6 +547,8 @@ pub enum ErrorCode {
     InvalidSerial,
     #[msg("Treasury account does not match config")]
     InvalidTreasury,
+    #[msg("Asset-capital treasury is invalid or matches operations treasury")]
+    InvalidAssetTreasury,
     #[msg("IPO mint does not match config")]
     InvalidMint,
     #[msg("IPO vault is not the program-controlled vault")]
@@ -529,6 +577,7 @@ pub const CONFIG_SEED: &[u8] = b"config";
 pub const DESK_SEED: &[u8] = b"desk";
 include!(concat!(env!("OUT_DIR"), "/economics.rs"));
 pub const IPO_MINT_PRICE_TOKENS: u64 = 0;
+pub const BPS_DENOMINATOR: u64 = 10_000;
 pub const MAX_METADATA_BASE_URI: usize = 180;
 
 #[cfg(test)]
@@ -548,5 +597,14 @@ mod tests {
             metadata_uri("https://example.com/api/metadata/", 2, 4),
             "https://example.com/api/metadata/IPO-0002?level=4"
         );
+    }
+
+    #[test]
+    fn splits_each_mint_into_asset_capital_and_operations() {
+        assert_eq!(
+            split_mint_receipt(120_000_000).unwrap(),
+            (96_000_000, 24_000_000)
+        );
+        assert_eq!(split_mint_receipt(7).unwrap(), (5, 2));
     }
 }

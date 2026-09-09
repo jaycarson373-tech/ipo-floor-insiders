@@ -26,6 +26,7 @@ const programKeypairPath = path.join(root, 'program', 'target', 'deploy', 'progr
 const rpcUrl = process.env.SOLANA_RPC_URL ?? 'https://api.devnet.solana.com';
 const ipoMintValue = process.env.IPO_MINT;
 const treasuryValue = process.env.TREASURY_WALLET ?? '5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875';
+const assetTreasuryValue = process.env.ASSET_TREASURY_WALLET;
 const metadataBaseUrl = process.env.METADATA_BASE_URL ?? 'https://ipo-floor-insiders.vercel.app/api/metadata';
 const collectionMetadataUrl = process.env.COLLECTION_METADATA_URL
   ?? 'https://ipo-floor-insiders.vercel.app/collection/manifest.json';
@@ -33,6 +34,9 @@ const execute = process.env.EXECUTE === 'true';
 
 if (!ipoMintValue) {
   throw new Error('IPO_MINT is required. Use the public mint address of the real $IPO token.');
+}
+if (!assetTreasuryValue) {
+  throw new Error('ASSET_TREASURY_WALLET is required and must differ from TREASURY_WALLET.');
 }
 if (rpcUrl.includes('mainnet') && process.env.CONFIRM_MAINNET !== 'IPO') {
   throw new Error('Mainnet is selected. Set CONFIRM_MAINNET=IPO after reviewing the printed addresses.');
@@ -49,6 +53,8 @@ const collectionKeypair = readKeypair(collectionPath);
 const programId = readKeypair(programKeypairPath).publicKey;
 const ipoMint = new PublicKey(ipoMintValue);
 const treasury = new PublicKey(treasuryValue);
+const assetTreasury = new PublicKey(assetTreasuryValue);
+if (assetTreasury.equals(treasury)) throw new Error('Asset capital and operations must use separate treasury addresses.');
 const connection = new Connection(rpcUrl, 'confirmed');
 const [config] = PublicKey.findProgramAddressSync(
   [Buffer.from('config'), payer.publicKey.toBuffer()],
@@ -62,6 +68,7 @@ console.log('Authority:       ', payer.publicKey.toBase58());
 console.log('Program:         ', programId.toBase58());
 console.log('Config PDA:      ', config.toBase58());
 console.log('Treasury:        ', treasury.toBase58());
+console.log('Asset treasury:  ', assetTreasury.toBase58());
 console.log('IPO mint:        ', ipoMint.toBase58());
 console.log('IPO upgrade vault:', ipoVault.toBase58());
 console.log('Core collection: ', collectionKeypair.publicKey.toBase58());
@@ -128,11 +135,12 @@ if (!(await connection.getAccountInfo(collectionKeypair.publicKey, 'confirmed'))
 }
 
 const uriBytes = Buffer.from(metadataBaseUrl, 'utf8');
-const initializeData = Buffer.alloc(8 + 32 + 4 + uriBytes.length);
+const initializeData = Buffer.alloc(8 + 32 + 32 + 4 + uriBytes.length);
 Buffer.from([175, 175, 109, 31, 13, 152, 155, 237]).copy(initializeData, 0);
 treasury.toBuffer().copy(initializeData, 8);
-initializeData.writeUInt32LE(uriBytes.length, 40);
-uriBytes.copy(initializeData, 44);
+assetTreasury.toBuffer().copy(initializeData, 40);
+initializeData.writeUInt32LE(uriBytes.length, 72);
+uriBytes.copy(initializeData, 76);
 
 const initializeInstruction = new TransactionInstruction({
   programId,
@@ -188,6 +196,7 @@ function printSiteEnvironment() {
   console.log(`NEXT_PUBLIC_IPO_MINT=${ipoMint.toBase58()}`);
   console.log(`NEXT_PUBLIC_IPO_VAULT=${ipoVault.toBase58()}`);
   console.log(`NEXT_PUBLIC_TREASURY_WALLET=${treasury.toBase58()}`);
+  console.log(`NEXT_PUBLIC_ASSET_TREASURY_WALLET=${assetTreasury.toBase58()}`);
   console.log(`NEXT_PUBLIC_CORE_COLLECTION=${collectionKeypair.publicKey.toBase58()}`);
   console.log(`NEXT_PUBLIC_METADATA_BASE_URL=${metadataBaseUrl}`);
 }

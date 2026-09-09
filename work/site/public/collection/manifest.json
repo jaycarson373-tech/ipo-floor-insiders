@@ -4,10 +4,11 @@
   "standard": "Metaplex Core",
   "supply": 1212,
   "mintPrice": {
-    "sol": 0.044,
+    "sol": 0.12,
+    "lamports": 120000000,
     "ipo": 0
   },
-  "holderPoolPercent": 3.3,
+  "rewardParticipation": "Equal base participation per eligible desk; terms published per program.",
   "upgradeLevels": [
     "Member",
     "Researcher",
@@ -17,5 +18,5 @@
   ],
   "assetCategory": "IPO-themed project launch membership and research",
   "securitiesAccess": false,
-  "artDirection": "Architectural research desks with a consistent camera, restrained materials, and crisp pixel-grid detail."
+  "artDirection": "Architectural launch consoles with a consistent camera, restrained materials, and crisp pixel-grid detail."
 }

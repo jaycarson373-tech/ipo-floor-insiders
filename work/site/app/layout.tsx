@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'IPO',
-  description: 'Initial Pump Offering: curated Solana launches, 1,212 Launch Passes, funded holder drops, and on-chain receipts.',
+  title: 'IPO — Initial Pump Offering',
+  description: 'Launch your idea, build your community, and reward your holders with transparent Solana launch tooling.',
 };
 
 export default function RootLayout({

@@ -1,29 +1,303 @@
-import Link from 'next/link';
-import { launchConfig } from '../launch-config';
+import Link from "next/link";
+import { launchConfig } from "../launch-config";
+import { productFeatures } from "../product-data";
 
-function Status({ live = false }: { live?: boolean }) {
-  return <span className={`statusBadge ${live ? 'live' : ''}`}>{live ? 'SUPPORTED' : 'PLANNED'}</span>;
+function Flag({
+  live = false,
+  blocked = false,
+}: {
+  live?: boolean;
+  blocked?: boolean;
+}) {
+  return (
+    <span
+      className={`status ${live ? "status-available" : blocked ? "status-blocked" : "status-preview"}`}
+    >
+      {live ? "AVAILABLE" : blocked ? "BLOCKED" : "PREVIEW"}
+    </span>
+  );
 }
 
 export default function DocsPage() {
   const mintConfigured = Boolean(launchConfig.config);
-  const sections = ['overview', 'economics', 'launch-pass', 'launches', 'holder-drops', 'pump-rail', 'compare', 'ipo-token', 'signal', 'activity', 'disclosures', 'faq'];
-  return <main className="docsPage">
-    <header className="siteHeader"><Link className="wordmark" href="/"><span>IPO</span><small>PUBLIC DOCS</small></Link><nav><Link href="/">Explore</Link><a href="#economics">Economics</a><a href="#disclosures">Disclosures</a></nav><Link className="walletControl" href="/">Back to app</Link></header>
-    <header className="docsHero"><p className="kicker">Initial Pump Offering</p><h1>Launch terms without the fog.</h1><p>Confirmed Launch Pass economics, proposed project-token launch mechanics, integration status, and the receipts required before any financial claim goes live.</p></header>
-    <div className="docsLayout"><aside className="docsNav">{sections.map((section) => <a href={`#${section}`} key={section}>{section.replaceAll('-', ' ')}</a>)}</aside><article className="docsContent">
-      <section id="overview"><p className="kicker">Overview</p><h2>A curated Solana launch and discovery platform.</h2><p>IPO is designed for project teams preparing high-quality fair launches and for communities that want clearer research, launch terms, holder drops, and on-chain receipts. It is not an issuer-backed pre-IPO securities platform, a broker, or a promise of company shares.</p><div className="statusRows"><div><Status live /><p>Dark product experience, deterministic Launch Pass art, documentation, wallet connection, and transaction-state handling.</p></div><div><Status live={mintConfigured} /><p>{mintConfigured ? 'Public pass mint configuration is present and checked against the expected economics.' : 'Mint program source and client exist, but public on-chain configuration is missing.'}</p></div><div><Status /><p>Project intake, review, Pump.fun launch integration, comparisons, holder-drop contracts, IPO claims, activity indexing, Signal campaigns, and buyback/burn automation.</p></div></div></section>
-      <section id="economics"><p className="kicker">Confirmed defaults</p><h2>1,212 passes at 0.044 SOL.</h2><div className="statusRows"><div><strong>Supply</strong><p>1,212 numbered Metaplex Core Launch Passes.</p></div><div><strong>Mint</strong><p>0.044 SOL per pass, plus separately disclosed network and account costs.</p></div><div><strong>IPO token</strong><p>No IPO is required, locked, or burned during minting. IPO is reserved for optional post-mint use.</p></div><div><strong>Sellout gross</strong><p>53.328 SOL before network, account, hosting, operational, tax, and other costs.</p></div></div></section>
-      <section id="launch-pass"><p className="kicker">Launch Pass</p><h2>Membership, not a guaranteed return.</h2><p>A successful mint creates a transferable Metaplex Core asset with a persistent serial and visual level. The proposed holder product includes project previews, eligibility for funded project-token drops, watchlists, contribution history, claims, and receipts.</p><p>Essential ownership, claim, receipt, and disclosure access remains available without upgrading. Five optional visual and research-tool levels are proposed; prices and payments remain disabled.</p><Status live={mintConfigured} /></section>
-      <section id="launches"><p className="kicker">Launch review</p><h2>Apply, review, fund, launch, verify.</h2><p>Project intake is proposed as a reviewed process rather than an automatic listing. Before a project can appear as upcoming or open, it should publish its team or responsible party, token address when created, supply, launch rail, holder reserve, timing, risks, links, moderation status, and cancellation treatment.</p><p>No launch currently appears as approved, funded, or live. Research entries must remain visually separate from executable opportunities.</p><Status /></section>
-      <section id="holder-drops"><p className="kicker">Project-funded holder drops</p><h2>{launchConfig.holderPoolPercent}% or 10% templates, selected per launch.</h2><p>An approved project may propose a standard {launchConfig.holderPoolPercent}% reserve or featured 10% reserve of its project-token supply for eligible Launch Pass holders. These are templates, not automatic rights. A project must choose the amount, deposit the exact tokens, and publish eligibility, snapshot, weighting, vesting, rounding, claim conditions, and unclaimed-token treatment before the round opens.</p><p>The first release should use equal base weight per eligible pass. No upgrade multiplier or “booster” allocation is active. Any future booster policy requires separate review and explicit per-launch disclosure.</p><Status /></section>
-      <section id="pump-rail"><p className="kicker">Pump.fun launch rail</p><h2>Preparation on IPO, token creation through Pump.</h2><p>The proposed integration sends selected project launches through Pump.fun and tracks the resulting token and canonical market. Pump.fun currently supports SOL- or USDC-denominated launches; the repository does not support pairing a launch directly with the PUMP token. Successful bonding curves graduate automatically to a canonical PumpSwap pool.</p><p>IPO does not currently create Pump.fun coins, route trades, collect creator fees, or control PumpSwap liquidity.</p><Status /></section>
-      <section id="compare"><p className="kicker">IPO Compare</p><h2>Address-based token comparison.</h2><p>The proposed comparison surface uses exact Solana addresses and timestamped sources to show price, liquidity, holder concentration, launch source, contract signals, and disclosed launch terms. No market-data adapter is connected, so comparison inputs remain disabled and unavailable values are never shown as zero.</p><Status /></section>
-      <section id="ipo-token"><p className="kicker">IPO token</p><h2>Optional ecosystem use after mint.</h2><p>A future IPO token may be launched through Pump.fun. A separate genesis claim for verified Launch Pass holders is proposed, but token amount, snapshot, exclusions, vesting, claim authority, and contract are unresolved. Holding a pass does not currently create an IPO-token entitlement.</p><p>A future policy may direct a disclosed portion of realized platform revenue to open-market IPO purchases and token burns. This is not revenue sharing, a dividend, a holder payment, or a promise of price support. The percentage is unset, and each purchase and burn must be proven on-chain.</p><Status /></section>
-      <section id="signal"><p className="kicker">IPO Signal</p><h2>Reviewed contribution, not engagement farming.</h2><p>Proposed campaigns can accept original research, educational explainers, thoughtful launch coverage, creative campaign assets, community answers, and product feedback. Every campaign needs an objective, deadline, eligibility rules, reviewer, funded reward, moderation, and anti-abuse review.</p><p>No follower-count leaderboard, automatic rewards for likes, spam missions, or paid price promotion. Contribution credit may unlock nonfinancial tools or cosmetics after a policy is published; it does not increase allocation weight.</p><Status /></section>
-      <section id="activity"><p className="kicker">Activity</p><h2>One ledger, distinct financial states.</h2><p>The activity layer will separately record launch creation, reserve funding, snapshot finalization, allocation, claim, creator-fee receipt, IPO purchase, token burn, cancellation, and refund. A connected wallet, requested signature, social post, or announced policy is not proof of completion.</p><Status /></section>
-      <section id="disclosures"><p className="kicker">Disclosures</p><h2>Project tokens are not company stock.</h2><p>IPO currently supports a Launch Pass concept and proposed project-token launch workflows. It does not provide substantiated issuer-backed pre-IPO securities inventory. “IPO” means Initial Pump Offering in this product and must not be interpreted as a regulated public offering.</p><p>No launch, allocation, drop, listing, liquidity, buyback, burn, dollar value, return, or availability is guaranteed. Token launches and trading carry substantial risk.</p></section>
-      <section id="faq"><p className="kicker">FAQ</p><h2>Short answers.</h2><div className="faqList"><article><h3>Can I mint now?</h3><p>{mintConfigured ? 'The site has a public configuration and verifies its economics before enabling mint.' : 'No. The public on-chain configuration is missing, so the interface remains in preview mode.'}</p></article><article><h3>Do I need IPO to mint?</h3><p>No. Minting is 0.044 SOL plus network and account costs.</p></article><article><h3>Does every project owe holders 10%?</h3><p>No. The {launchConfig.holderPoolPercent}% and 10% reserves are proposed templates. A project must select, fund, and disclose its own round before any eligibility exists.</p></article><article><h3>Is IPO paired with PUMP?</h3><p>No. Pump.fun documents SOL and USDC launch pairs. No PUMP pair or Pump integration is implemented here.</p></article><article><h3>Are buybacks guaranteed?</h3><p>No. The policy, revenue percentage, contracts, and wallets are not finalized.</p></article><article><h3>Is this company equity?</h3><p>No. The current product concerns NFTs and project tokens, not company shares.</p></article></div></section>
-    </article></div>
-  </main>;
+  const sections = [
+    "overview",
+    "economics",
+    "ownership",
+    "assets",
+    "rooms",
+    "launches",
+    "fee-routing",
+    "rewards",
+    "upgrades",
+    "status",
+    "disclosures",
+  ];
+  return (
+    <main className="docsPage">
+      <header className="siteHeader">
+        <Link className="wordmark" href="/">
+          <span>IPO</span>
+          <small>PRODUCT DOCS</small>
+        </Link>
+        <nav>
+          <Link href="/">Explore</Link>
+          <a href="#rooms">Rooms</a>
+          <a href="#status">Status</a>
+        </nav>
+        <div className="headerActions">
+          <Link href="/">Back to app</Link>
+        </div>
+      </header>
+      <header className="docsHero shell">
+        <p className="eyebrow">INITIAL PUMP OFFERING</p>
+        <h1>Terms before transactions.</h1>
+        <p>
+          Desk economics, ownership cutoffs, asset policy, launch configuration,
+          and the receipts required before any financial action can be described
+          as complete.
+        </p>
+      </header>
+      <div className="docsLayout shell">
+        <aside className="docsNav">
+          {sections.map((section) => (
+            <a href={`#${section}`} key={section}>
+              {section.replaceAll("-", " ")}
+            </a>
+          ))}
+        </aside>
+        <article className="docsContent">
+          <section id="overview">
+            <p className="eyebrow">OVERVIEW</p>
+            <h2>Desk membership, sourced research, optional launches.</h2>
+            <p>
+              IPO combines 1,212 desk NFTs, IPO Watch research rooms, and
+              creator tools for optional project-token launches. The journey is:
+              discover a sourced thesis, follow its room, optionally participate
+              in its community token, and verify actual receipts and
+              distributions.
+            </p>
+            <p>
+              Project tokens are not company IPOs. Third-party tokenized pre-IPO
+              exposure requires explicit provider and rights verification.
+            </p>
+          </section>
+          <section id="economics">
+            <p className="eyebrow">PROPOSED V1 MINT POLICY</p>
+            <h2>
+              {launchConfig.supply.toLocaleString()} desks at{" "}
+              {launchConfig.mintPriceSol.toFixed(2)} SOL.
+            </h2>
+            <div className="docRows">
+              <div>
+                <strong>Mint-funded assets</strong>
+                <p>
+                  80% or 0.096 SOL per desk, attributable to that desk until
+                  purchased or claimed under published rules.
+                </p>
+              </div>
+              <div>
+                <strong>Operations</strong>
+                <p>
+                  20% or 0.024 SOL per desk for development, infrastructure, and
+                  operations.
+                </p>
+              </div>
+              <div>
+                <strong>Extra costs</strong>
+                <p>
+                  Network and account-creation costs are disclosed separately.
+                </p>
+              </div>
+              <div>
+                <strong>$IPO requirement</strong>
+                <p>None. No token lock or burn is required to mint.</p>
+              </div>
+              <div>
+                <strong>Full-supply scenario</strong>
+                <p>
+                  145.44 SOL gross, 116.352 SOL initial assets, and 29.088 SOL
+                  operations. This is a scenario, not funds raised.
+                </p>
+              </div>
+            </div>
+            <Flag live={mintConfigured} blocked={!mintConfigured} />
+            <p>
+              {mintConfigured
+                ? "The client verifies deployed supply, price, and zero-token requirement before minting."
+                : "The revised source splits each mint between separate asset and operations treasuries, but it is not deployed and public config is missing. Minting remains disabled."}
+            </p>
+          </section>
+          <section id="ownership">
+            <p className="eyebrow">OWNERSHIP AND EPOCHS</p>
+            <h2>Earned balances stay; future rights move.</h2>
+            <p>
+              One desk equals one base participation unit. Initial desk capital
+              stays attributable to that desk. Revenue rewards accrue to
+              eligible owners by finalized epoch. Selling a desk transfers
+              participation starting with the next epoch; rewards finalized for
+              the previous owner remain claimable by that owner.
+            </p>
+            <p>
+              The integer epoch adapter, rounding, excluded-address handling,
+              transfer cutoff, and duplicate-claim protection are tested
+              locally. A production indexer, accumulator/vault, ownership
+              proofs, and claim program are not deployed.
+            </p>
+            <Flag />
+          </section>
+          <section id="assets">
+            <p className="eyebrow">ASSET REGISTRY</p>
+            <h2>No address, no purchase.</h2>
+            <p>
+              An asset record must include exact chain and mint, provider,
+              category, backing and rights documents, transfer constraints,
+              token program and extensions, authorities, supported quote route,
+              liquidity limits, purchase status, and verification time.
+            </p>
+            <p>
+              Project/community tokens, third-party tokenized private-company
+              exposure, and issuer-authorized securities are distinct
+              categories. IPO currently has no purchase-enabled tokenized
+              pre-IPO asset. Failed quotes retain visible unspent capital; the
+              system never silently substitutes another asset.
+            </p>
+            <Flag blocked />
+          </section>
+          <section id="rooms">
+            <p className="eyebrow">IPO ROOMS / IPO WATCH</p>
+            <h2>Research can exist without a token.</h2>
+            <p>
+              Room drafts capture a thesis, dated source, catalyst with
+              confirmed/reported/speculative status, invalidation criteria,
+              author identity, and sponsorship or financial-interest disclosure.
+              Local drafts work now.
+            </p>
+            <p>
+              Publishing, preserved edit history, authentication, watchlists,
+              bookmarks, alerts, discussion, moderation, and
+              contribution-campaign receipts require backend services. No fake
+              rooms or engagement numbers appear while those services are
+              unavailable.
+            </p>
+            <Flag />
+          </section>
+          <section id="launches">
+            <p className="eyebrow">OPTIONAL PROJECT-TOKEN LAUNCHES</p>
+            <h2>A useful room can add a launch.</h2>
+            <p>
+              The six-step builder records token metadata, reviewed reward
+              asset, fee shares, optional initial buy, full review, and
+              execution readiness. Drafts persist through interruption. Pump
+              create_v2 can compose creation with an initial buy; successful
+              bonding curves graduate to PumpSwap.
+            </p>
+            <p>
+              Metadata storage, final recipients, Pump SDK transaction
+              execution, creator authorization, and post-transaction chain-state
+              verification are not connected. A saved launch packet is not a
+              launched token.
+            </p>
+            <Flag />
+          </section>
+          <section id="fee-routing">
+            <p className="eyebrow">THIRD-PARTY CREATOR-FEE TEMPLATE</p>
+            <h2>60 / 15 / 15 / 10.</h2>
+            <div className="docRows">
+              <div>
+                <strong>Coin-holder purchases</strong>
+                <p>60% of creator fees actually collected.</p>
+              </div>
+              <div>
+                <strong>Desk-holder purchases</strong>
+                <p>15%.</p>
+              </div>
+              <div>
+                <strong>Creator</strong>
+                <p>15%.</p>
+              </div>
+              <div>
+                <strong>Operations</strong>
+                <p>10%.</p>
+              </div>
+            </div>
+            <p>
+              This is configurable and applies to creator-fee receipts, not
+              total volume or all trading fees. It cannot redirect an existing
+              coin without creator authorization. Routing is verified only after
+              reading chain state.
+            </p>
+            <p>
+              For IPO’s own token, the planned policy is 100% of creator-fee
+              receipts actually received by the project toward
+              desk-holder purchases, with execution costs funded separately by
+              operations. It remains planned.
+            </p>
+          </section>
+          <section id="rewards">
+            <p className="eyebrow">ACCOUNTING STATES</p>
+            <h2>Contributed is not earned.</h2>
+            <p>
+              Initial capital waiting, mint-funded assets purchased, recurring
+              revenue awaiting investment, revenue-funded rewards, claimable
+              balances, claimed balances, and operations are separate. Mint
+              capital is not yield or recurring revenue. No APR, redemption
+              floor, principal protection, or resale guarantee exists.
+            </p>
+            <p>
+              Receipt deduplication, integer splits, per-desk allocation, dust
+              preservation, purchase-failure retention, and duplicate claims are
+              tested. Production collection, purchase, and claim infrastructure
+              remains blocked.
+            </p>
+          </section>
+          <section id="upgrades">
+            <p className="eyebrow">OPTIONAL $IPO UTILITY</p>
+            <h2>Tools and personalization, not payout multipliers.</h2>
+            <p>
+              Future upgrades may include alerts, research organization,
+              analytics, exports, personalization, and artwork. Basic holdings,
+              claims, receipts, and disclosures stay available to every entitled
+              user. Prices, burns, and payment are not finalized or enabled.
+            </p>
+          </section>
+          <section id="status">
+            <p className="eyebrow">IMPLEMENTATION STATUS</p>
+            <h2>Available, preview, and blocked.</h2>
+            <div className="statusRows">
+              {productFeatures.map((feature) => (
+                <div key={feature.name}>
+                  <Flag
+                    live={feature.status === "available"}
+                    blocked={feature.status === "blocked"}
+                  />
+                  <div>
+                    <strong>{feature.name}</strong>
+                    <p>{feature.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section id="disclosures">
+            <p className="eyebrow">DISCLOSURES</p>
+            <h2>Exposure is not equity by default.</h2>
+            <p>
+              Tokenized private-company exposure may be a third-party instrument
+              with contractual, eligibility, transfer, liquidity, and
+              counterparty constraints. It must not be described as company
+              stock, voting rights, official affiliation, or guaranteed IPO
+              access unless issuer-supported documentation proves those exact
+              rights.
+            </p>
+            <p>
+              No launch, asset availability, valuation, reward, claim value,
+              liquidity, return, acceptance, or resale is guaranteed. Passing
+              tests is not a smart-contract audit.
+            </p>
+          </section>
+        </article>
+      </div>
+    </main>
+  );
 }

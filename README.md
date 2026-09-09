@@ -1,92 +1,33 @@
-# IPO
+# IPO — Initial Pump Offering
 
-IPO, short for Initial Pump Offering, is a curated Solana launch and discovery product with 1,212 Metaplex Core Launch Pass memberships.
+IPO combines Solana desk membership, sourced IPO Watch research rooms, and optional project-token launch tools. The interface separates mint-funded asset capital from revenue-funded rewards and distinguishes receipts, purchases, allocations, claims, and operations.
 
-## Confirmed product defaults
+## Desk defaults
 
-- Supply: `1,212`
-- Mint price: `0.044 SOL` per pass, plus network and account costs
-- Mint token requirement: none
-- Upgrade currency: `$IPO`, after mint only
-- Upgrade levels: five configurable membership levels
+- Supply: `1,212` Metaplex Core NFTs
+- Mint price: `0.12 SOL` per desk plus network/account costs
+- `$IPO` required to mint: none
+- Reward participation: equal base weight per eligible desk
+- Proposed mint split: `80%` desk-attributed asset capital / `20%` operations
+- Gross sellout scenario: `145.44 SOL`; this is not money already raised
 
-The current repository supports an architectural Launch Pass collection and a SOL-only mint program. It does not substantiate issuer-backed pre-IPO securities access. Project submissions, Pump.fun launches, token comparison, 3.3%/10% holder drops, IPO claims, and buyback/burn execution are documented as planned and are not executable.
+All product economics are centralized in `work/site/product-config.json`. The client refuses to enable minting if deployed configuration differs from the expected supply, SOL price, or zero-token requirement.
 
-## Contents
+## Status
 
-- `work/site` - Next/Vinext product site, generated NFT collection, and Core helpers
-- `work/program` - Anchor program for SOL-only minting, configurable upgrades, and treasury handling
-- `work/scripts` - launch setup helpers
-- `work/PRODUCT_SPEC.md` - confirmed behavior, planned features, and unresolved launch decisions
-- `work/LAUNCH_RUNBOOK.md` - deployment checklist and current public addresses
+Available locally: sourced Room drafts, launch/support application drafts, fee-share validation, deterministic artwork, wallet connection, revised Metaplex Core mint source with atomic 80/20 routing, transaction states, integer epoch accounting, receipt deduplication, equal desk allocation, and documentation.
 
-Private keypairs and local environment files are intentionally ignored.
+Not production-connected: Pump execution, metadata storage, recipient fee accounts, creator-fee indexing, reward purchases, reward vault/claims, ownership indexing, curated submission backend, presale escrow, settlements, refunds, and activity indexing. Production actions remain disabled rather than represented with fake data.
 
-## Site
+## Commands
 
 ```bash
-cd work/site
 npm install
-npm run generate:collection
 npm run dev:vercel -- --port 3001
-```
-
-Open `http://localhost:3001/`.
-
-Production checks:
-
-```bash
-cd work/site
 npm run lint
-npm run typecheck
+npm --workspace sites-project run typecheck
 npm test
 npm run build:vercel
 ```
 
-## Vercel
-
-This repository is configured for Vercel from the repository root.
-
-```bash
-npm ci
-npm run build:vercel
-```
-
-Manual import settings:
-
-```text
-Framework Preset: Next.js
-Install Command: npm ci
-Build Command: npm run build:vercel
-Output Directory: work/site/.next
-```
-
-## Collection
-
-The deterministic generator creates:
-
-- `1,212` metadata files
-- `6,060` SVG images: five upgrade stages for every Launch Pass
-- A fixed base rarity and identity for every serial
-- Architectural research workspaces with no external image dependencies
-
-```bash
-cd work/site
-npm run generate:collection
-npm test
-```
-
-## Program
-
-```bash
-cd work/program
-npm install
-NO_DNA=1 anchor build
-cargo test
-```
-
-The compiled program artifact is written to `work/program/target/deploy/program.so`. The `target/` directory is ignored, so rebuild before deployment.
-
-## Launch
-
-Read `work/LAUNCH_RUNBOOK.md` before funding or deployment. Do not commit private keypairs or `.env.local`.
+See `work/PRODUCT_SPEC.md` and `work/LAUNCH_RUNBOOK.md` for product boundaries and launch requirements.
