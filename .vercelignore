@@ -1,0 +1,7 @@
+node_modules
+**/node_modules
+work/program/target
+work/site/.next
+work/site/dist
+outputs
+**/.DS_Store
