@@ -36,7 +36,7 @@ export async function GET(
   const serial = match ? Number(match[1]) : 0;
 
   if (!match || serial < 1 || serial > productConfig.supply) {
-    return NextResponse.json({ error: 'Unknown IPO Launch Pass' }, { status: 404 });
+    return NextResponse.json({ error: 'Unknown IPO Desk' }, { status: 404 });
   }
 
   const levelValue = Number(request.nextUrl.searchParams.get('level') ?? '0');

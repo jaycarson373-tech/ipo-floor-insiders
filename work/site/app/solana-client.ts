@@ -107,7 +107,7 @@ export async function mintDesk(provider: WalletProvider, onSubmitted?: (signatur
   const connection = getConnection();
   const state = await fetchLaunchState(connection);
   if (state.paused) throw new Error('Minting is currently paused.');
-  if (state.minted >= state.totalSupply) throw new Error(`All ${EXPECTED_SUPPLY.toLocaleString()} Launch Passes are minted.`);
+  if (state.minted >= state.totalSupply) throw new Error(`All ${EXPECTED_SUPPLY.toLocaleString()} IPO Desks are minted.`);
 
   const buyer = provider.publicKey;
   const balance = await connection.getBalance(buyer, 'confirmed');

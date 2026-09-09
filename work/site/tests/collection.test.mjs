@@ -24,7 +24,7 @@ test('collection matches the centralized product configuration', async () => {
   assert.deepEqual(product.draftMintCapitalBps, { rewardAssets: 8_000, operations: 2_000 });
 });
 
-test('collection contains every complete deterministic Launch Pass', async () => {
+test('collection contains every complete deterministic IPO Desk', async () => {
   const metadataFiles = (await readdir(metadataDir)).filter((file) => file.endsWith('.json')).sort();
   const levelOneHashes = new Set();
   assert.equal(metadataFiles.length, product.supply);

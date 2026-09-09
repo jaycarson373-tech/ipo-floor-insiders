@@ -121,9 +121,9 @@ async function generateDesk(serial) {
   const t = traitsFor(serial);
   for (let level = 1; level <= product.maxLevels; level += 1) await writeFile(new URL(`${id}-L${level}.svg`, imageDir), artwork(serial, level));
   const metadata = {
-    name: `IPO Launch Pass #${serialLabel(serial)}`,
+    name: `IPO Desk #${serialLabel(serial)}`,
     symbol: 'IPO',
-    description: 'A collectible IPO Launch Pass represented by an architectural research desk. Holder-drop and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.',
+    description: 'A collectible IPO desk represented by an architectural research workspace. Holder rewards and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.',
     image: `images/${id}-L1.svg`,
     attributes: [
       { trait_type: 'Rarity', value: t.rarity },
@@ -154,9 +154,9 @@ await mkdir(metadataDir, { recursive: true });
 for (let serial = 1; serial <= product.supply; serial += 1) await generateDesk(serial);
 
 await writeFile(new URL('manifest.json', collectionDir), `${JSON.stringify({
-  name: 'IPO Launch Pass', symbol: 'IPO', standard: 'Metaplex Core', supply: product.supply,
+  name: 'IPO Desks', symbol: 'IPO', standard: 'Metaplex Core', supply: product.supply,
   mintPrice: { sol: product.mintPriceSol, lamports: product.mintPriceLamports, ipo: 0 }, rewardParticipation: 'Equal base participation per eligible desk; terms published per program.',
   upgradeLevels: levels, assetCategory: 'IPO-themed project launch membership and research', securitiesAccess: false,
   artDirection: 'Architectural launch consoles with a consistent camera, restrained materials, and crisp pixel-grid detail.',
 }, null, 2)}\n`);
-console.log(`Generated ${product.supply} IPO Launch Passes with ${product.maxLevels} architectural art stages each.`);
+console.log(`Generated ${product.supply} IPO Desks with ${product.maxLevels} architectural art stages each.`);
