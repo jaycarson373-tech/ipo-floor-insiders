@@ -38,63 +38,63 @@
       "id": 421,
       "name": "The Intern",
       "rarity": "STANDARD",
-      "source": "../pumpios-preview-standard-v1.png",
+      "source": "../pumpios-preview-standard-v2.png",
       "quadrant": 0
     },
     {
       "id": 187,
       "name": "The Analyst",
       "rarity": "STANDARD",
-      "source": "../pumpios-preview-standard-v1.png",
+      "source": "../pumpios-preview-standard-v2.png",
       "quadrant": 1
     },
     {
       "id": 333,
       "name": "The Market Maker",
       "rarity": "RARE",
-      "source": "../pumpios-preview-standard-v1.png",
+      "source": "../pumpios-preview-standard-v2.png",
       "quadrant": 2
     },
     {
       "id": 674,
       "name": "The Bookrunner",
       "rarity": "RARE",
-      "source": "../pumpios-preview-standard-v1.png",
+      "source": "../pumpios-preview-standard-v2.png",
       "quadrant": 3
     },
     {
       "id": 808,
       "name": "The Quant",
       "rarity": "SUPER RARE",
-      "source": "../pumpios-preview-rare-v1.png",
+      "source": "../pumpios-preview-rare-v2.png",
       "quadrant": 0
     },
     {
       "id": 999,
       "name": "The Whale",
       "rarity": "SUPER RARE",
-      "source": "../pumpios-preview-rare-v1.png",
+      "source": "../pumpios-preview-rare-v2.png",
       "quadrant": 1
     },
     {
       "id": 777,
       "name": "The Printer",
       "rarity": "LEGENDARY",
-      "source": "../pumpios-preview-rare-v1.png",
+      "source": "../pumpios-preview-rare-v2.png",
       "quadrant": 2
     },
     {
       "id": 1199,
       "name": "The Golden Pump",
       "rarity": "LEGENDARY",
-      "source": "../pumpios-preview-rare-v1.png",
+      "source": "../pumpios-preview-rare-v2.png",
       "quadrant": 3
     },
     {
       "id": 1,
       "name": "The Chairman",
       "rarity": "CHAIRMAN",
-      "source": "../pumpio-chairman-reference.jpg"
+      "source": "../pumpio-chairman-v2.png"
     }
   ],
   "metadataFinalized": false,
