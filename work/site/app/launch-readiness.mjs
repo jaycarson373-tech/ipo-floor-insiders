@@ -18,10 +18,20 @@ function isHttpsUrl(value) {
   }
 }
 
+function isAllowedRpc(value, allowLocal) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || (allowLocal && url.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(url.hostname));
+  } catch {
+    return false;
+  }
+}
+
 export function evaluateStaticLaunchReadiness(product, env, { requireMainnet = true } = {}) {
   const checks = [];
   const feeTotal = Object.values(product.defaultFeeSharesBps ?? {}).reduce((sum, value) => sum + value, 0);
   const mintSplitTotal = Object.values(product.draftMintCapitalBps ?? {}).reduce((sum, value) => sum + value, 0);
+  const revenueTotal = Object.values(product.platformRevenueBps ?? {}).reduce((sum, value) => sum + value, 0);
 
   add(checks, 'supply', product.supply === 1_200 ? 'pass' : 'fail', `Configured supply: ${product.supply ?? 'missing'}`);
   add(
@@ -32,6 +42,25 @@ export function evaluateStaticLaunchReadiness(product, env, { requireMainnet = t
   );
   add(checks, 'mint-split', mintSplitTotal === 10_000 ? 'pass' : 'fail', `Mint allocation total: ${mintSplitTotal} bps`);
   add(checks, 'fee-split', feeTotal === 10_000 ? 'pass' : 'fail', `Creator-fee template total: ${feeTotal} bps`);
+  add(
+    checks,
+    'platform-revenue-policy',
+    revenueTotal === 10_000
+      && product.platformRevenueBps?.holderRewards === 7_000
+      && product.platformRevenueBps?.ipoBuybackBurn === 2_000
+      && product.platformRevenueBps?.protocolOperations === 1_000
+      ? 'pass'
+      : 'fail',
+    `Platform revenue policy total: ${revenueTotal} bps`,
+  );
+  add(
+    checks,
+    'platform-revenue-execution',
+    product.platformRevenueExecutionEnabled === false ? 'pass' : 'fail',
+    product.platformRevenueExecutionEnabled === false
+      ? 'Revenue execution is disabled until its external rails are verified.'
+      : 'Revenue execution must remain disabled until custody, swaps, snapshots, distributions, and burns are verified.',
+  );
   add(
     checks,
     'upgrade-payments',
@@ -55,8 +84,8 @@ export function evaluateStaticLaunchReadiness(product, env, { requireMainnet = t
   add(
     checks,
     'rpc',
-    isHttpsUrl(env.NEXT_PUBLIC_SOLANA_RPC_URL ?? '') ? 'pass' : 'fail',
-    env.NEXT_PUBLIC_SOLANA_RPC_URL ? 'RPC URL is present and uses HTTPS.' : 'RPC URL is missing.',
+    isAllowedRpc(env.NEXT_PUBLIC_SOLANA_RPC_URL ?? '', !requireMainnet) ? 'pass' : 'fail',
+    env.NEXT_PUBLIC_SOLANA_RPC_URL ? (requireMainnet ? 'RPC URL is present and uses HTTPS.' : 'RPC URL is valid for rehearsal.') : 'RPC URL is missing.',
   );
   add(
     checks,

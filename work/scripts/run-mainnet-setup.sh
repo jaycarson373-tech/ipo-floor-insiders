@@ -7,7 +7,7 @@ ASSET_TREASURY_WALLET="${ASSET_TREASURY_WALLET:-7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY
 
 SOLANA_RPC_URL=https://api.mainnet-beta.solana.com "$ROOT/scripts/check-funding.sh"
 echo
-echo "Program:  9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU"
+echo "Program:  $(NO_DNA=1 solana-keygen pubkey "$ROOT/keys/program.json")"
 echo "Treasury: ${TREASURY_WALLET:-5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875}"
 echo "Asset treasury: $ASSET_TREASURY_WALLET"
 if [[ "${CONFIRM_MAINNET:-}" != "IPO" ]]; then

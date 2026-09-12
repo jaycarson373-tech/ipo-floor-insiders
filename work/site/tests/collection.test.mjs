@@ -17,8 +17,15 @@ test('Pumpios target economics match the centralized product configuration', () 
   assert.equal(product.upgradePolicy.levels, 10);
   assert.equal(product.upgradePolicy.paymentEnabled, false);
   assert.deepEqual(product.draftMintCapitalBps, { rewardAssets: 10_000, operations: 0 });
+  assert.deepEqual(product.platformRevenueBps, { holderRewards: 7_000, ipoBuybackBurn: 2_000, protocolOperations: 1_000 });
+  assert.equal(product.platformRevenueExecutionEnabled, false);
   assert.equal(manifest.supply, product.supply);
   assert.deepEqual(manifest.mintPrice, { sol: 0.12, lamports: 120_000_000, ipo: 0 });
+});
+
+test('platform revenue policy conserves 100% and remains execution-gated', () => {
+  assert.equal(Object.values(product.platformRevenueBps).reduce((sum, value) => sum + value, 0), 10_000);
+  assert.equal(product.platformRevenueExecutionEnabled, false);
 });
 
 test('preview rarity plan totals exactly 1,200 without claiming finalized metadata', () => {

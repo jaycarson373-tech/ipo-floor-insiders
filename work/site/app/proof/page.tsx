@@ -1,5 +1,5 @@
 import { ArrowUpRight, CircleAlert, ReceiptText, ShieldCheck } from "lucide-react";
-import { launchConfig, mintEnvironmentConfigured } from "../launch-config";
+import { launchConfig, publicMintConfigured } from "../launch-config";
 
 const rows = [
   ["MINT PROGRAM", launchConfig.programId, "SOURCE ID ONLY"],
@@ -20,7 +20,7 @@ export default function ProofPage() {
     <main className="pioPage pioProofPage">
       <header className="pioPageHero dark">
         <div><p className="pioEyebrow">PROOF CENTER</p><h1>EVERYTHING ON THE BOOKS.</h1><p>Contracts, tokens, collections, revenue receipts, reward purchases, distributions, burns, and snapshots belong in one public ledger.</p></div>
-        <div className="pioProofSeal"><ShieldCheck /><strong>{mintEnvironmentConfigured ? "CONFIGURED" : "MIGRATION BLOCKED"}</strong><span>PUBLIC MINT STATUS</span></div>
+        <div className="pioProofSeal"><ShieldCheck /><strong>{publicMintConfigured ? "RELEASE CONFIGURED" : "RELEASE GATED"}</strong><span>PUBLIC MINT STATUS</span></div>
       </header>
       <section className="pioProofTable">
         <div className="pioProofTableHead"><span>RESOURCE</span><span>ADDRESS / RECEIPT</span><span>STATE</span></div>

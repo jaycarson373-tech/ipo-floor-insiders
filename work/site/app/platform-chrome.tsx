@@ -2,11 +2,12 @@
 
 import {
   BookOpen,
-  Flame,
+  ChartNoAxesCombined,
   Gift,
-  Layers3,
+  Home,
   LogOut,
   Menu,
+  NotebookTabs,
   Rocket,
   ShieldCheck,
   Sparkles,
@@ -19,16 +20,16 @@ import type { ReactNode } from "react";
 import { useWallet } from "./wallet-context";
 
 const nav = [
-  { href: "/", label: "IPO", icon: Flame },
-  { href: "/pumpios", label: "Pumpios", icon: Sparkles },
-  { href: "/leveling", label: "Leveling", icon: Layers3 },
+  { href: "/", label: "IPO", icon: Home },
+  { href: "/launchpad", label: "Market", icon: ChartNoAxesCombined },
+  { href: "/launch", label: "Launch", icon: Rocket },
+  { href: "/reputation", label: "Reputation", icon: NotebookTabs },
   { href: "/rewards", label: "Rewards", icon: Gift },
-  { href: "/launchpad", label: "Launchpad", icon: Rocket },
+  { href: "/pumpios", label: "Pumpios", icon: Sparkles },
   { href: "/proof", label: "Proof", icon: ShieldCheck },
-  { href: "/mint", label: "Mint", icon: WalletCards },
 ];
 
-const mobileNav = nav.filter((item) => ["/", "/pumpios", "/launchpad", "/mint"].includes(item.href));
+const mobileNav = nav.filter((item) => ["/", "/launchpad", "/launch", "/reputation"].includes(item.href));
 
 export default function PlatformChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();

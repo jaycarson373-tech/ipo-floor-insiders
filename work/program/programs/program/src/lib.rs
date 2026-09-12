@@ -5,7 +5,7 @@ use anchor_lang::solana_program::{
 };
 use anchor_spl::token::{self, burn, Burn, Mint, Token, TokenAccount};
 
-declare_id!("9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU");
+declare_id!("GMSArcjhrpxt6JkqwmJX47tbuFH6PtdH21JARt3hBUnm");
 
 #[program]
 pub mod ipo_program {

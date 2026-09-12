@@ -15,11 +15,15 @@ NO_DNA=1 solana balance "$DEPLOYER_ADDRESS" --url "$RPC_URL"
 if [[ -f "$PROGRAM_BINARY" ]]; then
   PROGRAM_BYTES="$(stat -f%z "$PROGRAM_BINARY")"
   PROGRAM_DATA_BYTES="$((PROGRAM_BYTES + 45))"
+  RENT_JSON="$(NO_DNA=1 solana rent "$PROGRAM_DATA_BYTES" --lamports --output json --url "$RPC_URL")"
+  RENT_LAMPORTS="$(node -e "const value=JSON.parse(process.argv[1]);process.stdout.write(String(value.rentExemptMinimumLamports))" "$RENT_JSON")"
+  RECOMMENDED_LAMPORTS="$((RENT_LAMPORTS * 2 + 100000000))"
   echo
   echo "Compiled program: $PROGRAM_BYTES bytes"
   echo "Known program-data rent floor:"
   NO_DNA=1 solana rent "$PROGRAM_DATA_BYTES" --url "$RPC_URL"
-  echo "This floor excludes the config, collection, temporary deployment buffer, and transaction fees."
+  printf 'Recommended peak deployment funding: %.9f SOL\n' "$(node -e "process.stdout.write(String(Number(process.argv[1])/1e9))" "$RECOMMENDED_LAMPORTS")"
+  echo "The recommendation includes a same-size temporary buffer and 0.1 SOL headroom for the program, config, collection, and fees. Unused buffer rent is recoverable."
 else
   echo
   echo "Program binary is missing. Run the verified build before funding or deployment."

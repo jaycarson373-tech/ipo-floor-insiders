@@ -10,14 +10,15 @@ IPO means Initial Pump Offering: a Solana launchpad for structured presale prepa
 - Mint allocation: `100%` to Pumpio-attributed mint-funded asset capital in the revised source
 - Base participation: equal per eligible Pumpio when an offering publishes a funded holder program
 - Levels: ten intended product/art stages; prices unset and payments disabled
+- Platform revenue policy: `70%` eligible Pumpio-holder rewards / `20%` `$IPO` buyback and burn / `10%` protocol operations
 
 All target economics are centralized in `work/site/product-config.json`. The previous source and frontend used a 1,212-item collection. Changing this file does not change any deployed contract; production minting remains disabled until the revised program/config and Pumpios Core collection are deployed and verified.
 
 ## Product status
 
-Implemented locally: responsive IPO/Pumpios frontend, approved collection-preview art, rarity filtering and search, Pumpio detail previews, launch-draft persistence, wallet detection, deployment validation, transaction lifecycle, integer reward accounting, receipt deduplication, and a migration-blocked mint interface.
+Implemented locally: responsive IPO/Pumpios frontend, approved collection-preview art, deterministic metadata and generative image endpoints for all 1,200 IDs, rarity filtering and search, Pumpio detail previews, launch-draft persistence, wallet detection, deployment validation, transaction lifecycle, integer reward accounting, receipt deduplication, and a release-gated mint interface. The program has completed a local-fork deploy, Core collection initialization, signed mint, exact receipt, pause, insufficient-balance, and duplicate-submission rehearsal.
 
-Preview only: the final 1,200-item art/metadata set, ten-level upgrades, holder snapshots, PUMP rewards, $IPO buyback/burn, revenue routing, offering cards, and proof ledgers.
+Preview only: final art/metadata freeze and permanent storage, ten-level upgrades, holder snapshots, the 70/20/10 revenue execution, offering cards, creator reputation scores, and proof ledgers.
 
 Blocked externally: finalized metadata, Metaplex Core collection, revised program/config deployment, production RPC/address set, Pump integration, creator-fee indexer, swap/reward engine, ownership snapshots, claims/distributions, presale escrow, refunds, and security review.
 

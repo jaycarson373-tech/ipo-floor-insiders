@@ -3,7 +3,7 @@ import productConfig from '../product-config.json';
 export const launchConfig = {
   cluster: process.env.NEXT_PUBLIC_SOLANA_CLUSTER ?? 'devnet',
   rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? 'https://api.devnet.solana.com',
-  programId: process.env.NEXT_PUBLIC_IPO_PROGRAM_ID ?? '9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU',
+  programId: process.env.NEXT_PUBLIC_IPO_PROGRAM_ID ?? 'GMSArcjhrpxt6JkqwmJX47tbuFH6PtdH21JARt3hBUnm',
   config: process.env.NEXT_PUBLIC_IPO_CONFIG ?? '',
   treasury: process.env.NEXT_PUBLIC_TREASURY_WALLET ?? '',
   assetTreasury: process.env.NEXT_PUBLIC_ASSET_TREASURY_WALLET ?? '',
@@ -16,6 +16,8 @@ export const launchConfig = {
   maxLevels: productConfig.maxLevels,
   defaultFeeSharesBps: productConfig.defaultFeeSharesBps,
   draftMintCapitalBps: productConfig.draftMintCapitalBps,
+  platformRevenueBps: productConfig.platformRevenueBps,
+  platformRevenueExecutionEnabled: productConfig.platformRevenueExecutionEnabled,
   upgradePolicy: productConfig.upgradePolicy,
   pumpExecutionEnabled: process.env.NEXT_PUBLIC_PUMP_EXECUTION_ENABLED === 'true',
   publicMintEnabled: process.env.NEXT_PUBLIC_PUBLIC_MINT_ENABLED === 'true',

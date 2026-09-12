@@ -79,6 +79,12 @@ async function runNetworkChecks(checks, config, values) {
     return;
   }
 
+  const [derivedConfig] = PublicKey.findProgramAddressSync(
+    [Buffer.from('config'), state.authority.toBuffer()],
+    programId,
+  );
+  add(checks, 'config-pda', derivedConfig.equals(configAddress) ? 'pass' : 'fail', derivedConfig.equals(configAddress) ? 'Config address is the canonical authority PDA.' : 'Config address is not the canonical authority PDA.');
+
   const addressChecks = [
     ['operations-treasury', state.treasury, values.NEXT_PUBLIC_TREASURY_WALLET],
     ['asset-treasury', state.assetTreasury, values.NEXT_PUBLIC_ASSET_TREASURY_WALLET],
@@ -99,17 +105,26 @@ async function runNetworkChecks(checks, config, values) {
   try {
     const collectionAccount = await connection.getAccountInfo(state.coreCollection, 'confirmed');
     add(checks, 'core-collection-owner', collectionAccount?.owner.equals(CORE_PROGRAM_ID) ? 'pass' : 'fail', collectionAccount?.owner.equals(CORE_PROGRAM_ID) ? 'Collection is owned by Metaplex Core.' : 'Collection is missing or is not owned by Metaplex Core.');
+    const authorityMatches = collectionAccount?.data.length >= 33
+      && collectionAccount.data[0] === 5
+      && new PublicKey(collectionAccount.data.subarray(1, 33)).equals(configAddress);
+    add(checks, 'core-update-authority', authorityMatches ? 'pass' : 'fail', authorityMatches ? 'Core collection update authority is the IPO config PDA.' : 'Core collection update authority does not match the IPO config PDA.');
   } catch (error) {
     add(checks, 'linked-accounts', 'fail', `Linked-account verification failed: ${cleanError(error)}`);
   }
 
   try {
-    const metadataUrl = `${normalizeUrl(values.NEXT_PUBLIC_METADATA_BASE_URL)}/IPO-0001?level=0`;
+    const metadataUrl = `${normalizeUrl(values.NEXT_PUBLIC_METADATA_BASE_URL)}/PUMPIO-0001?level=0`;
     const response = await fetch(metadataUrl, { signal: AbortSignal.timeout(10_000) });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const metadata = await response.json();
-    const valid = typeof metadata.name === 'string' && typeof metadata.image === 'string';
+    const valid = typeof metadata.name === 'string' && typeof metadata.image === 'string' && Array.isArray(metadata.attributes);
     add(checks, 'metadata-live', valid ? 'pass' : 'fail', valid ? 'Public Pumpio metadata resolves.' : 'Public Pumpio metadata is incomplete or still preview-only.');
+    if (valid) {
+      const imageResponse = await fetch(metadata.image, { signal: AbortSignal.timeout(10_000) });
+      const imageType = imageResponse.headers.get('content-type') ?? '';
+      add(checks, 'metadata-image', imageResponse.ok && imageType.startsWith('image/') ? 'pass' : 'fail', imageResponse.ok && imageType.startsWith('image/') ? 'Pumpio image resolves with an image content type.' : 'Pumpio image is missing or has an invalid content type.');
+    }
   } catch (error) {
     add(checks, 'metadata-live', 'fail', `Public metadata check failed: ${cleanError(error)}`);
   }

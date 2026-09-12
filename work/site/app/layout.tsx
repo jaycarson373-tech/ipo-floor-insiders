@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'IPO - Initial Pump Offering / Pumpios',
-  description: 'Initial Pump Offerings on Solana, powered by 1,200 capsule-headed underwriters called Pumpios.',
+  title: 'IPO - Initial Pump Offering on Solana',
+  description: 'A Solana marketplace for structured presales, fair launches, public creator records, and verifiable holder rewards.',
 };
 
 export default function RootLayout({

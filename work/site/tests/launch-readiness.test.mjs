@@ -40,6 +40,14 @@ test('static launch preflight blocks non-mainnet release configuration', () => {
   assert.equal(evaluateStaticLaunchReadiness(product, env, { requireMainnet: false }).ready, true);
 });
 
+test('static launch preflight permits localhost RPC only for rehearsal', () => {
+  const env = validEnvironment();
+  env.NEXT_PUBLIC_SOLANA_CLUSTER = 'devnet';
+  env.NEXT_PUBLIC_SOLANA_RPC_URL = 'http://127.0.0.1:8899';
+  assert.equal(evaluateStaticLaunchReadiness(product, env).ready, false);
+  assert.equal(evaluateStaticLaunchReadiness(product, env, { requireMainnet: false }).ready, true);
+});
+
 test('static launch preflight requires an explicit public mint release switch', () => {
   const env = validEnvironment();
   env.NEXT_PUBLIC_PUBLIC_MINT_ENABLED = 'false';

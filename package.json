@@ -24,6 +24,8 @@
     "lint": "npm --workspace sites-project run lint",
     "test": "npm --workspace sites-project run test",
     "launch:preflight": "npm --workspace sites-project run launch:preflight",
+    "launch:smoke-mint": "node work/scripts/04-smoke-mint.mjs",
+    "launch:devnet": "bash work/scripts/run-devnet-rehearsal.sh",
     "generate:collection": "npm --workspace sites-project run generate:collection",
     "mint:core": "npm --workspace sites-project run mint:core",
     "anchor:build": "npm --workspace program run build"

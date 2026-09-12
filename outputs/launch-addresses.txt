@@ -15,13 +15,16 @@ IPO mint candidate (not verified on-chain):
 CG4jSsRE73DeL8PoBuusjiRgFhyJTGbogJttubM2GGdj
 
 Asset-capital treasury:
-Not selected
+7vHThHyHXzEXyNwFYC4y2bVBAa5A4nAY2wUddr99dJ7C
 
 Metaplex Core collection candidate (not created):
 3oWH9UQ2E8D7GuHUAfzn1GTkB9HAoEfbRo7JJ7e4o4RK
 
 Anchor program id:
-9Gqg4yjDH34pgMXRTqxdJFbzvzeBBDkGvaJvb9kKRaPU
+GMSArcjhrpxt6JkqwmJX47tbuFH6PtdH21JARt3hBUnm
+
+Config PDA after deployment:
+FWUph1gcQRbfhUz6rMkScDEKLd4itHVLf2ZYF4oc1hR8
 
 Current blocker:
-Program deployment and initialization have not been reviewed or executed.
+Devnet rehearsal and reviewed mainnet deployment remain required.

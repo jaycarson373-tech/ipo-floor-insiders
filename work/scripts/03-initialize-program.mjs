@@ -16,13 +16,13 @@ import {
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const deployerPath = path.join(root, 'keys', 'deployer-authority.json');
 const collectionPath = path.join(root, 'keys', 'core-collection.json');
-const programKeypairPath = path.join(root, 'program', 'target', 'deploy', 'program-keypair.json');
+const programKeypairPath = path.join(root, 'keys', 'program.json');
 const rpcUrl = process.env.SOLANA_RPC_URL ?? 'https://api.devnet.solana.com';
 const treasuryValue = process.env.TREASURY_WALLET ?? '5AjpQUTJSD4PJAx7v6saLv1wLwABk7pJn83q9tgiX875';
 const assetTreasuryValue = process.env.ASSET_TREASURY_WALLET;
 const metadataBaseUrl = process.env.METADATA_BASE_URL ?? 'https://ipo-floor-insiders.vercel.app/api/metadata';
 const collectionMetadataUrl = process.env.COLLECTION_METADATA_URL
-  ?? 'https://ipo-floor-insiders.vercel.app/collection/manifest.json';
+  ?? 'https://ipo-floor-insiders.vercel.app/api/collection';
 const execute = process.env.EXECUTE === 'true';
 
 if (!assetTreasuryValue) {
@@ -92,7 +92,7 @@ if (!(await connection.getAccountInfo(collectionKeypair.publicKey, 'confirmed'))
   const builder = createCollection(umi, {
     collection: collectionSigner,
     updateAuthority: publicKey(config.toBase58()),
-    name: 'IPO Desks',
+    name: 'Pumpios',
     uri: collectionMetadataUrl,
   });
   const latest = await umi.rpc.getLatestBlockhash({ commitment: 'confirmed' });

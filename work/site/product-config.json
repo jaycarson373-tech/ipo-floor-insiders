@@ -13,6 +13,12 @@
     "rewardAssets": 10000,
     "operations": 0
   },
+  "platformRevenueBps": {
+    "holderRewards": 7000,
+    "ipoBuybackBurn": 2000,
+    "protocolOperations": 1000
+  },
+  "platformRevenueExecutionEnabled": false,
   "upgradePolicy": {
     "levels": 10,
     "paymentAsset": "IPO",

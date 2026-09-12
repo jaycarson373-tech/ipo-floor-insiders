@@ -6,7 +6,7 @@ Do not enable minting because the frontend says 1,200. The client must read and 
 
 ## Required migration
 
-1. Finalize and review all 1,200 Pumpio artworks, traits, rarity assignments, and metadata.
+1. Review the deterministic 1,200-item metadata and generative artwork service, then freeze or move it to permanent storage.
 2. Decide whether to deploy a new program/config or migrate the existing deployment.
 3. Review the ten-level on-chain mapping, cost indexes, authority model, and metadata update path.
 4. Create the Pumpios Metaplex Core collection under the intended authority.
@@ -42,5 +42,9 @@ cd ../program
 cargo fmt --check
 cargo test
 ```
+
+After the deployment authority holds at least 2.5 devnet SOL, run the complete
+devnet sequence from the repository root with `npm run launch:devnet`. It deploys,
+initializes, smoke-mints, tests rejection states, and runs the read-only preflight.
 
 Verify every major route at 390px, 430px, and desktop. Confirm no horizontal overflow, broken art, fake activity, or enabled financial action without verified infrastructure.
