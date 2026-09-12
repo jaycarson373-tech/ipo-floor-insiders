@@ -1,55 +1,46 @@
-# IPO Economics and Entitlement Specification
+# IPO + Pumpios Product Specification
 
-## Product
+## Product architecture
 
-IPO means Initial Pump Offering. It is a Solana launch platform with two paths: instant fair launches on supported Pump infrastructure and curated presales with structured terms. It also combines 1,212 desk NFTs and IPO Watch research rooms. Research can exist without a token, and creators do not need a desk to prepare an instant launch. Project tokens are not actual company IPOs or company equity.
+- **IPO:** Initial Pump Offering launchpad and offering-record interface.
+- **Pumpios:** intended 1,200-item Metaplex Core membership collection.
+- **$IPO:** intended protocol and optional upgrade token; exact mint not published.
+- **PUMP:** intended paired or reward asset only where exact mint, pair, route, custody, and distribution infrastructure are verified.
 
-## Mint policy
+Project tokens are not company IPO shares or company equity.
 
-- Price: 0.12 SOL per desk plus network/account costs.
-- Mint-funded assets: 80%, or 0.096 SOL per desk.
-- Operations: 20%, or 0.024 SOL per desk.
-- No `$IPO` requirement, lock, or burn.
-- Full-supply scenario: 145.44 SOL gross, 116.352 SOL initial assets, and 29.088 SOL operations. This is not money already raised.
+## Pumpios target
 
-The revised Anchor source routes the two amounts atomically to distinct treasuries and records both on the desk account. Desk minting does not depend on a `$IPO` mint. This changes account layout and initialization arguments, so an old deployment cannot be reused silently. The web client decodes the new layout and verifies the separate published asset treasury before minting.
+The intended supply is 1,200 at 0.12 SOL each, plus separately disclosed network/account costs. No `$IPO` lock, burn, or token account is required to mint. The revised local program routes the full mint payment to Pumpio-attributed mint-funded asset capital. Mint capital is not revenue, yield, principal protection, or guaranteed value.
 
-## Entitlement accounting
+The previous checked-in product used 1,212 and five upgrade steps. The new shared configuration targets 1,200 and ten steps. This requires a new or migrated config/program and Core collection; no deployed state has been silently changed.
 
-Initial capital stays attributable to its desk until purchased or claimed. Purchases may batch execution while preserving per-desk integer balances and unspent amounts. Mint capital is not yield or protocol revenue.
+Approved art is currently a nine-concept preview. The proposed rarity plan is 900 Standard, 200 Rare, 80 Super Rare, 19 Legendary, and one Chairman. It is not on-chain or final metadata.
 
-Recurring rewards use finalized epochs. One eligible desk equals one unit. A newly minted desk cannot join historical epochs. On transfer, future participation starts with the next epoch; balances finalized for the previous owner remain theirs. Claims use immutable allocation IDs and reject duplicates. Pool/vault addresses are excluded from the denominator. Integer division dust remains in the source account under published treatment.
+## Leveling
 
-This epoch, transfer, purchase-failure, rounding, and duplicate-claim logic is locally tested. Production enforcement still needs ownership indexing/proofs, an accumulator or vault, purchase instructions, allocation finalization, and a claim program.
+The intended presentation levels are Intern, Analyst, Associate, Trader, Broker, Underwriter, Market Maker, Bookrunner, Partner, and Chairman. The on-chain level field and cost arrays must be reviewed against this presentation before deployment. Upgrade pricing is unset and payment remains disabled. Upgrades must not gate holdings, claims, receipts, or essential disclosures.
 
-## Assets
+## Holder access
 
-The target basket is a small, reviewed set of third-party tokenized pre-IPO exposure. Every entry needs an exact Solana mint, provider, category, backing/rights documentation, transfer constraints, token controls/extensions, quote route, liquidity limits, current purchase eligibility, and timestamp. No such asset is currently purchase-enabled in this repository.
+There is no universal 3.3% holder allocation in the current program. Any Pumpio benefit must be offering-specific and publish whether it is a purchase reservation, free distribution, or application privilege. Funded supply, snapshot cutoff, eligibility, allocation, vesting, claim, rounding, and unclaimed treatment must be disclosed before activation.
 
-Project/community tokens, third-party exposure, and issuer-authorized securities remain distinct. A provider token is not its underlying exposure. Failed or expired quotes retain funds visibly as unspent; no substitute purchase is allowed.
+## Rewards and revenue
 
-## IPO Rooms
+The intended revenue architecture can route verified platform revenue to PUMP purchases and Pumpio distributions, $IPO buyback/burn, and continued development. Percentages are not final. No flow is active.
 
-Room drafts store thesis, source, catalyst and confidence, invalidation criteria, author, and sponsorship/financial-interest disclosure locally. Browser-local revision history, follows, bookmarks, alert preferences, share-card copying, campaign drafts, and pending contribution submissions are implemented for workflow testing. Production publishing, notifications, funded campaigns, reviewer decisions, reward receipts, moderation, discussion, and durable storage still need authenticated services.
+Activation requires exact token/pair addresses, custody accounts, quote and swap routes, receipt reconciliation, ownership history or epoch snapshots, excluded addresses, integer allocation, distribution/claims, retries, idempotency, and public transaction proof. Mint-funded capital and owed rewards may not be treated as revenue.
 
-An optional room launch uses the current six-step fair-launch builder. Proposed third-party creator-fee routing is 60% coin-holder purchases, 15% desk-holder purchases, 15% creator, and 10% IPO platform operations. The template applies only to creator fees received and requires creator authorization and chain-state verification. The 15% desk pool uses equal participation by eligible desk at the finalized epoch; it is not a fixed return.
+## Launchpad
 
-Curated presales are a separate application path. Deposits remain disabled until segregated escrow, published caps and tranches, oversubscription rules, settlement authorization, cancellation, and refunds are implemented and reviewed. A Pump bonding curve does not create a fixed-price presale allocation.
+IPO presents curated presales and fair launches as numbered offering records. A record includes token identity, thesis, team disclosure, pair, presale terms, target, holder priority, timeline, launch conditions, revenue routing, contracts, proof, and risks.
 
-Current Pump documentation describes an initial fee-sharing config with the creator at 100%, followed by a one-time final recipient update that revokes the admin; fee sweeps and distribution are permissionless. IPO must verify the finalized config from chain state. That primitive routes creator-fee receipts but does not provide dynamic holder snapshots, reward purchases, accrual, or claims.
-
-For `$IPO` itself, the planned policy is 100% of creator-fee receipts actually received by the project toward desk-holder asset purchases. Operations pays execution costs separately. This is planned until routing, indexing, and purchases are deployed and verified.
-
-## Upgrades
-
-Optional `$IPO` upgrades use five proposed product levels: Member, Scout, Analyst, Operator, and Studio. They may provide alerts, research organization, analytics, exports, creator tools, personalization, and artwork. They do not multiply payouts. Holdings, essential disclosures, claims, receipts, and equal desk participation remain accessible without an upgrade.
-
-The configured draft burn policy sends 100% of any future `$IPO` upgrade payment to burn. No price is set, and payments are disabled. The on-chain burn path exists but its mint address is unset until the authority explicitly configures upgrades. A future release must verify the exact `$IPO` mint, burn instruction, transaction confirmation, and resulting supply before enabling or displaying a paid level change. Upgrade burns may not use mint-funded assets, desk rewards, or operations balances.
+Local launch drafting works. Pump execution, creator-fee finalization, offering publication, and post-transaction verification are not connected. Presale deposits stay disabled until segregated escrow, participant/cap rules, oversubscription, cancellation, settlement, and refunds are implemented and reviewed.
 
 ## Status
 
-Implemented: responsive product shell, Room drafts and local social workflow, campaign/submission preview, launch/support drafts, deterministic desk art, wallet flow, revised 80/20 mint source/client, integer accounting domain, transfer cutoffs, failure retention, duplicate protection, and public docs.
+**Implemented locally:** product UI, preview browser, launch drafts, wallet detection, deployment verification, mint transaction lifecycle, integer accounting adapters, transfer cutoffs, failure retention, and duplicate protection.
 
-Preview: mint and accounting source before deployment, research publishing, asset registry review, launch configuration, and reward allocation.
+**Preview:** Pumpios art, rarity plan, ten-level presentation, rewards/revenue/proof surfaces, and offering board.
 
-Blocked: public mint config, tokenized pre-IPO purchase registry, Pump execution, fee indexing, purchases, ownership history, reward vault/claims, Room backend, valuations, and production activity receipts.
+**Blocked:** final collection metadata, Core collection, revised deployment, Pump integration, production indexers, reward purchases/distributions, ownership snapshots, claims, presale escrow, and security review.

@@ -23,7 +23,7 @@ export function evaluateStaticLaunchReadiness(product, env, { requireMainnet = t
   const feeTotal = Object.values(product.defaultFeeSharesBps ?? {}).reduce((sum, value) => sum + value, 0);
   const mintSplitTotal = Object.values(product.draftMintCapitalBps ?? {}).reduce((sum, value) => sum + value, 0);
 
-  add(checks, 'supply', product.supply === 1_212 ? 'pass' : 'fail', `Configured supply: ${product.supply ?? 'missing'}`);
+  add(checks, 'supply', product.supply === 1_200 ? 'pass' : 'fail', `Configured supply: ${product.supply ?? 'missing'}`);
   add(
     checks,
     'mint-price',

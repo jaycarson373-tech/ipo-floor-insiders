@@ -1,38 +1,40 @@
-# IPO — Initial Pump Offering
+# IPO + Pumpios
 
-IPO is an Initial Pump Offering platform for instant fair launches, curated presale preparation, sourced IPO Watch research rooms, and a limited desk membership. The interface separates mint-funded asset capital from revenue-funded rewards and distinguishes receipts, purchases, allocations, claims, burns, and operations.
+IPO means Initial Pump Offering: a Solana launchpad for structured presale preparation, fair launches, and transparent reward routing. Pumpios are the intended 1,200-item Metaplex Core membership collection.
 
-## Desk defaults
+## Intended economics
 
-- Supply: `1,212` Metaplex Core NFTs
-- Mint price: `0.12 SOL` per desk plus network/account costs
+- Pumpios supply: `1,200`
+- Mint price: `0.12 SOL` plus network/account costs
 - `$IPO` required to mint: none
-- Reward participation: equal base weight per eligible desk
-- Proposed mint split: `80%` desk-attributed asset capital / `20%` operations
-- Gross sellout scenario: `145.44 SOL`; this is not money already raised
-- Proposed fair-launch creator-fee split: `60%` coin-holder purchases / `15%` desk-holder purchases / `15%` creator / `10%` platform operations
-- Proposed upgrades: five tool and art levels with `100%` of upgrade payments burned; pricing and payment disabled
+- Mint allocation: `100%` to Pumpio-attributed mint-funded asset capital in the revised source
+- Base participation: equal per eligible Pumpio when an offering publishes a funded holder program
+- Levels: ten intended product/art stages; prices unset and payments disabled
 
-All product economics are centralized in `work/site/product-config.json`. The client refuses to enable minting if deployed configuration differs from the expected supply, SOL price, treasury separation, collection, or metadata. The desk-mint instruction has no `$IPO` token account.
+All target economics are centralized in `work/site/product-config.json`. The previous source and frontend used a 1,212-item collection. Changing this file does not change any deployed contract; production minting remains disabled until the revised program/config and Pumpios Core collection are deployed and verified.
 
-## Status
+## Product status
 
-Available locally: sourced Room drafts with preserved revisions, local follows/bookmarks, share-card copying, contribution campaign drafts, pending local submissions, launch/support application drafts, fee-share validation, deterministic artwork, wallet connection, revised Metaplex Core mint source with atomic 80/20 routing, transaction states, integer epoch accounting, receipt deduplication, equal desk allocation, and documentation. Browser-local social and campaign actions do not publish, notify, fund rewards, or submit work to IPO.
+Implemented locally: responsive IPO/Pumpios frontend, approved collection-preview art, rarity filtering and search, Pumpio detail previews, launch-draft persistence, wallet detection, deployment validation, transaction lifecycle, integer reward accounting, receipt deduplication, and a migration-blocked mint interface.
 
-Not production-connected: Pump execution, metadata storage, recipient fee accounts, creator-fee indexing, reward purchases, reward vault/claims, ownership indexing, curated submission backend, presale escrow, settlements, refunds, and activity indexing. Production actions remain disabled rather than represented with fake data.
+Preview only: the final 1,200-item art/metadata set, ten-level upgrades, holder snapshots, PUMP rewards, $IPO buyback/burn, revenue routing, offering cards, and proof ledgers.
+
+Blocked externally: finalized metadata, Metaplex Core collection, revised program/config deployment, production RPC/address set, Pump integration, creator-fee indexer, swap/reward engine, ownership snapshots, claims/distributions, presale escrow, refunds, and security review.
 
 ## Commands
 
 ```bash
-npm install
-npm run dev:vercel -- --port 3001
+cd work/site
+npm run generate:collection
 npm run lint
-npm --workspace sites-project run typecheck
+npm run typecheck
 npm test
 npm run build:vercel
 npm run launch:preflight
+
+cd ../program
+cargo fmt --check
+cargo test
 ```
 
-The final preflight is read-only and intentionally fails until every production
-address exists and matches the deployed mainnet state. See `work/PRODUCT_SPEC.md`
-and `work/LAUNCH_RUNBOOK.md` for product boundaries and launch requirements.
+`launch:preflight` is read-only and intentionally fails until the complete production deployment matches the target configuration.

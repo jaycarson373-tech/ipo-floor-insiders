@@ -117,7 +117,7 @@ export async function fetchLaunchState(connection = getConnection()) {
   return state;
 }
 
-export async function mintDesk(provider: WalletProvider, onSubmitted?: (signature: string) => void) {
+export async function mintPumpio(provider: WalletProvider, onSubmitted?: (signature: string) => void) {
   if (!provider.publicKey || !provider.signTransaction) {
     throw new Error('This wallet does not support transaction signing.');
   }
@@ -125,7 +125,7 @@ export async function mintDesk(provider: WalletProvider, onSubmitted?: (signatur
   const connection = getConnection();
   const state = await fetchLaunchState(connection);
   if (state.paused) throw new Error('Minting is currently paused.');
-  if (state.minted >= state.totalSupply) throw new Error(`All ${EXPECTED_SUPPLY.toLocaleString()} IPO Desks are minted.`);
+  if (state.minted >= state.totalSupply) throw new Error(`All ${EXPECTED_SUPPLY.toLocaleString()} Pumpios are minted.`);
 
   const buyer = provider.publicKey;
   const balance = await connection.getBalance(buyer, 'confirmed');

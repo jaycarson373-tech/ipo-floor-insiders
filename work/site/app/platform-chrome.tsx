@@ -1,14 +1,16 @@
 "use client";
 
 import {
-  BarChart3,
   BookOpen,
-  Boxes,
+  Flame,
   Gift,
+  Layers3,
   Menu,
   Rocket,
-  Search,
+  ShieldCheck,
+  Sparkles,
   WalletCards,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,11 +24,16 @@ declare global {
 }
 
 const nav = [
-  { href: "/", label: "Discover", icon: Search },
-  { href: "/launch", label: "Launch", icon: Rocket },
+  { href: "/", label: "IPO", icon: Flame },
+  { href: "/pumpios", label: "Pumpios", icon: Sparkles },
+  { href: "/leveling", label: "Leveling", icon: Layers3 },
   { href: "/rewards", label: "Rewards", icon: Gift },
-  { href: "/collection", label: "Collection", icon: Boxes },
+  { href: "/launchpad", label: "Launchpad", icon: Rocket },
+  { href: "/proof", label: "Proof", icon: ShieldCheck },
+  { href: "/mint", label: "Mint", icon: WalletCards },
 ];
+
+const mobileNav = nav.filter((item) => ["/", "/pumpios", "/launchpad", "/mint"].includes(item.href));
 
 export default function PlatformChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -61,9 +68,6 @@ export default function PlatformChrome({ children }: { children: ReactNode }) {
               {item.label}
             </Link>
           ))}
-          <Link className={pathname === "/activity" ? "active" : ""} href="/activity">
-            Activity
-          </Link>
         </nav>
         <div className="lpHeaderActions">
           <Link className="lpDocsLink" href="/docs"><BookOpen size={15} /> Docs</Link>
@@ -74,7 +78,10 @@ export default function PlatformChrome({ children }: { children: ReactNode }) {
             <summary aria-label="Open menu"><Menu size={20} /></summary>
             <div>
               <Link href="/docs"><BookOpen size={16} /> Docs</Link>
-              <Link href="/activity"><BarChart3 size={16} /> Activity</Link>
+              {mobileNav.map((item) => {
+                const Icon = item.icon;
+                return <Link href={item.href} key={item.href}><Icon size={16} /> {item.label}</Link>;
+              })}
               <button onClick={connectWallet} type="button"><WalletCards size={16} /> {wallet}</button>
             </div>
           </details>
@@ -83,7 +90,7 @@ export default function PlatformChrome({ children }: { children: ReactNode }) {
       {notice && (
         <div className="lpNotice" role="status">
           <span>{notice}</span>
-          <button aria-label="Dismiss notice" onClick={() => setNotice("")} type="button">×</button>
+          <button aria-label="Dismiss notice" onClick={() => setNotice("")} type="button"><X size={16} /></button>
         </div>
       )}
       {children}
@@ -92,15 +99,15 @@ export default function PlatformChrome({ children }: { children: ReactNode }) {
           <strong>IPO</strong>
           <span>Initial Pump Offering</span>
         </div>
-        <p>Launch terms, fee routes, and rewards should be verifiable before capital moves.</p>
+        <p>Serious launch infrastructure. Unserious underwriters.</p>
         <nav>
           <Link href="/docs">Docs</Link>
-          <Link href="/activity">Activity</Link>
+          <Link href="/proof">Proof</Link>
           <a href="https://solana.com" rel="noreferrer" target="_blank">Solana</a>
         </nav>
       </footer>
       <nav className="lpMobileNav" aria-label="Mobile navigation">
-        {nav.map((item) => {
+        {mobileNav.map((item) => {
           const Icon = item.icon;
           return (
             <Link className={pathname === item.href ? "active" : ""} href={item.href} key={item.href}>

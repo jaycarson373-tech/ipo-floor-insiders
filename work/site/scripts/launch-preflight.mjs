@@ -109,7 +109,7 @@ async function runNetworkChecks(checks, config, values) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const metadata = await response.json();
     const valid = typeof metadata.name === 'string' && typeof metadata.image === 'string';
-    add(checks, 'metadata-live', valid ? 'pass' : 'fail', valid ? 'Public desk metadata resolves.' : 'Public desk metadata is incomplete.');
+    add(checks, 'metadata-live', valid ? 'pass' : 'fail', valid ? 'Public Pumpio metadata resolves.' : 'Public Pumpio metadata is incomplete or still preview-only.');
   } catch (error) {
     add(checks, 'metadata-live', 'fail', `Public metadata check failed: ${cleanError(error)}`);
   }

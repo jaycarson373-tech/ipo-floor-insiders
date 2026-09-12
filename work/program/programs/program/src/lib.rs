@@ -105,7 +105,7 @@ pub mod ipo_program {
             &ctx.accounts.core_collection,
         )?;
 
-        let name = format!("IPO Desk #{:04}", serial);
+        let name = format!("Pumpio #{:04}", serial);
         let uri = metadata_uri(&config.metadata_base_uri, serial, 0);
         let authority = config.authority;
         let config_bump = [config.bump];
@@ -532,7 +532,7 @@ fn mint_asset_capital(lamports: u64) -> Result<u64> {
 
 fn metadata_uri(base: &str, serial: u16, level: u8) -> String {
     format!(
-        "{}/IPO-{:04}?level={}",
+        "{}/PUMPIO-{:04}?level={}",
         base.trim_end_matches('/'),
         serial,
         level
@@ -614,7 +614,7 @@ pub struct UpgradeConfigSet {
 pub enum ErrorCode {
     #[msg("Minting is paused")]
     MintPaused,
-    #[msg("All 1,212 IPO Desks have been minted")]
+    #[msg("All 1,200 Pumpios have been minted")]
     SoldOut,
     #[msg("Serial must be the next supply number")]
     InvalidSerial,
@@ -636,9 +636,9 @@ pub enum ErrorCode {
     InvalidAssetOwner,
     #[msg("Token account is not owned by the signer")]
     InvalidTokenOwner,
-    #[msg("Desk is already max level")]
+    #[msg("Pumpio is already max level")]
     MaxLevel,
-    #[msg("Desk upgrades are not configured")]
+    #[msg("Pumpio upgrades are not configured")]
     UpgradesDisabled,
     #[msg("Metadata base URI must be an HTTPS URL of 180 characters or fewer")]
     InvalidMetadataUri,
@@ -670,7 +670,7 @@ mod tests {
     fn builds_canonical_metadata_uri() {
         assert_eq!(
             metadata_uri("https://example.com/api/metadata/", 2, 4),
-            "https://example.com/api/metadata/IPO-0002?level=4"
+            "https://example.com/api/metadata/PUMPIO-0002?level=4"
         );
     }
 
@@ -696,10 +696,10 @@ mod tests {
 
     #[test]
     fn encodes_metaplex_core_instruction_data() {
-        let create = create_core_data("IPO Desk #0001", "https://example.com/IPO-0001").unwrap();
+        let create = create_core_data("Pumpio #0001", "https://example.com/PUMPIO-0001").unwrap();
         assert_eq!(&create[..2], &[20, 0]);
         assert_eq!(&create[create.len() - 2..], &[0, 0]);
-        let update = update_core_uri_data("https://example.com/IPO-0001?level=1").unwrap();
+        let update = update_core_uri_data("https://example.com/PUMPIO-0001?level=1").unwrap();
         assert_eq!(&update[..3], &[15, 0, 1]);
         assert_eq!(update.last(), Some(&0));
     }

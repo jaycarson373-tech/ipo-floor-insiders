@@ -17,12 +17,17 @@ const METADATA_BASE_URL = process.env.METADATA_BASE_URL;
 const OWNER = process.env.OWNER_WALLET;
 const COLLECTION = process.env.CORE_COLLECTION;
 const COLLECTION_KEYPAIR_PATH = process.env.CORE_COLLECTION_KEYPAIR;
+const COLLECTION_METADATA_URI = process.env.COLLECTION_METADATA_URI;
 const CREATE_COLLECTION = process.env.CREATE_COLLECTION === 'true';
 const START_SERIAL = Number(process.env.START_SERIAL ?? '1');
 const COUNT = Number(process.env.COUNT ?? '1');
 
+if (process.env.PUMPIOS_METADATA_FINALIZED !== 'true') {
+  throw new Error('Pumpio metadata is preview-only. Set PUMPIOS_METADATA_FINALIZED=true only after the 1,200-item collection is reviewed and frozen.');
+}
+
 if (!METADATA_BASE_URL) {
-  throw new Error('METADATA_BASE_URL is required. Upload public/collection first, then pass its public metadata base URL.');
+  throw new Error('METADATA_BASE_URL is required. Publish finalized Pumpio metadata before minting.');
 }
 
 if (!OWNER) {
@@ -34,15 +39,18 @@ const umi = createUmi(RPC_URL).use(mplCore());
 umi.use(keypairIdentity(umi.eddsa.createKeypairFromSecretKey(new Uint8Array(secret))));
 
 async function ensureCollection() {
+  if (!COLLECTION && !COLLECTION_METADATA_URI) {
+    throw new Error('COLLECTION_METADATA_URI is required when creating the Pumpios Core collection.');
+  }
+
   if (COLLECTION_KEYPAIR_PATH && CREATE_COLLECTION) {
     const collectionSecret = JSON.parse(await readFile(COLLECTION_KEYPAIR_PATH, 'utf8'));
     const collectionKeypair = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(collectionSecret));
     const collection = createSignerFromKeypair(umi, collectionKeypair);
-    const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/../manifest.json`;
     await createCollection(umi, {
       collection,
-      name: 'IPO Desks',
-      uri,
+      name: 'Pumpios',
+      uri: COLLECTION_METADATA_URI,
     }).sendAndConfirm(umi);
     console.log(`Created Core collection: ${collection.publicKey}`);
     return collection.publicKey;
@@ -53,11 +61,10 @@ async function ensureCollection() {
   }
 
   const collection = generateSigner(umi);
-  const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/../manifest.json`;
   await createCollection(umi, {
     collection,
-    name: 'IPO Desks',
-    uri,
+    name: 'Pumpios',
+    uri: COLLECTION_METADATA_URI,
   }).sendAndConfirm(umi);
   console.log(`Created Core collection: ${collection.publicKey}`);
   return collection.publicKey;
@@ -70,21 +77,21 @@ if (!Number.isInteger(START_SERIAL) || !Number.isInteger(COUNT) || START_SERIAL 
 }
 
 if (START_SERIAL + COUNT - 1 > product.supply) {
-  throw new Error(`Requested serial range exceeds the configured ${product.supply} desk supply.`);
+  throw new Error(`Requested serial range exceeds the configured ${product.supply} Pumpio supply.`);
 }
 
 for (let serial = START_SERIAL; serial < START_SERIAL + COUNT; serial += 1) {
-  const deskId = `IPO-${String(serial).padStart(4, '0')}`;
+  const pumpioId = `PUMPIO-${String(serial).padStart(4, '0')}`;
   const asset = generateSigner(umi);
-  const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/${deskId}.json`;
+  const uri = `${METADATA_BASE_URL.replace(/\/$/, '')}/${pumpioId}.json`;
 
   await create(umi, {
     asset,
     collection,
     owner: publicKey(OWNER),
-    name: `IPO Desk #${String(serial).padStart(4, '0')}`,
+    name: `Pumpio #${String(serial).padStart(4, '0')}`,
     uri,
   }).sendAndConfirm(umi);
 
-  console.log(`Minted Core asset ${deskId}: ${asset.publicKey}`);
+  console.log(`Minted Core asset ${pumpioId}: ${asset.publicKey}`);
 }

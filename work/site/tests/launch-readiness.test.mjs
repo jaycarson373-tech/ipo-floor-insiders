@@ -49,7 +49,7 @@ test('launch config decoder matches the no-token mint account layout', () => {
   view.setUint32(136, uri.length, true);
   data.set(uri, 140);
   const numericOffset = 140 + uri.length;
-  view.setUint16(numericOffset, 1_212, true);
+  view.setUint16(numericOffset, 1_200, true);
   view.setUint16(numericOffset + 2, 17, true);
   view.setBigUint64(numericOffset + 4, 120_000_000n, true);
 
@@ -61,7 +61,7 @@ test('launch config decoder matches the no-token mint account layout', () => {
   assert.equal(decoded.assetTreasury.toBase58(), keys[2].toBase58());
   assert.equal(decoded.coreCollection.toBase58(), keys[3].toBase58());
   assert.equal(decoded.metadataBaseUri, 'https://example.com/api/metadata');
-  assert.equal(decoded.totalSupply, 1_212);
+  assert.equal(decoded.totalSupply, 1_200);
   assert.equal(decoded.minted, 17);
   assert.equal(decoded.mintPriceLamports, 120_000_000n);
   assert.equal(decoded.paused, false);

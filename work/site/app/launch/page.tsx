@@ -109,7 +109,7 @@ export default function LaunchPage() {
               <span className="lpMiniLabel">PROPOSED CREATOR-FEE ROUTE</span><h2>Decide where collected fees go.</h2>
               <div className="lpFeeRoute">
                 <div className="coin"><b>60%</b><span>Coin holders</span></div>
-                <div className="desk"><b>15%</b><span>Desk holders</span></div>
+                <div className="desk"><b>15%</b><span>Pumpio holders</span></div>
                 <div className="creator"><b>15%</b><span>Creator</span></div>
                 <div className="ops"><b>10%</b><span>Operations</span></div>
               </div>

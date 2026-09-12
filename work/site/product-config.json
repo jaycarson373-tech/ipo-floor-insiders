@@ -1,8 +1,8 @@
 {
-  "supply": 1212,
+  "supply": 1200,
   "mintPriceSol": 0.12,
   "mintPriceLamports": 120000000,
-  "maxLevels": 5,
+  "maxLevels": 10,
   "defaultFeeSharesBps": {
     "coinHolders": 6000,
     "deskHolders": 1500,
@@ -14,7 +14,7 @@
     "operations": 0
   },
   "upgradePolicy": {
-    "levels": 5,
+    "levels": 10,
     "paymentAsset": "IPO",
     "burnBps": 10000,
     "paymentEnabled": false
