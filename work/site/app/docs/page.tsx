@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { launchConfig, mintEnvironmentConfigured } from "../launch-config";
+import { launchConfig } from "../launch-config";
 import { productFeatures } from "../product-data";
 
 function Flag({
@@ -19,7 +18,7 @@ function Flag({
 }
 
 export default function DocsPage() {
-  const mintConfigured = mintEnvironmentConfigured;
+  const mintConfigured = false;
   const sections = [
     "overview",
     "economics",
@@ -35,20 +34,6 @@ export default function DocsPage() {
   ];
   return (
     <main className="docsPage">
-      <header className="siteHeader">
-        <Link className="wordmark" href="/">
-          <span>IPO</span>
-          <small>PRODUCT DOCS</small>
-        </Link>
-        <nav>
-          <Link href="/">Explore</Link>
-          <a href="#rooms">Rooms</a>
-          <a href="#status">Status</a>
-        </nav>
-        <div className="headerActions">
-          <Link href="/">Back to app</Link>
-        </div>
-      </header>
       <header className="docsHero shell">
         <p className="eyebrow">INITIAL PUMP OFFERING</p>
         <h1>Terms before transactions.</h1>
@@ -124,8 +109,8 @@ export default function DocsPage() {
             <Flag live={mintConfigured} blocked={!mintConfigured} />
             <p>
               {mintConfigured
-                ? "The client verifies deployed supply, price, and zero-token requirement before minting."
-                : "The revised source splits each mint between separate asset and operations treasuries, but it is not deployed and public config is missing. Minting remains disabled."}
+                ? "The client verifies deployed supply, price, linked accounts, collection ownership, and metadata before minting."
+                : "The revised source splits each mint between separate asset and operations treasuries, but the program is not verified as deployed. Minting remains disabled."}
             </p>
           </section>
           <section id="ownership">

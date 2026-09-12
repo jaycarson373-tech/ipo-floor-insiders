@@ -1,5 +1,5 @@
-import IpoApp from './ipo-app';
+import LaunchpadHome from './launchpad-home';
 
 export default function Home() {
-  return <IpoApp />;
+  return <LaunchpadHome />;
 }
