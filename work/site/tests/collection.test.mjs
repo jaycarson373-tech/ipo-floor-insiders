@@ -21,7 +21,7 @@ test('collection matches the centralized product configuration', async () => {
   assert.match(manifest.rewardParticipation, /Equal base participation/);
   assert.equal(Object.values(product.defaultFeeSharesBps).reduce((sum, value) => sum + value, 0), 10_000);
   assert.equal(Object.values(product.draftMintCapitalBps).reduce((sum, value) => sum + value, 0), 10_000);
-  assert.deepEqual(product.draftMintCapitalBps, { rewardAssets: 8_000, operations: 2_000 });
+  assert.deepEqual(product.draftMintCapitalBps, { rewardAssets: 10_000, operations: 0 });
   assert.deepEqual(product.upgradePolicy, {
     levels: 5,
     paymentAsset: 'IPO',
@@ -48,7 +48,7 @@ test('collection contains every complete deterministic IPO Desk', async () => {
       const image = await readFile(path.join(imageDir, `${id}-L${level}.svg`));
       const source = image.toString('utf8');
       assert.ok(image.length > 5_000, `${id} L${level} has complete artwork`);
-      assert.match(source, /architectural IPO research workspace/);
+      assert.match(source, /architectural IPO launch chamber/);
       assert.ok(!/<image\b|hood|eye glow/i.test(source));
       if (level === 1) levelOneHashes.add(createHash('sha256').update(image).digest('hex'));
     }

@@ -1,40 +1,36 @@
 {
   "name": "IPO Desk #0994",
   "symbol": "IPO",
-  "description": "A collectible IPO desk represented by an architectural research workspace. Holder rewards and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.",
+  "description": "A collectible IPO launch console represented by an architectural issuance chamber. Holder rewards and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.",
   "image": "images/IPO-0994-L1.svg",
   "attributes": [
     {
       "trait_type": "Rarity",
-      "value": "Epic"
+      "value": "Rare"
     },
     {
-      "trait_type": "Workspace",
-      "value": "executive observatory"
+      "trait_type": "Chamber",
+      "value": "prospectus archive"
     },
     {
-      "trait_type": "Desk Form",
-      "value": "modular"
+      "trait_type": "Offering Ring",
+      "value": "twin rail"
+    },
+    {
+      "trait_type": "Terminal Layout",
+      "value": "broker slab"
     },
     {
       "trait_type": "Material",
-      "value": "matte black"
+      "value": "white ceramic"
     },
     {
-      "trait_type": "Lighting",
-      "value": "paper white"
+      "trait_type": "Signal",
+      "value": "coral close"
     },
     {
-      "trait_type": "View",
-      "value": "data wall"
-    },
-    {
-      "trait_type": "Research Mode",
-      "value": "launch research"
-    },
-    {
-      "trait_type": "Desk Object",
-      "value": "desk lamp"
+      "trait_type": "Document System",
+      "value": "prospectus folio"
     },
     {
       "trait_type": "Desk Serial",
@@ -92,7 +88,7 @@
         "uri": "images/IPO-0994-L5.svg"
       }
     ],
-    "seed": "ipo-desk-994",
-    "visual_signature": "4C52E4CB"
+    "seed": "ipo-launch-console-994",
+    "visual_signature": "A7A513C2"
   }
 }

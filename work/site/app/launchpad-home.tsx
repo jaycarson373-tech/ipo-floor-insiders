@@ -9,7 +9,6 @@ import {
   LockKeyhole,
   Radar,
   Rocket,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
@@ -31,41 +30,30 @@ export default function LaunchpadHome() {
 
   return (
     <main className="lpMain">
-      <section className="lpHero lpWrap">
-        <div className="lpHeroCopy">
-          <div className="lpKicker"><span /> SOLANA LAUNCHPAD · PUBLIC PREVIEW</div>
-          <h1>Initial Pump Offerings.</h1>
-          <p className="lpHeroLead">
-            Structured presales, fair launches, and holder rewards with the money route shown before anyone signs.
-          </p>
-          <div className="lpHeroActions">
-            <Link className="lpPrimary" href="/launch">Create an offering <ArrowRight size={17} /></Link>
-            <a className="lpSecondary" href="#launches">Browse launches</a>
+      <section className="lpHeroImmersive">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img alt="" aria-hidden="true" className="lpHeroBackdrop" src="/launch-chamber-hero-v2.png" />
+        <div className="lpHeroShade" />
+        <div className="lpHeroStage lpWrap">
+          <div className="lpHeroCopy">
+            <div className="lpKicker"><span /> INITIAL PUMP OFFERING · SOLANA LAUNCHPAD</div>
+            <h1>Initial Pump Offering.</h1>
+            <p className="lpHeroLead">
+              Structure a presale, publish the terms, move into a fair launch, and route disclosed creator fees back to the communities that made it possible.
+            </p>
+            <div className="lpHeroActions">
+              <Link className="lpPrimary" href="/launch">Launch a project <ArrowRight size={17} /></Link>
+              <a className="lpSecondary" href="#launches">Explore offerings</a>
+            </div>
+            <p className="lpHeroDisclosure">Brokerage-style clarity for project-token launches. IPO is not a broker, and project tokens are not company shares.</p>
           </div>
-          <div className="lpHeroProof">
-            <div><strong>2</strong><span>launch paths</span></div>
-            <div><strong>1,212</strong><span>desk memberships</span></div>
-            <div><strong>100%</strong><span>fee route disclosed</span></div>
+          <div className="lpHeroRoute" aria-label="Initial Pump Offering lifecycle">
+            <div><span>01</span><strong>Structure</strong><small>Terms + presale</small></div>
+            <ArrowRight />
+            <div><span>02</span><strong>Launch</strong><small>Open market</small></div>
+            <ArrowRight />
+            <div><span>03</span><strong>Reward</strong><small>Visible fee route</small></div>
           </div>
-        </div>
-        <div className="lpLaunchPreview" aria-label="Initial Pump Offering lifecycle preview">
-          <div className="lpPreviewHead">
-            <div className="lpTokenMark">I</div>
-            <div><span>OFFERING PREVIEW</span><strong>YOUR PROJECT / $IDEA</strong></div>
-            <b>PRE-LAUNCH</b>
-          </div>
-          <div className="lpCurvePanel">
-            <div className="lpCurveMeta"><span>PRESALE PROGRESS</span><strong>TERMS REQUIRED</strong></div>
-            <div className="lpCurveTrack"><i /></div>
-            <div className="lpCurveLabels"><span>APPLICATION</span><span>FAIR LAUNCH</span></div>
-          </div>
-          <div className="lpPreviewGrid">
-            <div><span>RAISE</span><strong>Not configured</strong></div>
-            <div><span>DESK REWARD SHARE</span><strong>15% template</strong></div>
-            <div><span>SETTLEMENT</span><strong>Disabled</strong></div>
-            <div><span>VERIFICATION</span><strong>Required</strong></div>
-          </div>
-          <p><ShieldCheck size={15} /> A saved launch draft is not a token, sale, or guarantee.</p>
         </div>
       </section>
 
@@ -136,11 +124,11 @@ export default function LaunchpadHome() {
       <section className="lpSection lpWrap lpMembershipTease">
         <div className="lpDeskThumb">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img alt="IPO Desk architectural collectible" src="/collection/images/IPO-0420-L3.svg" />
+          <img alt="IPO Launch Console architectural collectible" src="/collection/images/IPO-0420-L3.svg" />
         </div>
         <div>
           <span className="lpMiniLabel">DESK MEMBERSHIP</span>
-          <h2>A membership layer, not a toll booth.</h2>
+          <h2>The launchpad&apos;s membership layer.</h2>
           <p>Anyone can browse and prepare a launch. Each desk has equal base participation in separately disclosed desk reward pools and a transparent mint-funded asset allocation.</p>
           <dl>
             <div><dt>SUPPLY</dt><dd>{launchConfig.supply.toLocaleString()}</dd></div>

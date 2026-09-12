@@ -71,7 +71,7 @@ function decodeConfig(address: PublicKey, data: Uint8Array): LaunchState {
 function validateLaunchState(state: LaunchState) {
   if (state.totalSupply !== EXPECTED_SUPPLY) throw new Error(`On-chain supply is not ${EXPECTED_SUPPLY.toLocaleString()}.`);
   if (state.mintPriceLamports !== EXPECTED_SOL_PRICE) throw new Error(`On-chain SOL price is not ${launchConfig.mintPriceSol.toFixed(3)} SOL.`);
-  if (state.assetTreasury.equals(state.treasury)) throw new Error('On-chain asset and operations treasuries are not separated.');
+  if (state.assetTreasury.equals(state.treasury)) throw new Error('On-chain asset and platform treasuries are not separated.');
   const expectedAddresses = [
     ['operations treasury', state.treasury, launchConfig.treasury],
     ['asset-capital treasury', state.assetTreasury, launchConfig.assetTreasury],
@@ -151,7 +151,6 @@ export async function mintDesk(provider: WalletProvider, onSubmitted?: (signatur
       { pubkey: buyer, isSigner: true, isWritable: true },
       { pubkey: state.config, isSigner: false, isWritable: true },
       { pubkey: desk, isSigner: false, isWritable: true },
-      { pubkey: state.treasury, isSigner: false, isWritable: true },
       { pubkey: state.assetTreasury, isSigner: false, isWritable: true },
       { pubkey: asset.publicKey, isSigner: true, isWritable: true },
       { pubkey: state.coreCollection, isSigner: false, isWritable: true },

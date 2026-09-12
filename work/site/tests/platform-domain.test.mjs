@@ -32,13 +32,13 @@ test('fee receipts split with integer math and retain dust', () => {
   assert.equal(result.dust, 1n);
 });
 
-test('mint receipts preserve the 80/20 per-desk allocation without assuming sellout', () => {
+test('mint receipts preserve the full per-desk asset allocation without assuming sellout', () => {
   const one = splitMintReceipt(120_000_000n);
-  assert.equal(one.initialAssetCapital, 96_000_000n);
-  assert.equal(one.operationFunds, 24_000_000n);
+  assert.equal(one.initialAssetCapital, 120_000_000n);
+  assert.equal(one.operationFunds, 0n);
   const partial = splitMintReceipt(7n * 120_000_000n);
-  assert.equal(partial.initialAssetCapital, 672_000_000n);
-  assert.equal(partial.operationFunds, 168_000_000n);
+  assert.equal(partial.initialAssetCapital, 840_000_000n);
+  assert.equal(partial.operationFunds, 0n);
 });
 
 test('upgrade payments follow the configured burn policy without touching desk rewards', () => {

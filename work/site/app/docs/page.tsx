@@ -77,15 +77,8 @@ export default function DocsPage() {
               <div>
                 <strong>Mint-funded assets</strong>
                 <p>
-                  80% or 0.096 SOL per desk, attributable to that desk until
+                  100% or 0.12 SOL per desk, attributable to that desk until
                   purchased or claimed under published rules.
-                </p>
-              </div>
-              <div>
-                <strong>Operations</strong>
-                <p>
-                  20% or 0.024 SOL per desk for development, infrastructure, and
-                  operations.
                 </p>
               </div>
               <div>
@@ -101,8 +94,8 @@ export default function DocsPage() {
               <div>
                 <strong>Full-supply scenario</strong>
                 <p>
-                  145.44 SOL gross, 116.352 SOL initial assets, and 29.088 SOL
-                  operations. This is a scenario, not funds raised.
+                  145.44 SOL gross and 145.44 SOL of mint-funded asset capital.
+                  This is a scenario, not funds raised.
                 </p>
               </div>
             </div>
@@ -110,7 +103,7 @@ export default function DocsPage() {
             <p>
               {mintConfigured
                 ? "The client verifies deployed supply, price, linked accounts, collection ownership, and metadata before minting."
-                : "The revised source splits each mint between separate asset and operations treasuries, but the program is not verified as deployed. Minting remains disabled."}
+                : "The revised source routes the full mint price to desk-attributed asset capital, but the program is not verified as deployed. Minting remains disabled."}
             </p>
           </section>
           <section id="ownership">

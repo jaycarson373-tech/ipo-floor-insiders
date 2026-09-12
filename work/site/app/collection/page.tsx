@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { launchConfig, mintEnvironmentConfigured } from "../launch-config";
 
-const desks = [1, 47, 121, 333, 420, 741, 999, 1212];
+const desks = [1, 47, 121, 333, 420, 561, 741, 888, 999, 1068, 1195, 1212];
 
 function deploymentErrorMessage(error: unknown) {
   const detail = error instanceof Error ? error.message : "";
@@ -100,22 +100,22 @@ export default function CollectionPage() {
   return (
     <main className="lpMain lpAppPage lpWrap">
       <div className="lpPageIntro">
-        <div><span>THE COLLECTION</span><h1>{launchConfig.supply.toLocaleString()} desks for the IPO launchpad.</h1><p>Architectural research workspaces with equal base participation. Artwork and optional upgrades never multiply financial rights.</p></div>
+        <div><span>THE COLLECTION</span><h1>{launchConfig.supply.toLocaleString()} launch consoles.</h1><p>Architectural offering machines with one shared silhouette and equal base participation. Artwork and optional upgrades never multiply financial rights.</p></div>
         <div className="lpPreviewBadge"><i /> {availability === "checking" ? "VERIFYING MINT" : availability === "available" ? "MINT AVAILABLE" : "MINT UNAVAILABLE"}</div>
       </div>
       <section className="lpCollectionHero">
         <div className="lpCollectionArt">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img alt="IPO Desk 1212 collection preview" src="/collection/images/IPO-1212-L5.svg" />
+          <img alt="IPO Launch Console 1212 collection preview" src="/collection/images/IPO-1212-L5.svg" />
         </div>
         <div className="lpCollectionTerms">
-          <span className="lpMiniLabel">METAPLEX CORE COLLECTION</span><h2>One desk. One participation unit.</h2>
-          <p>Each mint creates one Core NFT. No `$IPO` token is required. Mint payments are split into desk-attributed asset capital and operations.</p>
+          <span className="lpMiniLabel">METAPLEX CORE COLLECTION</span><h2>One console. One participation unit.</h2>
+          <p>Each mint creates one Core NFT. No `$IPO` token is required. The full mint price is attributed to that desk&apos;s mint-funded asset capital.</p>
           <dl>
             <div><dt>SUPPLY</dt><dd>1,212</dd></div>
             <div><dt>PRICE</dt><dd>0.12 SOL</dd></div>
-            <div><dt>MINT-FUNDED ASSETS</dt><dd>0.096 SOL</dd></div>
-            <div><dt>OPERATIONS</dt><dd>0.024 SOL</dd></div>
+            <div><dt>MINT-FUNDED ASSETS</dt><dd>0.12 SOL</dd></div>
+            <div><dt>$IPO TO MINT</dt><dd>NONE</dd></div>
           </dl>
           <button className={availability === "available" ? "lpPrimary" : "lpDisabled"} disabled={availability !== "available" || phase === "signing" || phase === "submitted"} onClick={reviewMint} type="button">
             {availability === "checking" ? "Verifying mint" : availability === "available" ? "Mint a desk" : "Mint unavailable"} <ArrowRight size={16} />
@@ -130,8 +130,8 @@ export default function CollectionPage() {
                 <>
                   <dl>
                     <div><dt>DESK PRICE</dt><dd>0.12 SOL</dd></div>
-                    <div><dt>ASSET CAPITAL</dt><dd>0.096 SOL</dd></div>
-                    <div><dt>OPERATIONS</dt><dd>0.024 SOL</dd></div>
+                    <div><dt>ASSET CAPITAL</dt><dd>0.12 SOL</dd></div>
+                    <div><dt>PLATFORM DEDUCTION</dt><dd>NONE</dd></div>
                     <div><dt>EXTRA COST</dt><dd>Network + accounts</dd></div>
                   </dl>
                   <button className="lpPrimary" onClick={confirmMint} type="button">Request wallet signature <ArrowRight size={16} /></button>
@@ -155,7 +155,7 @@ export default function CollectionPage() {
             return (
               <article key={id}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt={`IPO Desk ${String(id).padStart(4, "0")}`} src={`/collection/images/IPO-${String(id).padStart(4, "0")}-L${level}.svg`} />
+                <img alt={`IPO Launch Console ${String(id).padStart(4, "0")}`} src={`/collection/images/IPO-${String(id).padStart(4, "0")}-L${level}.svg`} />
                 <div><strong>IPO #{String(id).padStart(4, "0")}</strong><span>LEVEL {level}</span></div>
               </article>
             );

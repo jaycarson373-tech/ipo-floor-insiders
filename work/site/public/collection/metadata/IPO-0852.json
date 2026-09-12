@@ -1,7 +1,7 @@
 {
   "name": "IPO Desk #0852",
   "symbol": "IPO",
-  "description": "A collectible IPO desk represented by an architectural research workspace. Holder rewards and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.",
+  "description": "A collectible IPO launch console represented by an architectural issuance chamber. Holder rewards and launch features require published, funded terms; no company shares, allocation, or financial return is guaranteed.",
   "image": "images/IPO-0852-L1.svg",
   "attributes": [
     {
@@ -9,32 +9,28 @@
       "value": "Common"
     },
     {
-      "trait_type": "Workspace",
-      "value": "filing archive"
+      "trait_type": "Chamber",
+      "value": "issuance hall"
     },
     {
-      "trait_type": "Desk Form",
-      "value": "crescent"
+      "trait_type": "Offering Ring",
+      "value": "twin rail"
+    },
+    {
+      "trait_type": "Terminal Layout",
+      "value": "signal pods"
     },
     {
       "trait_type": "Material",
-      "value": "dark walnut"
+      "value": "black titanium"
     },
     {
-      "trait_type": "Lighting",
-      "value": "acid lime"
+      "trait_type": "Signal",
+      "value": "coral close"
     },
     {
-      "trait_type": "View",
-      "value": "archive shelving"
-    },
-    {
-      "trait_type": "Research Mode",
-      "value": "market brief"
-    },
-    {
-      "trait_type": "Desk Object",
-      "value": "conference phone"
+      "trait_type": "Document System",
+      "value": "allocation tape"
     },
     {
       "trait_type": "Desk Serial",
@@ -92,7 +88,7 @@
         "uri": "images/IPO-0852-L5.svg"
       }
     ],
-    "seed": "ipo-desk-852",
-    "visual_signature": "3BD1D037"
+    "seed": "ipo-launch-console-852",
+    "visual_signature": "7866BBAC"
   }
 }

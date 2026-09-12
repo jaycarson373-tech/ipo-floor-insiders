@@ -40,7 +40,7 @@ export const rewardAssets = [
 export const productFeatures: Array<{ name: string; status: ProductStatus; detail: string }> = [
   { name: 'IPO Room research workspace', status: 'available', detail: 'Sourced drafts, revision history, local follows, bookmarks, alert preferences, and share-card copying work in this browser.' },
   { name: 'Contribution campaign lab', status: 'available', detail: 'Campaign drafts and pending contribution submissions persist locally; funding, review, rewards, and publication need production services.' },
-  { name: '80/20 mint split source', status: 'preview', detail: 'The revised Anchor source atomically splits and records each mint; it is not deployed or externally reviewed.' },
+  { name: 'Full mint asset allocation source', status: 'preview', detail: 'The revised Anchor source atomically routes and records the full mint price as desk-attributed asset capital; it is not deployed or externally reviewed.' },
   { name: 'Launch planning and recovery', status: 'available', detail: 'Drafts persist in this browser and produce a complete review packet.' },
   { name: 'Pump create_v2 execution', status: 'blocked', detail: 'Requires metadata storage, production recipient wallets, SDK transaction QA, and operator enablement.' },
   { name: 'Creator-fee reconciliation', status: 'preview', detail: 'Integer accounting and receipt deduplication are tested; no production indexer is connected.' },

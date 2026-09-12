@@ -10,8 +10,8 @@
     "operations": 1000
   },
   "draftMintCapitalBps": {
-    "rewardAssets": 8000,
-    "operations": 2000
+    "rewardAssets": 10000,
+    "operations": 0
   },
   "upgradePolicy": {
     "levels": 5,

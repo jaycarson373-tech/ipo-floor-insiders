@@ -101,7 +101,6 @@ pub mod ipo_program {
         require!(serial == config.minted + 1, ErrorCode::InvalidSerial);
         validate_mint_accounts(
             config,
-            &ctx.accounts.treasury,
             &ctx.accounts.asset_treasury,
             &ctx.accounts.core_collection,
         )?;
@@ -112,17 +111,11 @@ pub mod ipo_program {
         let config_bump = [config.bump];
         let signer_seeds: &[&[u8]] = &[CONFIG_SEED, authority.as_ref(), &config_bump];
 
-        let (initial_asset_lamports, operations_lamports) =
-            split_mint_receipt(MINT_PRICE_LAMPORTS)?;
+        let initial_asset_lamports = mint_asset_capital(MINT_PRICE_LAMPORTS)?;
         transfer_sol(
             &ctx.accounts.buyer,
             &ctx.accounts.asset_treasury,
             initial_asset_lamports,
-        )?;
-        transfer_sol(
-            &ctx.accounts.buyer,
-            &ctx.accounts.treasury,
-            operations_lamports,
         )?;
         create_core_asset(
             &ctx.accounts.mpl_core_program,
@@ -144,7 +137,6 @@ pub mod ipo_program {
         desk.level = 0;
         desk.minted_at = Clock::get()?.unix_timestamp;
         desk.initial_asset_lamports = initial_asset_lamports;
-        desk.operations_lamports = operations_lamports;
         desk.bump = ctx.bumps.desk;
 
         emit!(DeskMinted {
@@ -153,7 +145,6 @@ pub mod ipo_program {
             serial,
             sol_paid: MINT_PRICE_LAMPORTS,
             initial_asset_lamports,
-            operations_lamports,
         });
         Ok(())
     }
@@ -275,10 +266,7 @@ pub struct MintDesk<'info> {
         bump
     )]
     pub desk: Account<'info, Desk>,
-    /// CHECK: Must match the immutable treasury stored in config.
-    #[account(mut)]
-    pub treasury: UncheckedAccount<'info>,
-    /// CHECK: Must match the separate asset-capital treasury stored in config.
+    /// CHECK: Must match the asset-capital treasury stored in config.
     #[account(mut)]
     pub asset_treasury: UncheckedAccount<'info>,
     /// CHECK: New Metaplex Core asset; must sign the outer transaction.
@@ -343,11 +331,9 @@ impl<'info> UpgradeDesk<'info> {
 
 fn validate_mint_accounts<'info>(
     config: &Account<'info, Config>,
-    treasury: &UncheckedAccount<'info>,
     asset_treasury: &UncheckedAccount<'info>,
     core_collection: &UncheckedAccount<'info>,
 ) -> Result<()> {
-    require_keys_eq!(treasury.key(), config.treasury, ErrorCode::InvalidTreasury);
     require_keys_eq!(
         asset_treasury.key(),
         config.asset_treasury,
@@ -536,15 +522,12 @@ fn whole_token_amount(tokens: u64, decimals: u8) -> Result<u64> {
         .ok_or(ErrorCode::TokenAmountOverflow.into())
 }
 
-fn split_mint_receipt(lamports: u64) -> Result<(u64, u64)> {
-    let initial_assets = lamports
+fn mint_asset_capital(lamports: u64) -> Result<u64> {
+    lamports
         .checked_mul(MINT_ASSET_BPS)
         .ok_or(ErrorCode::TokenAmountOverflow)?
-        / BPS_DENOMINATOR;
-    let operations = lamports
-        .checked_sub(initial_assets)
-        .ok_or(ErrorCode::TokenAmountOverflow)?;
-    Ok((initial_assets, operations))
+        .checked_div(BPS_DENOMINATOR)
+        .ok_or(ErrorCode::TokenAmountOverflow.into())
 }
 
 fn metadata_uri(base: &str, serial: u16, level: u8) -> String {
@@ -585,7 +568,6 @@ pub struct Desk {
     pub level: u8,
     pub minted_at: i64,
     pub initial_asset_lamports: u64,
-    pub operations_lamports: u64,
     pub bump: u8,
 }
 
@@ -606,7 +588,6 @@ pub struct DeskMinted {
     pub serial: u16,
     pub sol_paid: u64,
     pub initial_asset_lamports: u64,
-    pub operations_lamports: u64,
 }
 
 #[event]
@@ -694,12 +675,9 @@ mod tests {
     }
 
     #[test]
-    fn splits_each_mint_into_asset_capital_and_operations() {
-        assert_eq!(
-            split_mint_receipt(120_000_000).unwrap(),
-            (96_000_000, 24_000_000)
-        );
-        assert_eq!(split_mint_receipt(7).unwrap(), (5, 2));
+    fn routes_each_mint_fully_to_asset_capital() {
+        assert_eq!(mint_asset_capital(120_000_000).unwrap(), 120_000_000);
+        assert_eq!(mint_asset_capital(7).unwrap(), 7);
     }
 
     #[test]

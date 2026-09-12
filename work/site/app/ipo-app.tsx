@@ -725,22 +725,14 @@ export default function IpoApp() {
             title="A desk starts with its own ledger."
             body="Each mint’s initial asset allocation stays attributable to that desk. It is not protocol revenue or guaranteed value."
           />
-          <div className="capitalSplit">
+          <div className="capitalSplit single">
             <article>
-              <span>80% / MINT-FUNDED ASSETS</span>
-              <strong>0.096 SOL</strong>
+              <span>100% / MINT-FUNDED ASSETS</span>
+              <strong>0.12 SOL</strong>
               <p>
                 Held for eligible, explicitly verified tokenized pre-IPO
                 exposure. Failed or unavailable purchases remain visible as
                 unspent capital.
-              </p>
-            </article>
-            <article>
-              <span>20% / OPERATIONS</span>
-              <strong>0.024 SOL</strong>
-              <p>
-                Development, infrastructure, and operations. Network and
-                account-creation costs are disclosed separately.
               </p>
             </article>
           </div>
@@ -2197,8 +2189,8 @@ export default function IpoApp() {
               eyebrow="ACCOUNTING PROGRAM REQUIRED"
               title="No balances can be loaded."
             >
-              The revised mint source splits 80/20 into separate treasuries and
-              records both amounts per desk. Deployment, asset purchases, epoch
+              The revised mint source routes the full price to desk-attributed
+              asset capital. Deployment, asset purchases, epoch
               accounting, and claims are still required.
             </EmptyState>
           </div>
@@ -2298,11 +2290,6 @@ export default function IpoApp() {
             <span>ASSETS / REWARDS OWED</span>
             <strong>Unavailable</strong>
             <small>No allocation program</small>
-          </article>
-          <article>
-            <span>OPERATIONS</span>
-            <strong>Unavailable</strong>
-            <small>No published budget feed</small>
           </article>
         </div>
         <div className="activityTable">
@@ -2516,12 +2503,8 @@ export default function IpoApp() {
                     <dd>{formatLamports(totalLamports)} SOL</dd>
                   </div>
                   <div>
-                    <dt>Mint-funded assets (80%)</dt>
+                    <dt>Mint-funded assets (100%)</dt>
                     <dd>{formatLamports(mintAllocation.initialAssetCapital)} SOL</dd>
-                  </div>
-                  <div>
-                    <dt>Operations (20%)</dt>
-                    <dd>{formatLamports(mintAllocation.operationFunds)} SOL</dd>
                   </div>
                   <div>
                     <dt>Network/account costs</dt>
@@ -2533,7 +2516,7 @@ export default function IpoApp() {
                   </div>
                 </dl>
                 <p className="formNote">
-                  The current deployed program must support per-desk 80/20
+                  The current deployed program must support full per-desk asset
                   accounting before mint is enabled.
                 </p>
                 <button

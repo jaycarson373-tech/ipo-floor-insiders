@@ -31,7 +31,7 @@ export function splitIntegerAmount(totalUnits, shares) {
   return { allocations, dust: total - allocated };
 }
 
-export function splitMintReceipt(totalLamports, allocation = { rewardAssets: 8000, operations: 2000 }) {
+export function splitMintReceipt(totalLamports, allocation = { rewardAssets: 10000, operations: 0 }) {
   const total = BigInt(totalLamports);
   if (total < 0n) throw new Error('Mint receipt cannot be negative.');
   const rewardAssets = Number(allocation.rewardAssets);
