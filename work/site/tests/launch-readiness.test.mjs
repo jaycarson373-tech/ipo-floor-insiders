@@ -15,6 +15,7 @@ function validEnvironment() {
     NEXT_PUBLIC_ASSET_TREASURY_WALLET: address(),
     NEXT_PUBLIC_CORE_COLLECTION: address(),
     NEXT_PUBLIC_METADATA_BASE_URL: 'https://example.com/api/metadata',
+    NEXT_PUBLIC_PUBLIC_MINT_ENABLED: 'true',
   };
 }
 
@@ -37,6 +38,14 @@ test('static launch preflight blocks non-mainnet release configuration', () => {
   env.NEXT_PUBLIC_SOLANA_CLUSTER = 'devnet';
   assert.equal(evaluateStaticLaunchReadiness(product, env).ready, false);
   assert.equal(evaluateStaticLaunchReadiness(product, env, { requireMainnet: false }).ready, true);
+});
+
+test('static launch preflight requires an explicit public mint release switch', () => {
+  const env = validEnvironment();
+  env.NEXT_PUBLIC_PUBLIC_MINT_ENABLED = 'false';
+  const result = evaluateStaticLaunchReadiness(product, env);
+  assert.equal(result.ready, false);
+  assert.equal(result.checks.find((check) => check.id === 'public-mint-switch').status, 'fail');
 });
 
 test('launch config decoder matches the no-token mint account layout', () => {

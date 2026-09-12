@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import PlatformChrome from './platform-chrome';
+import { WalletProviderRoot } from './wallet-context';
 import './globals.css';
 
 const geistSans = Geist({
@@ -28,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PlatformChrome>{children}</PlatformChrome>
+        <WalletProviderRoot><PlatformChrome>{children}</PlatformChrome></WalletProviderRoot>
       </body>
     </html>
   );

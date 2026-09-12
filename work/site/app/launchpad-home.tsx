@@ -12,9 +12,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { launchConfig } from "./launch-config";
+import { launchConfig, publicMintConfigured } from "./launch-config";
 import PumpioArt from "./pumpio-art";
-import { levelPlan, pumpioPreviews, rarityPlan } from "./pumpio-data";
+import { levelPlan, pumpioPreviews, rarityPlan, traitCount } from "./pumpio-data";
 
 const showcase = [pumpioPreviews[2], pumpioPreviews[0], pumpioPreviews[8], pumpioPreviews[5], pumpioPreviews[6]];
 
@@ -28,7 +28,7 @@ export default function LaunchpadHome() {
           <p className="pioHeroLead">Mint a Pumpio for 0.12 SOL.</p>
           <p className="pioHeroSub">Collect. Level. Access the offering.</p>
           <div className="pioActions">
-            <Link className="pioButton primary" href="/mint">MINT A PUMPIO / 0.12 SOL <ArrowRight size={17} /></Link>
+            <Link className="pioButton primary" href="/mint">{publicMintConfigured ? "MINT A PUMPIO / 0.12 SOL" : "VIEW MINT STATUS"} <ArrowRight size={17} /></Link>
             <Link className="pioButton ghost" href="/pumpios">EXPLORE COLLECTION</Link>
           </div>
           <div className="pioHeroFacts">
@@ -58,7 +58,7 @@ export default function LaunchpadHome() {
       <section className="pioSection pioCream" id="pumpios">
         <div className="pioSectionHead">
           <div><p className="pioEyebrow">01 / PUMPIOS</p><h2>MEET THE PUMPIOS.</h2></div>
-          <p>1,200 capsule-headed underwriters built for the Initial Pump Offering.</p>
+          <p>1,200 capsule-headed underwriters with a hand-drawn visual language and one unmistakable silhouette.</p>
         </div>
         <div className="pioPreviewGrid">
           {pumpioPreviews.slice(0, 8).map((item) => (
@@ -69,7 +69,7 @@ export default function LaunchpadHome() {
           ))}
         </div>
         <div className="pioSectionAction">
-          <div className="pioRarityLine">{rarityPlan.map((item) => <span key={item.label}><b>{item.count}</b> {item.label}</span>)}</div>
+          <div className="pioRarityLine">{rarityPlan.map((item) => <span key={item.label}><b>{item.count}</b> {item.label}</span>)}<span><b>{traitCount}+</b> TRAITS</span></div>
           <Link className="pioTextLink" href="/pumpios">EXPLORE COLLECTION <ArrowRight size={16} /></Link>
         </div>
       </section>

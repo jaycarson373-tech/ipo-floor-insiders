@@ -5,6 +5,7 @@ import {
   Flame,
   Gift,
   Layers3,
+  LogOut,
   Menu,
   Rocket,
   ShieldCheck,
@@ -14,14 +15,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
-import type { WalletProvider } from "./solana-client";
-
-declare global {
-  interface Window {
-    solana?: WalletProvider & { isPhantom?: boolean };
-  }
-}
+import type { ReactNode } from "react";
+import { useWallet } from "./wallet-context";
 
 const nav = [
   { href: "/", label: "IPO", icon: Flame },
@@ -37,23 +32,8 @@ const mobileNav = nav.filter((item) => ["/", "/pumpios", "/launchpad", "/mint"].
 
 export default function PlatformChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [wallet, setWallet] = useState("Connect");
-  const [notice, setNotice] = useState("");
-
-  async function connectWallet() {
-    if (!window.solana) {
-      setNotice("No compatible Solana wallet was found in this browser.");
-      return;
-    }
-    try {
-      const response = await window.solana.connect();
-      const key = response.publicKey.toString();
-      setWallet(`${key.slice(0, 4)}...${key.slice(-4)}`);
-      setNotice("Wallet connected. Financial actions remain unavailable until their on-chain programs are verified.");
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Wallet connection was cancelled.");
-    }
-  }
+  const { address, connected, disconnect, notice, openPicker, setNotice } = useWallet();
+  const walletLabel = connected ? `${address.slice(0, 4)}...${address.slice(-4)}` : "Connect";
 
   return (
     <>
@@ -71,9 +51,12 @@ export default function PlatformChrome({ children }: { children: ReactNode }) {
         </nav>
         <div className="lpHeaderActions">
           <Link className="lpDocsLink" href="/docs"><BookOpen size={15} /> Docs</Link>
-          <button className="lpWallet" onClick={connectWallet} type="button">
-            <WalletCards size={16} /> {wallet}
-          </button>
+          {connected ? (
+            <details className="lpAccount">
+              <summary className="lpWallet"><i /> {walletLabel}</summary>
+              <div><span>CONNECTED WALLET</span><code>{address}</code><small>SOLANA / {process.env.NEXT_PUBLIC_SOLANA_CLUSTER ?? "devnet"}</small><button onClick={() => void disconnect()} type="button"><LogOut size={14} /> Disconnect</button></div>
+            </details>
+          ) : <button className="lpWallet" onClick={openPicker} type="button"><WalletCards size={16} /> Connect</button>}
           <details className="lpMenu">
             <summary aria-label="Open menu"><Menu size={20} /></summary>
             <div>
@@ -82,7 +65,7 @@ export default function PlatformChrome({ children }: { children: ReactNode }) {
                 const Icon = item.icon;
                 return <Link href={item.href} key={item.href}><Icon size={16} /> {item.label}</Link>;
               })}
-              <button onClick={connectWallet} type="button"><WalletCards size={16} /> {wallet}</button>
+              {connected ? <button onClick={() => void disconnect()} type="button"><LogOut size={16} /> Disconnect {walletLabel}</button> : <button onClick={openPicker} type="button"><WalletCards size={16} /> Connect wallet</button>}
             </div>
           </details>
         </div>

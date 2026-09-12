@@ -48,6 +48,12 @@ export function evaluateStaticLaunchReadiness(product, env, { requireMainnet = t
   );
   add(
     checks,
+    'public-mint-switch',
+    env.NEXT_PUBLIC_PUBLIC_MINT_ENABLED === 'true' ? 'pass' : 'fail',
+    env.NEXT_PUBLIC_PUBLIC_MINT_ENABLED === 'true' ? 'Public mint release switch is enabled.' : 'Public mint release switch is disabled.',
+  );
+  add(
+    checks,
     'rpc',
     isHttpsUrl(env.NEXT_PUBLIC_SOLANA_RPC_URL ?? '') ? 'pass' : 'fail',
     env.NEXT_PUBLIC_SOLANA_RPC_URL ? 'RPC URL is present and uses HTTPS.' : 'RPC URL is missing.',

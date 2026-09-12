@@ -18,6 +18,7 @@ export const launchConfig = {
   draftMintCapitalBps: productConfig.draftMintCapitalBps,
   upgradePolicy: productConfig.upgradePolicy,
   pumpExecutionEnabled: process.env.NEXT_PUBLIC_PUMP_EXECUTION_ENABLED === 'true',
+  publicMintEnabled: process.env.NEXT_PUBLIC_PUBLIC_MINT_ENABLED === 'true',
 };
 
 export const mintEnvironmentConfigured = [
@@ -26,3 +27,5 @@ export const mintEnvironmentConfigured = [
   launchConfig.assetTreasury,
   launchConfig.coreCollection,
 ].every(Boolean) && launchConfig.treasury !== launchConfig.assetTreasury;
+
+export const publicMintConfigured = mintEnvironmentConfigured && launchConfig.publicMintEnabled;

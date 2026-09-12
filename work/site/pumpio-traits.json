@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "status": "DRAFT_ART_SYSTEM",
+  "seedNamespace": "PUMPIOS-V3",
+  "categories": [
+    {
+      "id": "capsule",
+      "label": "Capsule",
+      "values": {
+        "standard": ["Classic green / cream", "Red / cream", "Blue / cream", "Pink / cream", "Black / acid", "Cream / green"],
+        "rare": ["Smoked glass", "Frosted glass", "Cracked enamel", "Burned ceramic"],
+        "superRare": ["Liquid aquarium", "Mirror chrome", "Holographic foil"],
+        "legendary": ["Money-filled glass", "Brushed gold", "Radioactive crystal"]
+      }
+    },
+    {
+      "id": "face",
+      "label": "Expression",
+      "values": {
+        "standard": ["Deadpan", "Tired", "Slightly smug", "Fried", "Unimpressed", "Barely awake"],
+        "rare": ["One-eye", "Stitched mouth", "Pixel drift"],
+        "superRare": ["Skeleton trace", "Liquid reflection"],
+        "legendary": ["Printer stare", "Chairman calm"]
+      }
+    },
+    {
+      "id": "eyes",
+      "label": "Eyes",
+      "values": {
+        "standard": ["Signature black", "Heavy lids", "Side-eye", "Market close", "Red-eye", "Monday open"],
+        "rare": ["Ticker reflection", "Blue screen", "Halftone eyes"],
+        "superRare": ["Chrome reflection", "X-ray sockets"],
+        "legendary": ["Gold market", "Radioactive ink"]
+      }
+    },
+    {
+      "id": "outfit",
+      "label": "Outfit",
+      "values": {
+        "standard": ["Cheap intern suit", "Charcoal suit", "Gray suit", "Banker vest", "Green hoodie", "Black hoodie", "Pinstripe shirt", "Tracksuit"],
+        "rare": ["Pinstripe suit", "Puffer suit", "Trader jacket", "Lab coat", "Bathrobe"],
+        "superRare": ["Fur-collar coat", "Hazmat tailoring", "Liquidated suit"],
+        "legendary": ["Golden tuxedo", "Chairman double-breasted"]
+      }
+    },
+    {
+      "id": "headwear",
+      "label": "Headwear",
+      "values": {
+        "standard": ["None", "IPO cap", "BUY cap", "Visor", "Beanie", "Intern headset"],
+        "rare": ["Trader headset", "Cowboy hat", "Bandages", "Bookrunner cap"],
+        "superRare": ["Signal halo", "Quant sensors"],
+        "legendary": ["Crown emblem", "Golden antenna"]
+      }
+    },
+    {
+      "id": "eyewear",
+      "label": "Eyewear",
+      "values": {
+        "standard": ["None", "Reading glasses", "Black shades", "Pink frames", "Screen lenses"],
+        "rare": ["Ski goggles", "Ticker glasses", "Blue blockers"],
+        "superRare": ["Chrome visor", "Liquid lenses"],
+        "legendary": ["Golden monocle", "Market scanner"]
+      }
+    },
+    {
+      "id": "heldItem",
+      "label": "Held item",
+      "values": {
+        "standard": ["None", "Coffee", "Energy drink", "Calculator", "Prospectus", "Red phone", "Green phone"],
+        "rare": ["Briefcase", "Tiny candle", "Ticker tape", "Closing bell"],
+        "superRare": ["Crystal terminal", "Whale phone"],
+        "legendary": ["Golden phone", "Printer controls"]
+      }
+    },
+    {
+      "id": "neckwear",
+      "label": "Neckwear",
+      "values": {
+        "standard": ["Black tie", "Green tie", "Red tie", "Loose tie", "No tie", "Lanyard"],
+        "rare": ["Gold chain", "Pearl chain", "Bow tie"],
+        "superRare": ["Ticker chain", "Chrome collar"],
+        "legendary": ["IPO medallion", "Chairman pin"]
+      }
+    },
+    {
+      "id": "background",
+      "label": "Background",
+      "values": {
+        "standard": ["Prospectus yellow", "Market blue", "Opening red", "Mint green", "Warm paper", "Ticker black", "Copy room", "Intern cubicle"],
+        "rare": ["Trading floor", "Closing desk", "Server aisle", "Underwriting room", "Street open"],
+        "superRare": ["Night exchange", "Yacht close", "Quant lab"],
+        "legendary": ["Printing house", "Golden vault", "Chairman boardroom"]
+      }
+    },
+    {
+      "id": "marketArtifact",
+      "label": "Market artifact",
+      "values": {
+        "standard": ["Candlestick fragment", "Ticker marks", "Offering stamp", "Price ladder", "Grid paper", "Red correction"],
+        "rare": ["Prospectus collage", "Order sheet", "Bell silhouette"],
+        "superRare": ["Whale wake", "Liquid chart"],
+        "legendary": ["Infinite green candle", "Golden book"]
+      }
+    },
+    {
+      "id": "surface",
+      "label": "Surface",
+      "values": {
+        "standard": ["Clean ink", "Paper tooth", "Dry brush", "Pencil ghosts", "Offset print", "Newsprint grain"],
+        "rare": ["Cracked varnish", "Tape repairs", "Heavy halftone"],
+        "superRare": ["Glass scratches", "Chrome scuffs"],
+        "legendary": ["Gold leaf wear", "Radioactive bloom"]
+      }
+    },
+    {
+      "id": "statusDetail",
+      "label": "Status detail",
+      "values": {
+        "standard": ["No badge", "Intern pass", "Coffee ring", "Margin note", "Paper clip"],
+        "rare": ["Underwriter pin", "Bookrunner stripe", "Market-maker tab"],
+        "superRare": ["Whale seal", "Quant notation"],
+        "legendary": ["Legend plate", "Chairman seal"]
+      }
+    }
+  ],
+  "compatibilityRules": [
+    "The capsule silhouette, eye placement, mouth placement, head-to-body ratio, and camera crop never change.",
+    "Transparent and liquid capsules do not receive opaque eyewear or conventional hats.",
+    "Skeleton trace appears only with transparent, smoked-glass, or radioactive capsule materials.",
+    "Chairman details are reserved for Pumpio #0001.",
+    "Legendary complexity is capped at three focal traits so the silhouette stays readable.",
+    "Background market artifacts never overlap the face or break the capsule outline.",
+    "Every generated signature is deterministic from collection namespace and serial number."
+  ]
+}

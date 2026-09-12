@@ -2,8 +2,9 @@
 
 import { ArrowRight, Check, CircleAlert, Minus, Plus, RotateCcw, WalletCards } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { launchConfig, mintEnvironmentConfigured } from "../launch-config";
+import { launchConfig, publicMintConfigured } from "../launch-config";
 import PumpioArt from "../pumpio-art";
+import { useWallet } from "../wallet-context";
 
 type Phase = "idle" | "review" | "signing" | "submitted" | "confirmed" | "failed";
 type Receipt = { asset: string; serial: number; signature: string };
@@ -17,8 +18,9 @@ function deploymentErrorMessage(error: unknown) {
 }
 
 export default function MintPage() {
-  const [availability, setAvailability] = useState<"checking" | "available" | "unavailable">(mintEnvironmentConfigured ? "checking" : "unavailable");
-  const [availabilityMessage, setAvailabilityMessage] = useState(mintEnvironmentConfigured ? "Verifying program, config, price, supply, and Core collection." : "Contract migration and Core collection addresses are not published.");
+  const { address, connected, disconnect, openPicker, provider } = useWallet();
+  const [availability, setAvailability] = useState<"checking" | "available" | "unavailable">(publicMintConfigured ? "checking" : "unavailable");
+  const [availabilityMessage, setAvailabilityMessage] = useState(publicMintConfigured ? "Verifying program, config, price, supply, and Core collection." : "Public minting remains disabled until migration, metadata, and deployment checks pass.");
   const [minted, setMinted] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -27,7 +29,7 @@ export default function MintPage() {
   const submitting = useRef(false);
 
   useEffect(() => {
-    if (!mintEnvironmentConfigured) return;
+    if (!publicMintConfigured) return;
     let active = true;
     void (async () => {
       try {
@@ -53,13 +55,12 @@ export default function MintPage() {
 
   async function reviewMint() {
     if (availability !== "available") return;
-    if (!window.solana) {
-      setPhase("failed");
-      setMessage("No compatible Solana wallet was found in this browser.");
+    if (!provider) {
+      openPicker();
+      setMessage("Connect a compatible Solana wallet to continue.");
       return;
     }
     try {
-      await window.solana.connect();
       const { fetchLaunchState } = await import("../solana-client");
       const state = await fetchLaunchState();
       if (state.paused || state.minted + quantity > state.totalSupply) throw new Error(state.paused ? "Minting is paused on-chain." : "Not enough Pumpios remain for that quantity.");
@@ -73,7 +74,7 @@ export default function MintPage() {
   }
 
   async function confirmMint() {
-    if (!window.solana || submitting.current || phase !== "review") return;
+    if (!provider || submitting.current || phase !== "review") return;
     submitting.current = true;
     setReceipts([]);
     setPhase("signing");
@@ -82,7 +83,7 @@ export default function MintPage() {
       const completed: Receipt[] = [];
       for (let index = 0; index < quantity; index += 1) {
         setMessage(`Approve Pumpio ${index + 1} of ${quantity} in your wallet.`);
-        const result = await mintPumpio(window.solana, () => setPhase("submitted"));
+        const result = await mintPumpio(provider, () => setPhase("submitted"));
         completed.push(result);
         setReceipts([...completed]);
         setPhase(index + 1 === quantity ? "confirmed" : "signing");
@@ -107,6 +108,7 @@ export default function MintPage() {
         <div className="pioMintPanel">
           <p className="pioEyebrow">PUMPIOS / METAPLEX CORE</p><h1>MINT YOUR PUMPIO.</h1><p className="pioMintIntro">The intended collection is 1,200 Pumpios at 0.12 SOL. No $IPO lock or burn is required to mint.</p>
           <div className={`pioMintStatus ${availability}`}><i /> {availability === "checking" ? "VERIFYING DEPLOYMENT" : availability === "available" ? "MINT AVAILABLE" : "MIGRATION REQUIRED"}</div>
+          <div className="pioWalletInline"><div><WalletCards size={16} /><span>{connected ? "CONNECTED" : "WALLET REQUIRED"}</span><strong>{connected ? `${address.slice(0, 4)}...${address.slice(-4)}` : "No wallet connected"}</strong></div>{connected ? <button onClick={() => void disconnect()} type="button">DISCONNECT</button> : <button onClick={openPicker} type="button">CONNECT WALLET</button>}</div>
           <dl className="pioMintStats"><div><dt>PRICE</dt><dd>0.12 SOL</dd></div><div><dt>SUPPLY</dt><dd>1,200</dd></div><div><dt>MINTED</dt><dd>{minted === null ? "--" : minted.toLocaleString()}</dd></div><div><dt>REMAINING</dt><dd>{remaining === null ? "--" : remaining.toLocaleString()}</dd></div></dl>
           <div className="pioQuantity"><span>QUANTITY</span><div><button aria-label="Decrease quantity" disabled={quantity === 1 || phase === "signing" || phase === "submitted"} onClick={() => setQuantity((value) => Math.max(1, value - 1))} type="button"><Minus /></button><strong>{quantity}</strong><button aria-label="Increase quantity" disabled={quantity === 3 || phase === "signing" || phase === "submitted"} onClick={() => setQuantity((value) => Math.min(3, value + 1))} type="button"><Plus /></button></div></div>
           <div className="pioMintTotal"><span>TOTAL</span><strong>{total} SOL</strong><small>+ estimated network and account costs</small></div>

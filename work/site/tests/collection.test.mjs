@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const product = JSON.parse(await readFile(path.join(root, 'product-config.json'), 'utf8'));
 const manifest = JSON.parse(await readFile(path.join(root, 'public', 'pumpios', 'preview-manifest.json'), 'utf8'));
+const traitCatalog = JSON.parse(await readFile(path.join(root, 'pumpio-traits.json'), 'utf8'));
+const blueprint = JSON.parse(await readFile(path.join(root, 'public', 'pumpios', 'trait-blueprint.json'), 'utf8'));
 
 test('Pumpios target economics match the centralized product configuration', () => {
   assert.equal(product.supply, 1_200);
@@ -35,4 +37,34 @@ test('approved Pumpio preview assets exist and retain a single Chairman concept'
     const file = path.resolve(root, 'public', 'pumpios', source);
     assert.ok((await stat(file)).size > 100_000, `${source} is a complete preview asset`);
   }
+});
+
+test('V3 trait system documents more than 100 traits across meaningful categories', () => {
+  const values = traitCatalog.categories.flatMap((category) => Object.values(category.values).flat());
+  assert.ok(traitCatalog.categories.length >= 10);
+  assert.ok(values.length > 100);
+  assert.equal(manifest.uniqueTraitNames, new Set(values.map((value) => value.toLowerCase())).size);
+  assert.ok(manifest.uniqueTraitNames > 100);
+  assert.equal(manifest.traitCount, values.length);
+  assert.equal(manifest.traitCategoryCount, traitCatalog.categories.length);
+  assert.ok(traitCatalog.compatibilityRules.length >= 5);
+});
+
+test('all 1,200 draft Pumpio trait signatures are deterministic and unique', () => {
+  assert.equal(blueprint.status, 'DRAFT_ART_BLUEPRINT');
+  assert.equal(blueprint.metadataFinalized, false);
+  assert.equal(blueprint.deterministic, true);
+  assert.equal(blueprint.items.length, 1_200);
+  assert.equal(blueprint.items[0].serial, 1);
+  assert.equal(blueprint.items.at(-1).serial, 1_200);
+  const signatures = blueprint.items.map((item) => JSON.stringify(item.traits));
+  assert.equal(new Set(signatures).size, 1_200);
+  assert.equal(manifest.uniqueBlueprintSignatures, 1_200);
+});
+
+test('draft rarity assignments preserve the exact planned distribution', () => {
+  const counts = Object.fromEntries(manifest.rarityPlan.map(({ label }) => [label, 0]));
+  for (const item of blueprint.items) counts[item.rarity] += 1;
+  assert.deepEqual(Object.values(counts), [900, 200, 80, 19, 1]);
+  assert.equal(blueprint.items.find((item) => item.serial === 1).name, 'The Chairman');
 });
