@@ -34,8 +34,8 @@ export default function LaunchpadHome() {
         <div className="ipoHeroInner">
           <div className="ipoHeroCopy">
             <p className="ipoKicker"><span /> INITIAL PUMP OFFERING / SOLANA</p>
-            <h1>THE LAUNCHPAD<br />BEFORE THE <em>PUMP.</em></h1>
-            <p className="ipoHeroLead">A marketplace for structured presales and fair launches. Publish the terms, build a verifiable record, and move from idea to market in public.</p>
+            <h1>INITIAL PUMP<br /><em>OFFERING.</em></h1>
+            <p className="ipoHeroLead">Launch tokens through structured presales and fair launches, with public terms, earned reputation, and verifiable revenue routing.</p>
             <div className="ipoHeroActions">
               <Link className="ipoAction primary" href="/launchpad">EXPLORE OFFERINGS <ArrowRight size={17} /></Link>
               <Link className="ipoAction secondary" href="/launch">START A LAUNCH BRIEF</Link>
