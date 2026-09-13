@@ -44,19 +44,19 @@
       "id": 421,
       "name": "The Dealmaker",
       "rarity": "STANDARD",
-      "source": "./v5/dealmaker.webp"
+      "source": "./v6/dealmaker.webp"
     },
     {
       "id": 187,
       "name": "The Analyst",
       "rarity": "STANDARD",
-      "source": "./v5/analyst.webp"
+      "source": "./v6/analyst.webp"
     },
     {
       "id": 333,
       "name": "The Floor Trader",
       "rarity": "RARE",
-      "source": "./v5/floor-trader.webp"
+      "source": "./v6/floor-trader.webp"
     },
     {
       "id": 674,
