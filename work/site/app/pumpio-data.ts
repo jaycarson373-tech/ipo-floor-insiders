@@ -17,9 +17,9 @@ export const pumpioPreviews: Array<{
   status: "COLLECTION PREVIEW";
   surface: string;
 }> = [
-  { id: 421, art: "intern", name: "The Intern", rarity: "STANDARD", level: 1, capsule: "Classic green / cream", face: "Deadpan", outfit: "Cheap intern suit", accessory: "No badge", background: "Prospectus yellow", surface: "Pencil ghosts", status: "COLLECTION PREVIEW" },
-  { id: 187, art: "analyst", name: "The Analyst", rarity: "STANDARD", level: 2, capsule: "Blue / cream", face: "Tired", outfit: "Banker vest", accessory: "Calculator", background: "Market blue", surface: "Offset print", status: "COLLECTION PREVIEW" },
-  { id: 333, art: "market-maker", name: "The Market Maker", rarity: "RARE", level: 7, capsule: "Red / cream", face: "Slightly smug", outfit: "Pinstripe suit", accessory: "Trader headset", background: "Opening red", surface: "Heavy halftone", status: "COLLECTION PREVIEW" },
+  { id: 421, art: "dealmaker", name: "The Dealmaker", rarity: "STANDARD", level: 1, capsule: "Ivory / green", face: "Confident sideways grin", outfit: "Oversized charcoal blazer", accessory: "Lapel adjustment", background: "Pale sage", surface: "Clean cel shading", status: "COLLECTION PREVIEW" },
+  { id: 187, art: "analyst", name: "The Analyst", rarity: "STANDARD", level: 2, capsule: "Ivory / blue", face: "Skeptical raised brow", outfit: "Navy sweater vest", accessory: "Chunky calculator", background: "Powder blue", surface: "Clean cel shading", status: "COLLECTION PREVIEW" },
+  { id: 333, art: "floor-trader", name: "The Floor Trader", rarity: "RARE", level: 7, capsule: "Ivory / red", face: "Mid-negotiation", outfit: "Dark pinstripe jacket", accessory: "Telephone receiver", background: "Muted coral", surface: "Clean cel shading", status: "COLLECTION PREVIEW" },
   { id: 674, art: "bookrunner", name: "The Bookrunner", rarity: "RARE", level: 8, capsule: "Black / acid", face: "Unimpressed", outfit: "Puffer suit", accessory: "Bookrunner cap", background: "Mint green", surface: "Dry brush", status: "COLLECTION PREVIEW" },
   { id: 808, art: "quant", name: "The Quant", rarity: "SUPER RARE", level: 8, capsule: "Liquid aquarium", face: "Liquid reflection", outfit: "Lab coat", accessory: "Quant sensors", background: "Quant lab", surface: "Glass scratches", status: "COLLECTION PREVIEW" },
   { id: 999, art: "whale", name: "The Whale", rarity: "SUPER RARE", level: 9, capsule: "Mirror chrome", face: "Deadpan", outfit: "Fur-collar coat", accessory: "Gold chain", background: "Yacht close", surface: "Chrome scuffs", status: "COLLECTION PREVIEW" },

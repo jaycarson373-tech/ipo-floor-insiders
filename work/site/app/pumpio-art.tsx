@@ -1,7 +1,7 @@
 export type PumpioArtId =
-  | "intern"
+  | "dealmaker"
   | "analyst"
-  | "market-maker"
+  | "floor-trader"
   | "bookrunner"
   | "quant"
   | "whale"
@@ -10,9 +10,9 @@ export type PumpioArtId =
   | "chairman";
 
 const artMap: Record<PumpioArtId, { alt: string; quadrant?: number; src: string }> = {
-  intern: { alt: "Hand-illustrated green and cream Pumpio intern in a charcoal suit", quadrant: 0, src: "/pumpios-preview-standard-v3.png" },
-  analyst: { alt: "Hand-illustrated blue Pumpio analyst holding a calculator", quadrant: 1, src: "/pumpios-preview-standard-v3.png" },
-  "market-maker": { alt: "Hand-illustrated red and cream Pumpio market maker in a pinstripe suit", quadrant: 2, src: "/pumpios-preview-standard-v3.png" },
+  dealmaker: { alt: "The Dealmaker, a green and ivory Pumpio adjusting a charcoal blazer lapel", src: "/pumpios/v4/dealmaker.webp" },
+  analyst: { alt: "The Analyst, a blue and ivory Pumpio checking a chunky calculator", src: "/pumpios/v4/analyst.webp" },
+  "floor-trader": { alt: "The Floor Trader, a red and ivory Pumpio negotiating on a telephone", src: "/pumpios/v4/floor-trader.webp" },
   bookrunner: { alt: "Hand-illustrated black and acid-green Pumpio bookrunner", quadrant: 3, src: "/pumpios-preview-standard-v3.png" },
   quant: { alt: "Hand-illustrated crystal blue liquid-filled Pumpio quant", quadrant: 0, src: "/pumpios-preview-rare-v3.png" },
   whale: { alt: "Hand-illustrated mirror-chrome Pumpio whale in a fur-collar coat", quadrant: 1, src: "/pumpios-preview-rare-v3.png" },

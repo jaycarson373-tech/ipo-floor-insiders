@@ -104,7 +104,7 @@ export default function MintPage() {
   return (
     <main className="pioPage pioMintPage">
       <header className="pioMintHero">
-        <div className="pioMintArt"><PumpioArt art="intern" /><span>REVEAL AFTER CONFIRMATION</span></div>
+        <div className="pioMintArt"><PumpioArt art="dealmaker" /><span>REVEAL AFTER CONFIRMATION</span></div>
         <div className="pioMintPanel">
           <p className="pioEyebrow">PUMPIOS / METAPLEX CORE</p><h1>MINT YOUR PUMPIO.</h1><p className="pioMintIntro">The intended collection is 1,200 Pumpios at 0.12 SOL. No $IPO lock or burn is required to mint.</p>
           <div className={`pioMintStatus ${availability}`}><i /> {availability === "checking" ? "VERIFYING DEPLOYMENT" : availability === "available" ? "MINT AVAILABLE" : "MIGRATION REQUIRED"}</div>

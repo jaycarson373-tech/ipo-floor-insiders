@@ -10,7 +10,7 @@
     "ipo": 0
   },
   "capsuleSilhouetteLocked": true,
-  "artDirection": "Hand-illustrated ink, graphite, gouache, and screen-print aesthetic",
+  "artDirection": "Premium clean 2D character illustration with bold black outlines, flat color, and restrained cel shading",
   "traitCount": 171,
   "uniqueTraitNames": 169,
   "traitCategoryCount": 12,
@@ -42,24 +42,21 @@
   "previews": [
     {
       "id": 421,
-      "name": "The Intern",
+      "name": "The Dealmaker",
       "rarity": "STANDARD",
-      "source": "../pumpios-preview-standard-v3.png",
-      "quadrant": 0
+      "source": "./v4/dealmaker.webp"
     },
     {
       "id": 187,
       "name": "The Analyst",
       "rarity": "STANDARD",
-      "source": "../pumpios-preview-standard-v3.png",
-      "quadrant": 1
+      "source": "./v4/analyst.webp"
     },
     {
       "id": 333,
-      "name": "The Market Maker",
+      "name": "The Floor Trader",
       "rarity": "RARE",
-      "source": "../pumpios-preview-standard-v3.png",
-      "quadrant": 2
+      "source": "./v4/floor-trader.webp"
     },
     {
       "id": 674,
