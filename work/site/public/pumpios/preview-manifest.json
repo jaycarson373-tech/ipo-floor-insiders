@@ -10,7 +10,7 @@
     "ipo": 0
   },
   "capsuleSilhouetteLocked": true,
-  "artDirection": "Premium clean 2D character illustration with bold black outlines, flat color, and restrained cel shading",
+  "artDirection": "Original lo-fi internet-native PFP illustration with imperfect hand ink, flat color, and fashion-zine character energy",
   "traitCount": 171,
   "uniqueTraitNames": 169,
   "traitCategoryCount": 12,
@@ -44,19 +44,19 @@
       "id": 421,
       "name": "The Dealmaker",
       "rarity": "STANDARD",
-      "source": "./v4/dealmaker.webp"
+      "source": "./v5/dealmaker.webp"
     },
     {
       "id": 187,
       "name": "The Analyst",
       "rarity": "STANDARD",
-      "source": "./v4/analyst.webp"
+      "source": "./v5/analyst.webp"
     },
     {
       "id": 333,
       "name": "The Floor Trader",
       "rarity": "RARE",
-      "source": "./v4/floor-trader.webp"
+      "source": "./v5/floor-trader.webp"
     },
     {
       "id": 674,
