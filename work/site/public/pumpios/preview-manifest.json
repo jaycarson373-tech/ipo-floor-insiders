@@ -10,7 +10,7 @@
     "ipo": 0
   },
   "capsuleSilhouetteLocked": true,
-  "artDirection": "Original lo-fi internet-native PFP illustration with imperfect hand ink, flat color, and fashion-zine character energy",
+  "artDirection": "Original fever-dream internet PFP illustration with surreal capsule identities, expressive ink, saturated worlds, and controlled visual chaos",
   "traitCount": 171,
   "uniqueTraitNames": 169,
   "traitCategoryCount": 12,
@@ -44,19 +44,19 @@
       "id": 421,
       "name": "The Dealmaker",
       "rarity": "STANDARD",
-      "source": "./v6/dealmaker.webp"
+      "source": "./v7/dealmaker.webp"
     },
     {
       "id": 187,
-      "name": "The Analyst",
+      "name": "The Oracle",
       "rarity": "STANDARD",
-      "source": "./v6/analyst.webp"
+      "source": "./v7/oracle.webp"
     },
     {
       "id": 333,
-      "name": "The Floor Trader",
+      "name": "The Red Line",
       "rarity": "RARE",
-      "source": "./v6/floor-trader.webp"
+      "source": "./v7/red-line.webp"
     },
     {
       "id": 674,

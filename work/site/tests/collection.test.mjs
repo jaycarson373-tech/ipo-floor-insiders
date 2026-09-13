@@ -36,17 +36,17 @@ test('preview rarity plan totals exactly 1,200 without claiming finalized metada
   assert.equal(manifest.status, 'COLLECTION PREVIEW');
 });
 
-test('approved Pumpio preview assets and high-resolution V6 masters exist', async () => {
+test('approved Pumpio preview assets and high-resolution V7 masters exist', async () => {
   assert.equal(manifest.previews.length, 9);
   assert.equal(manifest.previews.filter((item) => item.rarity === 'CHAIRMAN').length, 1);
   const sources = new Set(manifest.previews.map((item) => item.source));
   for (const source of sources) {
     const file = path.resolve(root, 'public', 'pumpios', source);
-    const minimumSize = source.includes('/v6/') ? 40_000 : 100_000;
+    const minimumSize = source.includes('/v7/') ? 250_000 : 100_000;
     assert.ok((await stat(file)).size > minimumSize, `${source} is a complete preview asset`);
   }
-  for (const name of ['pumpio-dealmaker.png', 'pumpio-analyst.png', 'pumpio-floor-trader.png']) {
-    const master = path.resolve(root, '..', 'art', 'pumpios-v6', 'masters', name);
+  for (const name of ['pumpio-dealmaker.png', 'pumpio-oracle.png', 'pumpio-red-line.png']) {
+    const master = path.resolve(root, '..', 'art', 'pumpios-v7', 'masters', name);
     assert.ok((await stat(master)).size > 1_000_000, `${name} is a high-resolution master`);
   }
 });

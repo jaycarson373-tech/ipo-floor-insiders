@@ -1,7 +1,7 @@
 export type PumpioArtId =
   | "dealmaker"
-  | "analyst"
-  | "floor-trader"
+  | "oracle"
+  | "red-line"
   | "bookrunner"
   | "quant"
   | "whale"
@@ -10,9 +10,9 @@ export type PumpioArtId =
   | "chairman";
 
 const artMap: Record<PumpioArtId, { alt: string; quadrant?: number; src: string }> = {
-  dealmaker: { alt: "The Dealmaker, a lo-fi hand-inked green and ivory Pumpio adjusting a charcoal blazer lapel", src: "/pumpios/v6/dealmaker.webp" },
-  analyst: { alt: "The Analyst, a lo-fi hand-inked blue and ivory Pumpio checking a chunky calculator", src: "/pumpios/v6/analyst.webp" },
-  "floor-trader": { alt: "The Floor Trader, a lo-fi hand-inked red and ivory Pumpio negotiating on a telephone", src: "/pumpios/v6/floor-trader.webp" },
+  dealmaker: { alt: "The Dealmaker, a cracked green Pumpio holding a sealed contract cube at a night auction", src: "/pumpios/v7/dealmaker.webp" },
+  oracle: { alt: "The Oracle, a stormglass blue Pumpio holding an all-seeing calculator in a flooded shrine", src: "/pumpios/v7/oracle.webp" },
+  "red-line": { alt: "The Red Line, a three-eyed red Pumpio taking a call inside a volcanic trading cathedral", src: "/pumpios/v7/red-line.webp" },
   bookrunner: { alt: "Hand-illustrated black and acid-green Pumpio bookrunner", quadrant: 3, src: "/pumpios-preview-standard-v3.png" },
   quant: { alt: "Hand-illustrated crystal blue liquid-filled Pumpio quant", quadrant: 0, src: "/pumpios-preview-rare-v3.png" },
   whale: { alt: "Hand-illustrated mirror-chrome Pumpio whale in a fur-collar coat", quadrant: 1, src: "/pumpios-preview-rare-v3.png" },

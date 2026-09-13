@@ -24,7 +24,7 @@ export default function PumpiosPage() {
   return (
     <main className="pioPage">
       <header className="pioPageHero pioPumpiosHero">
-        <div><p className="pioEyebrow">PUMPIOS / COLLECTION PREVIEW</p><h1>1,200 CAPSULE-HEADED UNDERWRITERS.</h1><p>A lo-fi hand-drawn character system with imperfect ink, flat color, fashion-zine attitude, and one unmistakable silhouette.</p></div>
+        <div><p className="pioEyebrow">PUMPIOS / COLLECTION PREVIEW</p><h1>1,200 CAPSULE-HEADED UNDERWRITERS.</h1><p>One unmistakable capsule bloodline. Strange identities, impossible markets, saturated worlds, and controlled visual chaos.</p></div>
         <PumpioArt art="chairman" />
       </header>
       <section className="pioBrowser">
