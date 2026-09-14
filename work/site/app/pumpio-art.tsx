@@ -10,26 +10,28 @@ export type PumpioArtId =
   | "chairman";
 
 const artMap: Record<PumpioArtId, { alt: string; quadrant?: number; src: string }> = {
-  dealmaker: { alt: "The Dealmaker, a cracked green Pumpio holding a sealed contract cube at a night auction", src: "/pumpios/v7/dealmaker.webp" },
-  oracle: { alt: "The Oracle, a stormglass blue Pumpio holding an all-seeing calculator in a flooded shrine", src: "/pumpios/v7/oracle.webp" },
-  "red-line": { alt: "The Red Line, a three-eyed red Pumpio taking a call inside a volcanic trading cathedral", src: "/pumpios/v7/red-line.webp" },
-  bookrunner: { alt: "Hand-illustrated black and acid-green Pumpio bookrunner", quadrant: 3, src: "/pumpios-preview-standard-v3.png" },
-  quant: { alt: "Hand-illustrated crystal blue liquid-filled Pumpio quant", quadrant: 0, src: "/pumpios-preview-rare-v3.png" },
-  whale: { alt: "Hand-illustrated mirror-chrome Pumpio whale in a fur-collar coat", quadrant: 1, src: "/pumpios-preview-rare-v3.png" },
-  printer: { alt: "Hand-illustrated transparent money-filled Pumpio printer", quadrant: 2, src: "/pumpios-preview-rare-v3.png" },
-  "golden-pump": { alt: "Hand-illustrated brushed-gold Pumpio in a cream tuxedo", quadrant: 3, src: "/pumpios-preview-rare-v3.png" },
-  chairman: { alt: "Hand-illustrated Chairman, the unique green and cream Pumpio", src: "/pumpio-chairman-v3.png" },
+  dealmaker: { alt: "The Dealmaker Pumpio at a night auction", src: "/pumpios/v8/0421.webp" },
+  oracle: { alt: "The Oracle Pumpio in a flooded data shrine", src: "/pumpios/v8/0187.webp" },
+  "red-line": { alt: "The Red Line Pumpio taking a call", src: "/pumpios/v8/0333.webp" },
+  bookrunner: { alt: "The Bookrunner Pumpio in an office corridor", src: "/pumpios/v8/0674.webp" },
+  quant: { alt: "The Quant Pumpio in an ocean convenience lab", src: "/pumpios/v8/0808.webp" },
+  whale: { alt: "The Whale Pumpio in a rainy financial district", src: "/pumpios/v8/0999.webp" },
+  printer: { alt: "The Printer Pumpio in a copy-room laundromat", src: "/pumpios/v8/0777.webp" },
+  "golden-pump": { alt: "The Golden Pump in an abandoned luxury mall", src: "/pumpios/v8/1199.webp" },
+  chairman: { alt: "The Chairman Pumpio at a suburban shareholder banquet", src: "/pumpios/v8/0001.webp" },
 };
 
-export default function PumpioArt({ art, className = "" }: { art: PumpioArtId; className?: string }) {
-  const item = artMap[art];
+export default function PumpioArt({ alt, art, className = "", src }: { alt?: string; art?: PumpioArtId; className?: string; src?: string }) {
+  const item = art ? artMap[art] : undefined;
+  const imageSrc = src ?? item?.src;
+  if (!imageSrc) return null;
   return (
     <div className={`pumpioArt ${className}`.trim()}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        alt={item.alt}
-        className={item.quadrant === undefined ? "pumpioSingle" : `pumpioSheet pumpioQ${item.quadrant}`}
-        src={item.src}
+        alt={alt ?? item?.alt ?? "Pumpio collection preview"}
+        className={item?.quadrant === undefined ? "pumpioSingle" : `pumpioSheet pumpioQ${item.quadrant}`}
+        src={imageSrc}
       />
     </div>
   );

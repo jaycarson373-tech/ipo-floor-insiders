@@ -127,7 +127,7 @@ export default function LaunchpadHome() {
 
       <section className="ipoBand ipoMembership" id="pumpios">
         <div className="ipoMembershipArt">
-          {pumpioPreviews.slice(0, 3).map((item) => <figure className="ipoPumpio" key={item.id}><PumpioArt art={item.art} /><figcaption><span>#{String(item.id).padStart(4, "0")}</span><small>{item.rarity}</small><strong>{item.name}</strong></figcaption></figure>)}
+          {pumpioPreviews.filter((item) => [421, 187, 333].includes(item.id)).map((item) => <figure className="ipoPumpio" key={item.id}><PumpioArt alt={`${item.name} Pumpio collection preview`} src={item.image} /><figcaption><span>#{String(item.id).padStart(4, "0")}</span><small>{item.rarity}</small><strong>{item.name}</strong></figcaption></figure>)}
         </div>
         <div className="ipoMembershipCopy">
           <p className="ipoLabel">05 / MEMBERSHIP</p>

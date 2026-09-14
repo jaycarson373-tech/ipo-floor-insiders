@@ -1,4 +1,5 @@
 import blueprint from "../../../../public/pumpios/trait-blueprint.json";
+import { canonicalPumpiosById } from "../../../pumpio-canonical";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +117,10 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   const serial = match ? Number(match[1]) : 0;
   const item = items.get(serial);
   if (!item) return new Response("Unknown Pumpio", { status: 404 });
+  const canonical = canonicalPumpiosById.get(serial);
+  if (canonical) {
+    return Response.redirect(new URL(canonical.image, request.url), 307);
+  }
   const levelValue = Number(new URL(request.url).searchParams.get("level") ?? "0");
   const level = Number.isInteger(levelValue) ? Math.min(10, Math.max(0, levelValue)) : 0;
   return new Response(renderSvg(item, level), {
@@ -123,6 +128,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       "Content-Type": "image/svg+xml; charset=utf-8",
       "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
       "X-Content-Type-Options": "nosniff",
+      "X-Pumpio-Art-Status": "DRAFT_PREVIEW",
     },
   });
 }

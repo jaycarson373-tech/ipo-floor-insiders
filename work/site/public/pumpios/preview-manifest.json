@@ -2,106 +2,54 @@
   "name": "Pumpios",
   "symbol": "PUMPIO",
   "standard": "Metaplex Core (target)",
-  "status": "COLLECTION PREVIEW",
+  "status": "REPRESENTATIVE ART PREVIEW",
   "supply": 1200,
-  "mintPrice": {
-    "sol": 0.12,
-    "lamports": 120000000,
-    "ipo": 0
-  },
+  "mintPrice": { "sol": 0.12, "lamports": 120000000, "ipo": 0 },
   "capsuleSilhouetteLocked": true,
-  "artDirection": "Original fever-dream internet PFP illustration with surreal capsule identities, expressive ink, saturated worlds, and controlled visual chaos",
+  "artDirection": "Original hand-drawn terminally-online underwriters with capsule silhouettes, office-internet fashion, expressive faces, and curated flash-photo collage environments",
   "traitCount": 171,
   "uniqueTraitNames": 169,
   "traitCategoryCount": 12,
   "uniqueBlueprintSignatures": 1200,
   "compatibilityRuleCount": 7,
   "rarityPlan": [
-    {
-      "label": "STANDARD",
-      "count": 900
-    },
-    {
-      "label": "RARE",
-      "count": 200
-    },
-    {
-      "label": "SUPER RARE",
-      "count": 80
-    },
-    {
-      "label": "LEGENDARY",
-      "count": 19
-    },
-    {
-      "label": "CHAIRMAN",
-      "count": 1
-    }
+    { "label": "STANDARD", "count": 900 },
+    { "label": "RARE", "count": 200 },
+    { "label": "SUPER RARE", "count": 80 },
+    { "label": "LEGENDARY", "count": 19 },
+    { "label": "CHAIRMAN", "count": 1 }
   ],
   "levels": 10,
+  "representativePreviewCount": 24,
+  "finalCollectionImagesComplete": 0,
   "previews": [
-    {
-      "id": 421,
-      "name": "The Dealmaker",
-      "rarity": "STANDARD",
-      "source": "./v7/dealmaker.webp"
-    },
-    {
-      "id": 187,
-      "name": "The Oracle",
-      "rarity": "STANDARD",
-      "source": "./v7/oracle.webp"
-    },
-    {
-      "id": 333,
-      "name": "The Red Line",
-      "rarity": "RARE",
-      "source": "./v7/red-line.webp"
-    },
-    {
-      "id": 674,
-      "name": "The Bookrunner",
-      "rarity": "RARE",
-      "source": "../pumpios-preview-standard-v3.png",
-      "quadrant": 3
-    },
-    {
-      "id": 808,
-      "name": "The Quant",
-      "rarity": "SUPER RARE",
-      "source": "../pumpios-preview-rare-v3.png",
-      "quadrant": 0
-    },
-    {
-      "id": 999,
-      "name": "The Whale",
-      "rarity": "SUPER RARE",
-      "source": "../pumpios-preview-rare-v3.png",
-      "quadrant": 1
-    },
-    {
-      "id": 777,
-      "name": "The Printer",
-      "rarity": "LEGENDARY",
-      "source": "../pumpios-preview-rare-v3.png",
-      "quadrant": 2
-    },
-    {
-      "id": 1199,
-      "name": "The Golden Pump",
-      "rarity": "LEGENDARY",
-      "source": "../pumpios-preview-rare-v3.png",
-      "quadrant": 3
-    },
-    {
-      "id": 1,
-      "name": "The Chairman",
-      "rarity": "CHAIRMAN",
-      "source": "../pumpio-chairman-v3.png"
-    }
+    { "id": 42, "name": "Night Auditor", "rarity": "STANDARD", "source": "./v8/0042.webp" },
+    { "id": 56, "name": "Mall Broker", "rarity": "STANDARD", "source": "./v8/0056.webp" },
+    { "id": 109, "name": "Receipt Kid", "rarity": "STANDARD", "source": "./v8/0109.webp" },
+    { "id": 187, "name": "The Oracle", "rarity": "STANDARD", "source": "./v8/0187.webp" },
+    { "id": 215, "name": "Pager Clerk", "rarity": "STANDARD", "source": "./v8/0215.webp" },
+    { "id": 304, "name": "Pink Slip", "rarity": "STANDARD", "source": "./v8/0304.webp" },
+    { "id": 388, "name": "Copy Machine", "rarity": "STANDARD", "source": "./v8/0388.webp" },
+    { "id": 421, "name": "The Dealmaker", "rarity": "STANDARD", "source": "./v8/0421.webp" },
+    { "id": 455, "name": "Exit Interview", "rarity": "STANDARD", "source": "./v8/0455.webp" },
+    { "id": 512, "name": "Lunch Break", "rarity": "STANDARD", "source": "./v8/0512.webp" },
+    { "id": 603, "name": "Compliance Kid", "rarity": "STANDARD", "source": "./v8/0603.webp" },
+    { "id": 688, "name": "Parking Garage", "rarity": "STANDARD", "source": "./v8/0688.webp" },
+    { "id": 741, "name": "Dial-Up", "rarity": "STANDARD", "source": "./v8/0741.webp" },
+    { "id": 822, "name": "After Hours", "rarity": "STANDARD", "source": "./v8/0822.webp" },
+    { "id": 930, "name": "Vending Machine", "rarity": "STANDARD", "source": "./v8/0930.webp" },
+    { "id": 1088, "name": "Weekend Shift", "rarity": "STANDARD", "source": "./v8/1088.webp" },
+    { "id": 333, "name": "The Red Line", "rarity": "RARE", "source": "./v8/0333.webp" },
+    { "id": 674, "name": "The Bookrunner", "rarity": "RARE", "source": "./v8/0674.webp" },
+    { "id": 777, "name": "The Printer", "rarity": "RARE", "source": "./v8/0777.webp" },
+    { "id": 1110, "name": "Burn Notice", "rarity": "RARE", "source": "./v8/1110.webp" },
+    { "id": 808, "name": "The Quant", "rarity": "SUPER RARE", "source": "./v8/0808.webp" },
+    { "id": 999, "name": "The Whale", "rarity": "SUPER RARE", "source": "./v8/0999.webp" },
+    { "id": 1199, "name": "The Golden Pump", "rarity": "LEGENDARY", "source": "./v8/1199.webp" },
+    { "id": 1, "name": "The Chairman", "rarity": "CHAIRMAN", "source": "./v8/0001.webp" }
   ],
   "blueprint": "./trait-blueprint.json",
   "metadataFinalized": false,
   "collectionDeployed": false,
-  "note": "Draft trait blueprints and concept art are not minted assets or finalized metadata. No rarity is assigned on-chain by this manifest."
+  "note": "Twenty-four art-directed representative previews are complete. The 1,200 deterministic trait assignments remain drafts; no full collection image set or on-chain rarity has been finalized."
 }

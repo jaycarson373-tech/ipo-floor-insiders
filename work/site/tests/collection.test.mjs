@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const product = JSON.parse(await readFile(path.join(root, 'product-config.json'), 'utf8'));
 const manifest = JSON.parse(await readFile(path.join(root, 'public', 'pumpios', 'preview-manifest.json'), 'utf8'));
+const canonical = JSON.parse(await readFile(path.join(root, 'pumpio-canonical.json'), 'utf8'));
 const traitCatalog = JSON.parse(await readFile(path.join(root, 'pumpio-traits.json'), 'utf8'));
 const blueprint = JSON.parse(await readFile(path.join(root, 'public', 'pumpios', 'trait-blueprint.json'), 'utf8'));
 
@@ -33,22 +34,41 @@ test('preview rarity plan totals exactly 1,200 without claiming finalized metada
   assert.deepEqual(manifest.rarityPlan.map((item) => item.count), [900, 200, 80, 19, 1]);
   assert.equal(manifest.metadataFinalized, false);
   assert.equal(manifest.collectionDeployed, false);
-  assert.equal(manifest.status, 'COLLECTION PREVIEW');
+  assert.equal(manifest.status, 'REPRESENTATIVE ART PREVIEW');
+  assert.equal(manifest.finalCollectionImagesComplete, 0);
 });
 
-test('approved Pumpio preview assets and high-resolution V7 masters exist', async () => {
-  assert.equal(manifest.previews.length, 9);
+test('24 representative Pumpio previews and high-resolution V8 masters exist', async () => {
+  assert.equal(manifest.previews.length, 24);
+  assert.equal(canonical.length, 24);
+  assert.deepEqual(
+    ['STANDARD', 'RARE', 'SUPER RARE', 'LEGENDARY', 'CHAIRMAN'].map((rarity) => canonical.filter((item) => item.rarity === rarity).length),
+    [16, 4, 2, 1, 1],
+  );
   assert.equal(manifest.previews.filter((item) => item.rarity === 'CHAIRMAN').length, 1);
   const sources = new Set(manifest.previews.map((item) => item.source));
   for (const source of sources) {
     const file = path.resolve(root, 'public', 'pumpios', source);
-    const minimumSize = source.includes('/v7/') ? 250_000 : 100_000;
-    assert.ok((await stat(file)).size > minimumSize, `${source} is a complete preview asset`);
+    assert.ok((await stat(file)).size > 200_000, `${source} is a complete optimized preview asset`);
   }
-  for (const name of ['pumpio-dealmaker.png', 'pumpio-oracle.png', 'pumpio-red-line.png']) {
-    const master = path.resolve(root, '..', 'art', 'pumpios-v7', 'masters', name);
-    assert.ok((await stat(master)).size > 1_000_000, `${name} is a high-resolution master`);
+  for (const item of canonical) {
+    const master = path.resolve(root, '..', 'art', 'pumpios-v8', 'masters', item.master);
+    assert.ok((await stat(master)).size > 1_000_000, `${item.master} is a high-resolution master`);
   }
+});
+
+test('canonical preview IDs have one matching image and visible trait record', () => {
+  assert.equal(new Set(canonical.map((item) => item.id)).size, 24);
+  assert.equal(new Set(canonical.map((item) => item.image)).size, 24);
+  for (const item of canonical) {
+    const preview = manifest.previews.find((candidate) => candidate.id === item.id);
+    assert.ok(preview, `manifest includes #${item.id}`);
+    assert.equal(preview.source.replace(/^\./, '/pumpios'), item.image);
+    for (const trait of ['capsule', 'face', 'outfit', 'accessory', 'background', 'surface']) {
+      assert.ok(item[trait].length > 3, `#${item.id} has ${trait}`);
+    }
+  }
+  assert.equal(canonical.find((item) => item.id === 421).image, '/pumpios/v8/0421.webp');
 });
 
 test('V3 trait system documents more than 100 traits across meaningful categories', () => {
